@@ -6,6 +6,8 @@ import {
   savePreferences,
   profileToDefaults,
   clearAllData,
+  getBreathingSessions,
+  getColdSessions,
   type UserPreferences,
   type CustomPreset,
 } from "@/lib/storage";
@@ -28,6 +30,7 @@ type Pace = UserPreferences["defaultPace"];
 
 const AUDIO_OPTIONS: { value: AudioMode; label: string }[] = [
   { value: "tone", label: strings.settings.audioOptions.tones },
+  { value: "haptic", label: strings.settings.audioOptions.haptic },
   { value: "silent", label: strings.settings.audioOptions.silent },
 ];
 
@@ -69,6 +72,22 @@ export default function SettingsPage() {
     const next = { ...prefs, ...patch };
     setPrefs(next);
     savePreferences(patch);
+  }
+
+  function handleExportData() {
+    const data = {
+      breathingSessions: getBreathingSessions(),
+      coldSessions: getColdSessions(),
+      preferences: getPreferences(),
+      exportedAt: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `whm-data-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async function handleClearData() {
@@ -337,6 +356,27 @@ export default function SettingsPage() {
         </div>
       </Card>
 
+      {/* Temperature Unit */}
+      <Card>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          {strings.settings.temperatureUnit}
+        </h2>
+        <div className="flex gap-2">
+          <OptionButton
+            selected={prefs.temperatureUnit === "celsius"}
+            onClick={() => update({ temperatureUnit: "celsius" })}
+          >
+            °C
+          </OptionButton>
+          <OptionButton
+            selected={prefs.temperatureUnit === "fahrenheit"}
+            onClick={() => update({ temperatureUnit: "fahrenheit" })}
+          >
+            °F
+          </OptionButton>
+        </div>
+      </Card>
+
       {/* Cold Target Default */}
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -355,22 +395,32 @@ export default function SettingsPage() {
         </div>
       </Card>
 
-      {/* Clear Data */}
+      {/* Data Management */}
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           {strings.settings.data}
         </h2>
-        {cleared ? (
-          <p className="text-sm text-green-600 dark:text-green-400">{strings.settings.allDataCleared}</p>
-        ) : (
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() => setShowClearConfirm(true)}
-          >
-            {strings.settings.clearAllData}
-          </Button>
-        )}
+        <div className="flex flex-col gap-3">
+          <div>
+            <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">
+              {strings.settings.exportDataDescription}
+            </p>
+            <Button variant="secondary" size="sm" onClick={handleExportData}>
+              {strings.settings.exportData}
+            </Button>
+          </div>
+          {cleared ? (
+            <p className="text-sm text-green-600 dark:text-green-400">{strings.settings.allDataCleared}</p>
+          ) : (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => setShowClearConfirm(true)}
+            >
+              {strings.settings.clearAllData}
+            </Button>
+          )}
+        </div>
       </Card>
 
       {/* App Version */}

@@ -139,8 +139,12 @@ export const strings = {
     audioMode: "Audio Mode",
     audioOptions: {
       tones: "Tones",
+      haptic: "Haptic",
       silent: "Silent",
     },
+    temperatureUnit: "Temperature Unit",
+    exportData: "Export Data",
+    exportDataDescription: "Download all your sessions and preferences as JSON",
     defaultBreathingConfig: "Default Breathing Config",
     rounds: "Rounds",
     breathsPerRound: "Breaths per round",

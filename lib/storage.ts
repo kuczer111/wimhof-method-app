@@ -44,8 +44,9 @@ export interface UserPreferences {
   defaultBreathCount: 20 | 30 | 40;
   defaultPace: "slow" | "medium" | "fast";
   defaultColdTarget: number; // seconds
-  audioMode: "voice" | "tone" | "silent";
+  audioMode: "voice" | "tone" | "silent" | "haptic";
   muted: boolean;
+  temperatureUnit: "celsius" | "fahrenheit";
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
   wakeLockEnabled: boolean;
@@ -171,6 +172,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   defaultColdTarget: 60,
   audioMode: "tone",
   muted: false,
+  temperatureUnit: "celsius",
   safetyAcknowledged: false,
   onboardingComplete: false,
   wakeLockEnabled: true,

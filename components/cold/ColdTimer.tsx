@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import { saveColdSession, generateId, getPreferences, type ColdSession } from "@/lib/storage";
 import { checkColdMilestones } from "@/lib/milestones";
-import { formatTime } from "@/lib/format";
+import { formatTime, getTemperatureUnitLabel, toStorageCelsius } from "@/lib/format";
 import { strings } from "@/lib/i18n";
 import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
 
@@ -127,7 +127,7 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
       duration: elapsed,
       targetDuration: target,
       type: coldType,
-      ...(temperature.trim() && { temperature: Number(temperature) }),
+      ...(temperature.trim() && { temperature: toStorageCelsius(Number(temperature), getPreferences().temperatureUnit) }),
       ...(rating !== null && { rating }),
     };
     saveColdSession(session);
@@ -219,7 +219,7 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
               placeholder={strings.cold.temperaturePlaceholder}
               className="w-full rounded-xl border border-gray-300 bg-gray-100/60 px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-100 dark:placeholder:text-gray-500"
             />
-            <span className="text-sm text-gray-500 dark:text-gray-400">{strings.cold.temperatureUnit}</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{getTemperatureUnitLabel(getPreferences().temperatureUnit)}</span>
           </div>
         </div>
 

@@ -16,10 +16,23 @@ function getContext(): AudioContext {
   return ctx;
 }
 
+// --- Audio mode helpers ---
+
+export type AudioMode = "voice" | "tone" | "silent" | "haptic";
+
+function getAudioMode(): AudioMode {
+  return getPreferences().audioMode;
+}
+
+function isHaptic(): boolean {
+  return getAudioMode() === "haptic";
+}
+
 // --- Mute toggle ---
 
 export function isMuted(): boolean {
-  return getPreferences().muted;
+  const mode = getAudioMode();
+  return getPreferences().muted || mode === "silent" || mode === "haptic";
 }
 
 export function setMuted(muted: boolean): void {
@@ -78,10 +91,49 @@ function playChime(frequencies: number[], duration: number): void {
   }
 }
 
+// --- Haptic vibration patterns ---
+
+function vibrate(pattern: number | number[]): void {
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    navigator.vibrate(pattern);
+  }
+}
+
+/** Two short pulses — rising feel for inhale */
+export function vibrateInhale(): void {
+  vibrate([80, 40, 80]);
+}
+
+/** Single long pulse — falling feel for exhale */
+export function vibrateExhale(): void {
+  vibrate(200);
+}
+
+/** Three quick pulses — hold start */
+export function vibrateHoldStart(): void {
+  vibrate([50, 30, 50, 30, 50]);
+}
+
+/** Long sustained buzz — hold end */
+export function vibrateHoldEnd(): void {
+  vibrate(400);
+}
+
+/** Short tap — countdown beep equivalent */
+export function vibrateCountdown(): void {
+  vibrate(60);
+}
+
+/** Double tap — final countdown */
+export function vibrateCountdownFinal(): void {
+  vibrate([100, 50, 100]);
+}
+
 // --- Public sound API ---
 
 /** Rising tone for inhale phase (C5 → E5 sweep, 0.4s) */
 export function playInhaleTone(): void {
+  if (isHaptic()) { vibrateInhale(); return; }
   if (isMuted()) return;
 
   const ac = getContext();
@@ -102,6 +154,7 @@ export function playInhaleTone(): void {
 
 /** Falling tone for exhale phase (E5 → C5 sweep, 0.4s) */
 export function playExhaleTone(): void {
+  if (isHaptic()) { vibrateExhale(); return; }
   if (isMuted()) return;
 
   const ac = getContext();
@@ -122,21 +175,25 @@ export function playExhaleTone(): void {
 
 /** Bright chime signaling the start of retention hold (C5+E5+G5 chord, 0.8s) */
 export function playHoldStartChime(): void {
+  if (isHaptic()) { vibrateHoldStart(); return; }
   playChime([523.25, 659.25, 783.99], 0.8);
 }
 
 /** Warm resolved chime signaling end of retention hold (C4+E4+G4+C5, 1s) */
 export function playHoldEndChime(): void {
+  if (isHaptic()) { vibrateHoldEnd(); return; }
   playChime([261.63, 329.63, 392.0, 523.25], 1.0);
 }
 
 /** Short beep for countdown (last seconds of recovery breath) */
 export function playCountdownBeep(): void {
+  if (isHaptic()) { vibrateCountdown(); return; }
   playTone(880, 0.12, "sine", 0.25);
 }
 
 /** Final beep — slightly lower and longer */
 export function playCountdownFinalBeep(): void {
+  if (isHaptic()) { vibrateCountdownFinal(); return; }
   playTone(440, 0.25, "sine", 0.35);
 }
 

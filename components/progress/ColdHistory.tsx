@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import Card from "@/components/ui/Card";
-import type { ColdSession } from "@/lib/storage";
-import { formatDuration } from "@/lib/format";
+import { getPreferences, type ColdSession } from "@/lib/storage";
+import { formatDuration, displayTemperature, getTemperatureUnitLabel } from "@/lib/format";
 import { strings } from "@/lib/i18n";
 
 function formatDate(iso: string): string {
@@ -116,7 +116,7 @@ function ColdList({ sessions }: { sessions: ColdSession[] }) {
           </div>
           <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
             <span>{strings.progress.coldTarget(formatDuration(s.targetDuration))}</span>
-            {s.temperature != null && <span>{s.temperature}{strings.cold.temperatureUnit}</span>}
+            {s.temperature != null && <span>{displayTemperature(s.temperature, getPreferences().temperatureUnit)}{getTemperatureUnitLabel(getPreferences().temperatureUnit)}</span>}
             {s.rating && <span>{strings.progress.coldRating(s.rating)}</span>}
           </div>
         </Card>
