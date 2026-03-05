@@ -5,7 +5,7 @@ NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
 # ─────────────────────────────────────────────
 
 notify() {
-  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
+  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
     return
   fi
   osascript -e "display notification \"$1\" with title \"Ralph 🤖\""
@@ -40,8 +40,8 @@ while true; do
   ./ralph-task.sh "$TASK"
 
   if [ $? -eq 0 ]; then
-    # Mark done
-    sed -i '' "s/^- \[ \] $(echo "$TASK" | sed 's/[[\.*^$()+?{|]/\\&/g')/- [x] $TASK/" TASKS.md
+    # Mark done — use awk for robustness (task text contains /, [], etc.)
+    awk -v task="$TASK" '{if (!done && $0 == "- [ ] " task) {print "- [x] " task; done=1} else print}' TASKS.md > TASKS.md.tmp && mv TASKS.md.tmp TASKS.md
 
     # Commit and push
     git add .
