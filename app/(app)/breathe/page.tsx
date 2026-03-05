@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import SafetyReminder from "@/components/SafetyReminder";
 import PowerBreaths from "@/components/breathing/PowerBreaths";
+import RetentionHold from "@/components/breathing/RetentionHold";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
@@ -77,9 +78,12 @@ export default function BreathePage() {
 
   if (phase === "retention") {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 px-4 pt-24 pb-24">
-        <p className="text-lg text-gray-300">Retention phase coming soon...</p>
-      </div>
+      <RetentionHold
+        onComplete={(durationMs) => {
+          // TODO: store durationMs for session history
+          setPhase("config");
+        }}
+      />
     );
   }
 
