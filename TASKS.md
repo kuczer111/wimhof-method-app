@@ -6,7 +6,7 @@
 - [x] 004: Design tokens and shared UI | Create `lib/constants.ts` for colors/sizes, reusable `components/ui/Button.tsx`, `components/ui/Card.tsx`, `components/ui/Modal.tsx`, and global Tailwind theme extensions.
 - [x] 005: Local storage service | Build `lib/storage.ts` with typed helpers to read/write breathing sessions, cold sessions, and user preferences to localStorage with JSON serialization.
 - [x] 006: Safety onboarding screen | Create `components/SafetyOnboarding.tsx` as a full-screen modal shown on first launch, listing safety rules with an acknowledge button that sets a flag in localStorage.
-- [ ] 007: In-session safety reminder | Build `components/SafetyReminder.tsx` dismiss dialog shown before every breathing session starts, with a "I understand" button to proceed.
+- [x] 007: In-session safety reminder | Build `components/SafetyReminder.tsx` dismiss dialog shown before every breathing session starts, with a "I understand" button to proceed.
 - [ ] 008: Breathing session config screen | Build `app/breathe/page.tsx` with round count selector (1–5), breath count selector (20/30/40), pace selector (Slow/Medium/Fast), and a "Start Session" button storing config in React state.
 - [ ] 009: Breathing animation component | Create `components/breathing/BreathingCircle.tsx` — an expanding/contracting circle animation driven by a pace prop (1.5s/2s/2.5s cycle) using CSS transitions or framer-motion.
 - [ ] 010: Power breaths phase | Build `components/breathing/PowerBreaths.tsx` that counts 20/30/40 breaths at the configured pace, displays current breath number prominently, drives the breathing animation, and auto-advances to retention phase.
