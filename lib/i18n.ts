@@ -171,6 +171,49 @@ export const strings = {
     coldRating: (value: number) => `Rating: ${value}/5`,
   },
 
+  onboarding: {
+    hero: {
+      title: "Wim Hof Method",
+      subtitle: "Unlock your body's natural potential through breathing, cold exposure, and commitment.",
+    },
+    pillars: {
+      title: "Three Pillars",
+      breathing: "Breathing",
+      breathingDesc: "Controlled hyperventilation to oxygenate your body and shift your chemistry.",
+      cold: "Cold Exposure",
+      coldDesc: "Gradual cold training to strengthen your cardiovascular system and willpower.",
+      mindset: "Mindset",
+      mindsetDesc: "Focus and commitment to push past perceived limits.",
+    },
+    expectations: {
+      title: "What to Expect",
+      subtitle: "These sensations are normal during breathing exercises:",
+      items: [
+        "Tingling in hands and feet",
+        "Lightheadedness or dizziness",
+        "Emotional release",
+        "Warmth spreading through your body",
+      ],
+      reassurance: "These are normal physiological responses. They will pass.",
+    },
+    safety: {
+      title: "Safety First",
+      subtitle: "This practice is powerful. Please acknowledge these rules:",
+      acknowledge: "I Understand and Accept",
+    },
+    startingPoint: {
+      title: "Your Starting Point",
+      subtitle: "This helps us tailor your experience.",
+      newbie: "I'm completely new",
+      newbieDesc: "Start with guided sessions and lower intensity.",
+      experienced: "I know the method",
+      experiencedDesc: "Jump in with standard settings.",
+    },
+    skip: "Skip",
+    next: "Next",
+    getStarted: "Get Started",
+  },
+
   common: {
     feelingLabels: ["Rough", "Meh", "OK", "Good", "Great"],
     saveSession: "Save Session",
