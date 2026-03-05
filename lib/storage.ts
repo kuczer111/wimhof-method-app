@@ -43,6 +43,7 @@ export interface UserPreferences {
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
   wakeLockEnabled: boolean;
+  firstSessionComplete?: boolean;
   profileComplete?: boolean;
   primaryGoal?: PrimaryGoal;
   availableTime?: AvailableTime;

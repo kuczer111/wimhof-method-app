@@ -4,6 +4,7 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import {
   saveBreathingSession,
+  savePreferences,
   getBreathingSessions,
   generateId,
   type BreathingSession,
@@ -17,6 +18,7 @@ interface SessionCompleteProps {
   retentionTimes: number[]; // ms per round
   totalDurationMs: number;
   onDone: () => void;
+  isFirstSession?: boolean;
 }
 
 function getPersonalBests(): Map<number, number> {
@@ -42,6 +44,7 @@ export default function SessionComplete({
   retentionTimes,
   totalDurationMs,
   onDone,
+  isFirstSession = false,
 }: SessionCompleteProps) {
   const { rounds, breathsPerRound, pace } = config;
   const [feelingRating, setFeelingRating] = useState<number | null>(null);
@@ -63,6 +66,9 @@ export default function SessionComplete({
   }
 
   function handleSave() {
+    if (isFirstSession) {
+      savePreferences({ firstSessionComplete: true });
+    }
     const session: BreathingSession = {
       id: generateId(),
       date: new Date().toISOString(),
@@ -131,6 +137,24 @@ export default function SessionComplete({
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Enhanced debrief for first session */}
+      {isFirstSession && retentionTimes.length > 0 && (
+        <div className="w-full max-w-xs rounded-2xl bg-sky-50 p-4 dark:bg-sky-900/20">
+          <h3 className="mb-2 text-center text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">
+            {strings.guidedMode.enhancedDebrief.title}
+          </h3>
+          <p className="mb-3 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+            {strings.guidedMode.enhancedDebrief.retentionExplanation}
+          </p>
+          <p className="mb-3 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+            {strings.guidedMode.enhancedDebrief.firstRoundNote(formatTimeMs(retentionTimes[0]))}
+          </p>
+          <p className="text-sm font-medium text-sky-700 dark:text-sky-300">
+            {strings.guidedMode.enhancedDebrief.improvementTip}
+          </p>
         </div>
       )}
 

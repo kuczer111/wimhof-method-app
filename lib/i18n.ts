@@ -249,6 +249,25 @@ export const strings = {
     skipForNow: "Skip for Now",
   },
 
+  guidedMode: {
+    preBreathing: {
+      title: "Let's Begin",
+      body: "You're about to do a series of deep, rhythmic breaths followed by a breath hold. Breathe in fully through the mouth, then let the air out naturally. Don't force the exhale. You may feel tingling or lightheadedness — that's completely normal.",
+      start: "I'm Ready",
+    },
+    midSessionPause: {
+      title: "How Did That Feel?",
+      body: "You just completed your first round! The tingling, lightheadedness, or emotional release you may have felt is your body responding to the change in blood chemistry. Each round typically gets easier as your body adapts.",
+      continue: "Continue to Round 2",
+    },
+    enhancedDebrief: {
+      title: "Understanding Your Results",
+      retentionExplanation: "Your retention time is how long you held your breath after exhaling. It's normal for this to increase with each round as your body becomes more saturated with oxygen.",
+      firstRoundNote: (time: string) => `Your first hold was ${time} — a great starting point! Most people see significant improvement within their first few sessions.`,
+      improvementTip: "Tip: Consistency matters more than duration. Even 5-10 seconds of improvement over time shows your body is adapting.",
+    },
+  },
+
   common: {
     feelingLabels: ["Rough", "Meh", "OK", "Good", "Great"],
     saveSession: "Save Session",

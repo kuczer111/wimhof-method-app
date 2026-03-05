@@ -6,6 +6,7 @@ import { strings } from "@/lib/i18n";
 import { getPreferences } from "@/lib/storage";
 import type { SessionConfig } from "@/lib/storage";
 import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
+import GuidedOverlay from "./GuidedOverlay";
 import PowerBreaths from "./PowerBreaths";
 import RetentionHold from "./RetentionHold";
 import RecoveryBreath from "./RecoveryBreath";
@@ -26,6 +27,11 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
   const [retentionTimes, setRetentionTimes] = useState<number[]>([]);
   const sessionStartRef = useRef(Date.now());
   const [totalDurationMs, setTotalDurationMs] = useState(0);
+
+  // Guided mode state
+  const isFirstSession = !getPreferences().firstSessionComplete;
+  const [showPreBreathingGuide, setShowPreBreathingGuide] = useState(isFirstSession);
+  const [showMidSessionPause, setShowMidSessionPause] = useState(false);
 
   useEffect(() => {
     unlockAudio();
@@ -49,13 +55,39 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
 
   const handleRecoveryComplete = useCallback(() => {
     if (currentRound < config.rounds) {
-      setCurrentRound((r) => r + 1);
-      setPhase("power-breaths");
+      if (isFirstSession && currentRound === 1) {
+        setShowMidSessionPause(true);
+      } else {
+        setCurrentRound((r) => r + 1);
+        setPhase("power-breaths");
+      }
     } else {
       setTotalDurationMs(Date.now() - sessionStartRef.current);
       setPhase("complete");
     }
-  }, [currentRound, config.rounds]);
+  }, [currentRound, config.rounds, isFirstSession]);
+
+  if (showPreBreathingGuide) {
+    return (
+      <GuidedOverlay
+        type="preBreathing"
+        onContinue={() => setShowPreBreathingGuide(false)}
+      />
+    );
+  }
+
+  if (showMidSessionPause) {
+    return (
+      <GuidedOverlay
+        type="midSessionPause"
+        onContinue={() => {
+          setShowMidSessionPause(false);
+          setCurrentRound((r) => r + 1);
+          setPhase("power-breaths");
+        }}
+      />
+    );
+  }
 
   if (phase === "power-breaths") {
     return (
@@ -101,6 +133,7 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
       retentionTimes={retentionTimes}
       totalDurationMs={totalDurationMs}
       onDone={onFinish}
+      isFirstSession={isFirstSession}
     />
   );
 }
