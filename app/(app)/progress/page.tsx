@@ -10,7 +10,9 @@ import {
 import BreathingHistory from "@/components/progress/BreathingHistory";
 import ColdHistory from "@/components/progress/ColdHistory";
 import Overview from "@/components/progress/Overview";
+import ShareButton from "@/components/ShareButton";
 import { strings } from "@/lib/i18n";
+import { renderProgressCard, getProgressCardData, shareOrDownload } from "@/lib/shareCard";
 
 type Tab = "overview" | "breathing" | "cold";
 
@@ -34,8 +36,20 @@ export default function ProgressPage() {
 
   return (
     <div className="flex flex-col px-4 pb-24 pt-8">
-      <h1 className="text-2xl font-bold">{strings.progress.heading}</h1>
-      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{strings.progress.subtitle}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{strings.progress.heading}</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{strings.progress.subtitle}</p>
+        </div>
+        <ShareButton
+          label="Export"
+          render={(canvas, ratio) => {
+            const data = getProgressCardData();
+            renderProgressCard(canvas, data, ratio);
+          }}
+          share={shareOrDownload}
+        />
+      </div>
 
       {/* Tabs */}
       <div className="mt-6 flex rounded-xl bg-gray-100 p-1 dark:bg-gray-900">

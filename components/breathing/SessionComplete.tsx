@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import ShareButton from "@/components/ShareButton";
 import {
   saveBreathingSession,
   savePreferences,
@@ -13,6 +14,7 @@ import {
 import { formatTimeMs } from "@/lib/format";
 import { strings } from "@/lib/i18n";
 import { checkBreathingMilestones } from "@/lib/milestones";
+import { renderSessionCard, getSessionCardData, shareOrDownload } from "@/lib/shareCard";
 
 interface SessionCompleteProps {
   config: SessionConfig;
@@ -205,6 +207,19 @@ export default function SessionComplete({
             {strings.common.saveSession}
           </Button>
         )}
+        <ShareButton
+          label="Share Session"
+          className="w-full"
+          render={(canvas, ratio) => {
+            const data = getSessionCardData(
+              retentionTimesSeconds,
+              Math.round(totalDurationMs / 1000),
+              rounds
+            );
+            renderSessionCard(canvas, data, ratio);
+          }}
+          share={shareOrDownload}
+        />
         <Button
           size="lg"
           variant={saved ? "primary" : "secondary"}
