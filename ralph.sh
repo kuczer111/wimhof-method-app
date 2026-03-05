@@ -16,47 +16,62 @@ if [ ! -f TASKS.md ]; then
   exit 1
 fi
 
+START_TIME=$(date +%s)
+TASK_COUNT=0
+
 echo "🚀 Ralph is starting..."
-notify "Ralph started on wimhof app 🚀"
+notify "Ralph started 🚀"
 
 while true; do
-
   NEXT=$(grep -m 1 "^- \[ \]" TASKS.md)
 
   if [ -z "$NEXT" ]; then
+    ELAPSED=$(( ($(date +%s) - START_TIME) / 60 ))
     echo ""
-    echo "🎉 All tasks complete!"
-    notify "🎉 All done! Wimhof app is built."
+    echo "🎉 All tasks complete! $TASK_COUNT tasks in ${ELAPSED} minutes."
+    notify "🎉 All done! $TASK_COUNT tasks in ${ELAPSED}min"
     exit 0
   fi
 
   TASK=$(echo "$NEXT" | sed 's/^- \[ \] //')
+  TASK_COUNT=$((TASK_COUNT + 1))
+  TASK_START=$(date +%s)
 
   echo ""
   echo "========================================="
-  echo "📌 $TASK"
+  echo "📌 Task $TASK_COUNT: $TASK"
   echo "========================================="
 
   ./ralph-task.sh "$TASK"
 
   if [ $? -eq 0 ]; then
-    # Mark done — use awk for robustness (task text contains /, [], etc.)
+    TASK_ELAPSED=$(( ($(date +%s) - TASK_START) / 60 ))
+
+    # Mark done — awk handles special chars in task names (/, [], etc.)
     awk -v task="$TASK" '{if (!done && $0 == "- [ ] " task) {print "- [x] " task; done=1} else print}' TASKS.md > TASKS.md.tmp && mv TASKS.md.tmp TASKS.md
 
-    # Commit and push
     git add .
+
+    # Safety check — catch accidental node_modules or bulk file commits
+    FILE_COUNT=$(git diff --cached --name-only | wc -l)
+    if [ "$FILE_COUNT" -gt 100 ]; then
+      git reset HEAD
+      notify "⚠️ Suspiciously large commit ($FILE_COUNT files) on task $TASK_COUNT — stopping"
+      echo "⚠️ Too many files staged ($FILE_COUNT). Check .gitignore before continuing."
+      exit 1
+    fi
+
     git commit -m "feat: $TASK"
-    git push
+    git push || { notify "⚠️ Push failed on task $TASK_COUNT"; exit 1; }
 
-    notify "✅ Done: $TASK"
-
+    echo "$(date): ✅ Task $TASK_COUNT (${TASK_ELAPSED}min): $TASK" >> ralph.log
+    notify "✅ Done ($TASK_COUNT, ${TASK_ELAPSED}min): $TASK"
     sleep 2
-
   else
-    notify "🛑 Stuck on: $TASK — needs you"
+    echo "$(date): ❌ FAILED Task $TASK_COUNT: $TASK" >> ralph.log
+    notify "🛑 Stuck on task $TASK_COUNT: $TASK — needs you"
     echo ""
     echo "Fix manually then re-run ./ralph.sh"
     exit 1
   fi
-
 done

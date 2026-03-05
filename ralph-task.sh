@@ -20,7 +20,7 @@ while [ $loop -lt $MAX_LOOPS ]; do
 
 IMPORTANT: The previous attempt FAILED to build. Here are the build errors you must fix:
 ---
-$(cat "$BUILD_LOG")
+$(tail -80 "$BUILD_LOG")
 ---
 Fix these errors. Do NOT repeat the same mistakes."
   fi
@@ -61,5 +61,6 @@ done
 
 echo ""
 echo "⚠️  Max loops hit. Task needs manual attention: $TASK"
+git checkout .
 rm -f "$BUILD_LOG"
 exit 1
