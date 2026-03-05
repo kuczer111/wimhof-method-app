@@ -1,6 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ReferenceLine,
+  ResponsiveContainer,
+  Dot,
+} from "recharts";
 import Card from "@/components/ui/Card";
 import {
   getBreathingSessions,
@@ -26,6 +36,128 @@ function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = Math.round(seconds % 60);
   return m > 0 ? `${m}m ${s}s` : `${s}s`;
+}
+
+interface ChartPoint {
+  label: string;
+  avgRetention: number;
+  date: string;
+  isPR: boolean;
+}
+
+function PRDot(props: { cx?: number; cy?: number; payload?: ChartPoint }) {
+  const { cx, cy, payload } = props;
+  if (!payload?.isPR) return null;
+  return (
+    <Dot
+      cx={cx}
+      cy={cy}
+      r={6}
+      fill="#facc15"
+      stroke="#facc15"
+      strokeWidth={2}
+    />
+  );
+}
+
+function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
+  const { data, avg, prValue } = useMemo(() => {
+    // Sort chronologically (oldest first) for the chart
+    const sorted = [...sessions].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    let maxRetention = 0;
+    const points: ChartPoint[] = sorted.map((s) => {
+      const sessionAvg =
+        s.retentionTimes.length > 0
+          ? s.retentionTimes.reduce((a, b) => a + b, 0) / s.retentionTimes.length
+          : 0;
+      const rounded = Math.round(sessionAvg);
+      const isPR = rounded > maxRetention;
+      if (isPR) maxRetention = rounded;
+      return {
+        label: new Date(s.date).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+        }),
+        avgRetention: rounded,
+        date: s.date,
+        isPR,
+      };
+    });
+
+    const totalAvg =
+      points.length > 0
+        ? Math.round(points.reduce((a, p) => a + p.avgRetention, 0) / points.length)
+        : 0;
+
+    return { data: points, avg: totalAvg, prValue: maxRetention };
+  }, [sessions]);
+
+  if (sessions.length < 2) return null;
+
+  return (
+    <Card>
+      <div className="mb-2 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-300">
+          Avg. Retention Per Session
+        </h3>
+        <div className="flex items-center gap-3 text-xs text-gray-500">
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-0.5 w-3 bg-blue-400" /> avg
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-2 w-2 rounded-full bg-yellow-400" /> PR
+          </span>
+        </div>
+      </div>
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
+          <XAxis
+            dataKey="label"
+            tick={{ fontSize: 10, fill: "#9ca3af" }}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis
+            tick={{ fontSize: 10, fill: "#9ca3af" }}
+            tickLine={false}
+            axisLine={false}
+            tickFormatter={(v: number) => `${v}s`}
+          />
+          <Tooltip
+            contentStyle={{
+              background: "#1f2937",
+              border: "1px solid #374151",
+              borderRadius: 8,
+              fontSize: 12,
+            }}
+            labelStyle={{ color: "#9ca3af" }}
+            formatter={(value: number) => [`${value}s`, "Avg retention"]}
+          />
+          <ReferenceLine
+            y={avg}
+            stroke="#60a5fa"
+            strokeDasharray="4 4"
+            strokeWidth={1}
+          />
+          <Line
+            type="monotone"
+            dataKey="avgRetention"
+            stroke="#3b82f6"
+            strokeWidth={2}
+            dot={<PRDot />}
+            activeDot={{ r: 4, fill: "#3b82f6" }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+      <div className="mt-1 flex justify-between text-xs text-gray-500">
+        <span>Overall avg: {avg}s</span>
+        <span>PR: {prValue}s</span>
+      </div>
+    </Card>
+  );
 }
 
 function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
@@ -149,7 +281,10 @@ export default function ProgressPage() {
       {/* Content */}
       <div className="mt-4">
         {tab === "breathing" ? (
-          <BreathingList sessions={breathingSessions} />
+          <div className="flex flex-col gap-4">
+            <RetentionChart sessions={breathingSessions} />
+            <BreathingList sessions={breathingSessions} />
+          </div>
         ) : (
           <ColdList sessions={coldSessions} />
         )}

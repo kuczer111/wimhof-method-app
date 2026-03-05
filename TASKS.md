@@ -19,7 +19,7 @@
 - [x] 017: Cold shower timer | Build `app/cold/page.tsx` with a configurable target duration (30s–3min), start/stop controls, elapsed time display, circular progress bar, and alert vibration when target is reached.
 - [x] 018: Cold session logging | After cold timer ends, show a log form with duration (auto-filled), temperature (optional), type (shower/bath/outdoor), and 1–5 rating, then save to localStorage via `lib/storage.ts`.
 - [x] 019: Session history list | Build `app/progress/page.tsx` with two tabs (Breathing / Cold) listing past sessions from localStorage, showing date, duration, retention times or cold duration, sorted newest-first.
-- [ ] 020: Breathing retention chart | Add a Recharts line chart to the Breathing tab in `app/progress/page.tsx` plotting retention time over sessions, with average line and personal record marker.
+- [x] 020: Breathing retention chart | Add a Recharts line chart to the Breathing tab in `app/progress/page.tsx` plotting retention time over sessions, with average line and personal record marker.
 - [ ] 021: Cold exposure stats | Add cold exposure stats to the Cold tab: total minutes, current streak counter, and a simple heatmap-style calendar showing days with cold sessions using Recharts or CSS grid.
 - [ ] 022: Settings page | Build `app/settings/page.tsx` with audio mode toggle (tones/silent), default breathing config, cold target default, clear data button with confirmation, and app version display.
 - [ ] 023: Session presets | Add preset cards to the breathing config screen: Beginner (3 rounds, 30 breaths, slow), Standard (3/30/medium), Deep Practice (4/40/medium), Morning Activation (3/30/fast) that auto-fill settings.
