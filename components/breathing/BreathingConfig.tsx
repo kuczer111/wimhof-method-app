@@ -7,6 +7,7 @@ import OptionButton from "@/components/ui/OptionButton";
 import type { SessionConfig, CustomPreset } from "@/lib/storage";
 import { getPreferences, savePreferences, generateId } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
+import SessionTip from "./SessionTip";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -81,6 +82,8 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
   return (
     <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{strings.breathe.heading}</h1>
+
+      <SessionTip />
 
       {/* Built-in presets */}
       <div className="grid grid-cols-2 gap-3">
