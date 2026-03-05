@@ -55,6 +55,8 @@ export const strings = {
     },
     rounds: "Rounds",
     breathsPerRound: "Breaths per Round",
+    perRoundCustomize: "Per round",
+    roundLabel: (n: number) => `R${n}`,
     pace: "Pace",
     paceOptions: {
       slow: "Slow",
