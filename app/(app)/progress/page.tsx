@@ -9,12 +9,13 @@ import {
 } from "@/lib/storage";
 import BreathingHistory from "@/components/progress/BreathingHistory";
 import ColdHistory from "@/components/progress/ColdHistory";
+import Overview from "@/components/progress/Overview";
 import { strings } from "@/lib/i18n";
 
-type Tab = "breathing" | "cold";
+type Tab = "overview" | "breathing" | "cold";
 
 export default function ProgressPage() {
-  const [tab, setTab] = useState<Tab>("breathing");
+  const [tab, setTab] = useState<Tab>("overview");
   const [breathingSessions, setBreathingSessions] = useState<BreathingSession[]>([]);
   const [coldSessions, setColdSessions] = useState<ColdSession[]>([]);
 
@@ -38,7 +39,7 @@ export default function ProgressPage() {
 
       {/* Tabs */}
       <div className="mt-6 flex rounded-xl bg-gray-100 p-1 dark:bg-gray-900">
-        {(["breathing", "cold"] as const).map((t) => (
+        {(["overview", "breathing", "cold"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -48,14 +49,16 @@ export default function ProgressPage() {
                 : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
           >
-            {t}
+            {strings.progress.tabs[t]}
           </button>
         ))}
       </div>
 
       {/* Content */}
       <div className="mt-4">
-        {tab === "breathing" ? (
+        {tab === "overview" ? (
+          <Overview breathingSessions={breathingSessions} coldSessions={coldSessions} />
+        ) : tab === "breathing" ? (
           <BreathingHistory sessions={breathingSessions} />
         ) : (
           <ColdHistory sessions={coldSessions} />

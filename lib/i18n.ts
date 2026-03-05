@@ -177,8 +177,22 @@ export const strings = {
     heading: "Progress",
     subtitle: "Your session history",
     tabs: {
+      overview: "overview",
       breathing: "breathing",
       cold: "cold",
+    },
+    overview: {
+      thisWeek: "This Week",
+      lastWeek: "Last Week",
+      sessions: "sessions",
+      avgRetention: "Avg Retention",
+      coldTotal: "Cold This Week",
+      breathingStreak: "Breathing Streak",
+      coldStreak: "Cold Streak",
+      consistency: "Consistency",
+      days: "days",
+      noData: "Complete your first session to see your overview.",
+      vsLastWeek: (diff: number) => diff > 0 ? `+${diff} vs last week` : diff < 0 ? `${diff} vs last week` : "same as last week",
     },
     chart: {
       title: "Avg. Retention Per Session",
