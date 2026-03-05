@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "framer-motion": "^12.35.0",
+    "next-pwa": "^2.0.2",
+    "recharts": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3"
+  }
+}

@@ -1,0 +1,27 @@
+# Task List
+
+- [ ] 001: Project setup | Initialize Next.js 14 app with TypeScript, Tailwind CSS, ESLint, and PWA manifest in `next.config.ts`, `tailwind.config.ts`, `app/layout.tsx`, `app/page.tsx`, and `public/manifest.json`.
+- [ ] 002: PWA service worker | Add next-pwa config, offline fallback page `app/offline/page.tsx`, meta tags, and icons in `public/` so the app is installable on mobile home screens.
+- [ ] 003: App shell and navigation | Build bottom tab navigation component `components/BottomNav.tsx`, app layout wrapper `components/AppShell.tsx`, and route pages: `app/breathe/page.tsx`, `app/cold/page.tsx`, `app/progress/page.tsx`, `app/settings/page.tsx`.
+- [ ] 004: Design tokens and shared UI | Create `lib/constants.ts` for colors/sizes, reusable `components/ui/Button.tsx`, `components/ui/Card.tsx`, `components/ui/Modal.tsx`, and global Tailwind theme extensions.
+- [ ] 005: Local storage service | Build `lib/storage.ts` with typed helpers to read/write breathing sessions, cold sessions, and user preferences to localStorage with JSON serialization.
+- [ ] 006: Safety onboarding screen | Create `components/SafetyOnboarding.tsx` as a full-screen modal shown on first launch, listing safety rules with an acknowledge button that sets a flag in localStorage.
+- [ ] 007: In-session safety reminder | Build `components/SafetyReminder.tsx` dismiss dialog shown before every breathing session starts, with a "I understand" button to proceed.
+- [ ] 008: Breathing session config screen | Build `app/breathe/page.tsx` with round count selector (1–5), breath count selector (20/30/40), pace selector (Slow/Medium/Fast), and a "Start Session" button storing config in React state.
+- [ ] 009: Breathing animation component | Create `components/breathing/BreathingCircle.tsx` — an expanding/contracting circle animation driven by a pace prop (1.5s/2s/2.5s cycle) using CSS transitions or framer-motion.
+- [ ] 010: Power breaths phase | Build `components/breathing/PowerBreaths.tsx` that counts 20/30/40 breaths at the configured pace, displays current breath number prominently, drives the breathing animation, and auto-advances to retention phase.
+- [ ] 011: Retention hold phase | Build `components/breathing/RetentionHold.tsx` showing an elapsed stopwatch timer (not countdown), a tap-to-end button, and recording the retention duration when the user taps.
+- [ ] 012: Recovery breath phase | Build `components/breathing/RecoveryBreath.tsx` with a fixed 15-second countdown, distinct color scheme, and auto-advance to the next round or session complete.
+- [ ] 013: Breathing session orchestrator | Create `components/breathing/SessionRunner.tsx` that sequences PowerBreaths → RetentionHold → RecoveryBreath for N rounds, tracks per-round retention times, and transitions to session complete.
+- [ ] 014: Session completion screen | Build `components/breathing/SessionComplete.tsx` showing total duration, retention times per round, personal best highlight, and a 1–5 feeling scale with optional text note, then save to storage.
+- [ ] 015: Audio engine for tones | Build `lib/audio.ts` using Web Audio API to generate inhale tone, exhale tone, hold start chime, hold end chime, and countdown beeps, with a mute toggle stored in preferences.
+- [ ] 016: Wire audio to breathing phases | Integrate `lib/audio.ts` into PowerBreaths, RetentionHold, and RecoveryBreath components so tones play in sync with each phase transition and breath cycle.
+- [ ] 017: Cold shower timer | Build `app/cold/page.tsx` with a configurable target duration (30s–3min), start/stop controls, elapsed time display, circular progress bar, and alert vibration when target is reached.
+- [ ] 018: Cold session logging | After cold timer ends, show a log form with duration (auto-filled), temperature (optional), type (shower/bath/outdoor), and 1–5 rating, then save to localStorage via `lib/storage.ts`.
+- [ ] 019: Session history list | Build `app/progress/page.tsx` with two tabs (Breathing / Cold) listing past sessions from localStorage, showing date, duration, retention times or cold duration, sorted newest-first.
+- [ ] 020: Breathing retention chart | Add a Recharts line chart to the Breathing tab in `app/progress/page.tsx` plotting retention time over sessions, with average line and personal record marker.
+- [ ] 021: Cold exposure stats | Add cold exposure stats to the Cold tab: total minutes, current streak counter, and a simple heatmap-style calendar showing days with cold sessions using Recharts or CSS grid.
+- [ ] 022: Settings page | Build `app/settings/page.tsx` with audio mode toggle (tones/silent), default breathing config, cold target default, clear data button with confirmation, and app version display.
+- [ ] 023: Session presets | Add preset cards to the breathing config screen: Beginner (3 rounds, 30 breaths, slow), Standard (3/30/medium), Deep Practice (4/40/medium), Morning Activation (3/30/fast) that auto-fill settings.
+- [ ] 024: Responsive polish and dark mode | Add dark mode support via Tailwind `dark:` classes and `prefers-color-scheme`, ensure all screens are responsive on mobile viewports (375px–428px), and add smooth page transitions.
+- [ ] 025: Final QA and build verification | Fix any TypeScript errors, ensure `npm run build` passes with zero warnings, test full breathing session flow end-to-end, verify PWA installability, and confirm offline functionality.
