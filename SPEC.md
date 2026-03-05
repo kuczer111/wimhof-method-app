@@ -1,212 +1,298 @@
-# Wim Hof Method — App Feature Specification
+# Wim Hof Method App — v2 Specification
+### Production Features (Refactoring v1 into a public-ready app)
 
 ---
 
-## Part 1: The Method Explained
+## Context
 
-### What is the Wim Hof Method?
+v1 is a working PWA with: breathing session engine (power breaths, retention hold, recovery breath), cold shower timer with logging, session history with retention charts, cold stats with streak/heatmap, settings page, presets, safety screens, dark mode, and audio tones via Web Audio API. All data is in localStorage. Stack: Next.js 14, TypeScript, Tailwind CSS, Recharts, PWA via next-pwa.
 
-The Wim Hof Method (WHM) is a system developed by Dutch athlete Wim Hof ("The Iceman") built around **three pillars**: controlled breathing, cold exposure, and meditation/mindset training. The core claim — supported by a growing body of peer-reviewed research — is that deliberate practice of these three pillars allows a person to consciously influence the autonomic nervous system and immune response, which classical physiology long considered impossible.
-
-A 2014 study published in PNAS demonstrated that trained practitioners could voluntarily suppress immune response to endotoxin injection, significantly reducing symptoms compared to a control group. The mechanism is largely explained through alkalosis (blood pH increase), adrenaline release, and modulation of inflammatory cytokines.
+v2 refactors and extends v1 — no full rewrite. Existing components, storage layer, and routing are the foundation.
 
 ---
 
-### Pillar 1: Breathing Technique
+## Refactoring Principles
 
-This is the technical heart of the method. It involves a series of controlled hyperventilation cycles followed by voluntary breath retention.
-
-#### The Full Breathing Round
-
-**Phase 1 — Power Breaths (30–40 repetitions)**
-The practitioner takes a deep, full breath in and then releases it passively, without force. Repeated 30–40 times. The breathing pace is roughly one breath every 1.5–2 seconds.
-
-Physiological effect: CO₂ levels drop sharply. Blood pH rises. Tingling sensations in hands, feet, and face. Some people feel lightheadedness or euphoria.
-
-**Phase 2 — Retention (exhale hold)**
-After the last power breath, the practitioner exhales and holds — lungs mostly empty. Typically 1–3 minutes for beginners, up to 3–5+ minutes for experienced practitioners.
-
-**Phase 3 — Recovery Breath**
-One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly. Completes one round. A standard session consists of 3–4 rounds.
-
-#### Safety Rules for Breathing
-- Never practice in or near water
-- Never practice while driving or operating machinery
-- Do not force the exhale hold
-- Lie down or sit — fainting is possible
-- Contraindicated for epilepsy, cardiac conditions, high blood pressure, pregnancy
+- Migrate localStorage to IndexedDB (via idb or Dexie) for scalability — keep the existing `lib/storage.ts` API surface but swap the backend
+- Externalize all user-facing strings into a `lib/i18n.ts` constants file (English only for now, structured for future translation)
+- Extract shared UI patterns (OptionButton, formatTime, formatDuration) into reusable utilities — these are duplicated across breathe, cold, settings, and progress pages
+- Split large page components into smaller focused components where they exceed ~200 lines
 
 ---
 
-### Pillar 2: Cold Exposure
+## Module 1: Onboarding Flow
 
-#### Cold Shower Protocol
-- Week 1–2: End warm shower with 30 seconds cold
-- Week 3–4: 1 minute cold at the end
-- Week 5–8: 2 minutes cold
-- Month 2+: Full cold showers (2–3 minutes)
+### 1.1 Welcome Screens
+A swipeable 5-screen welcome flow at `app/onboarding/page.tsx`:
+- Screen 1: Hero — what the method is in one sentence + visual
+- Screen 2: Three pillars shown as a visual cycle (breathing, cold, mindset)
+- Screen 3: What to expect physically (tingling, lightheadedness — normalize it)
+- Screen 4: Safety acknowledgment — redesigned from the current text-heavy `SafetyOnboarding.tsx` into a cleaner, visual format. Still mandatory.
+- Screen 5: Starting point picker — "I'm completely new" vs "I know the method"
 
-#### Physiological Benefits
-- Increased norepinephrine (up to 300%)
-- Reduced inflammatory markers
-- Improved insulin sensitivity
-- Enhanced mood
-- Activation of brown fat thermogenesis
+Skippable after screen 2 (except screen 4 which remains mandatory). On completion, sets `onboardingComplete` and `safetyAcknowledged` in preferences. The current `app/page.tsx` redirect logic should route to onboarding if `onboardingComplete` is false, otherwise to `/breathe`.
 
----
+### 1.2 First Session Guided Mode
+A wrapper around the existing `SessionRunner` that activates once (tracked via a `firstSessionComplete` flag in preferences):
+- Before power breaths: overlay with brief explanation text
+- After round 1: mid-session pause with "How did that feel?" prompt + explanation of what happened physically
+- After full session: enhanced debrief on `SessionComplete` screen explaining retention times and what they mean
 
-### Pillar 3: Meditation and Mindset
+### 1.3 Practice Profile Setup
+Added to onboarding (after screen 5) or accessible from settings:
+- Primary goal: stress reduction / athletic performance / immune health / curiosity / cold focus
+- Available time per day: 10 min / 20 min / 30+ min
+- Experience level: complete beginner / some experience / regular practitioner
+- Preferred session time: morning / midday / evening
 
-- Concentration and commitment during sessions
-- Body scanning — awareness of internal sensation
-- Visualization during retention holds
-- Sessions done in silence, full attention
-
----
-
-## Part 2: App Feature Specification
-
-### Module 1 — Guided Breathing Sessions
-
-#### 1.1 Breathing Round Engine
-- Configurable rounds (default 3, range 1–5)
-- Three phases: power breaths, retention hold, recovery breath hold
-- Distinct audio and visual cues per phase
-
-#### 1.2 Breathing Pace Control
-- Slow (2.5s), Medium (2s), Fast (1.5s)
-- Visual animation locked to pace
-- Audio: voice prompts or tones
-
-#### 1.3 Breath Count Configuration
-- Default 30, options: 20, 30, 40
-- Current breath number displayed prominently
-
-#### 1.4 Retention Timer and Tracking
-- Elapsed time display (not countdown)
-- User manually ends hold by tapping
-- Retention time recorded per round
-- End of session shows all retention times
-
-#### 1.5 Recovery Breath Hold
-- Fixed 15-second countdown
-- Distinct animation/color
-- Auto-advance to next round
-
-#### 1.6 Session Completion Screen
-- Total duration
-- All retention times by round
-- Personal best per round position
-- Note/feeling log (1–5 scale + optional text)
+Stored in `UserPreferences`. Used to set default session config and recommend presets.
 
 ---
 
-### Module 2 — Cold Exposure Tracker
+## Module 2: Enhanced Breathing Session
 
-#### 2.1 Cold Shower Timer
-- Configurable target (30s → 3 min)
-- Visual progress bar + elapsed time
-- Alert at target, option to continue
+### 2.1 Per-Round Breath Count
+Extend `SessionConfig` to support `breathsPerRound: number[]` (e.g., [30, 40, 40]) in addition to the current single number. `PowerBreaths` component reads the count for the current round.
 
-#### 2.2 Cold Log
-- Date, duration, temperature (optional), type, rating
-- Running streak counter
+### 2.2 Mindset Prompts During Retention
+Optional text prompt displayed during `RetentionHold` phase. Configurable per round in session config. Stored as `mindsetPrompts?: string[]` on `SessionConfig`.
 
-#### 2.3 Progressive Protocol Guide
-- 8-week progression plan
-- Mark each day complete
-- Milestones
+### 2.3 Retention Mode Options
+Add to session config: `retentionMode: "free" | "target"`. In "target" mode, show a visual indicator when approaching personal best. Current "free" mode (tap to end) remains default.
 
----
+### 2.4 Auto-Launch Cold Timer
+New option in session config: `autoCold: boolean`. When true, after the last round's recovery breath, automatically transition to the cold timer instead of showing `SessionComplete`. Session data is saved first.
 
-### Module 3 — Progress and Analytics
-
-#### 3.1 Breathing Progress Charts
-- Retention time over time (line chart)
-- Average per week, personal record
-- Total sessions
-
-#### 3.2 Cold Exposure Stats
-- Total minutes, streak calendar (heatmap)
-- Distribution by type
-
-#### 3.3 Combined Dashboard
-- Weekly view
-- Consistency score
-- Monthly summary
+### 2.5 Named Custom Presets
+Users can save up to 5 named custom session presets (stored in preferences). Add a "Save as Preset" button on the breathing config screen and a management UI in settings. Extends the existing preset card system.
 
 ---
 
-### Module 4 — Session Presets
+## Module 3: 30-Day Beginner Program
 
-#### 4.1 Preset Sessions
-- Beginner, Standard, Deep Practice, Morning Activation
+### 3.1 Program Data Model
+New types in `lib/storage.ts`:
+```typescript
+interface Program {
+  id: string;
+  title: string;
+  description: string;
+  durationDays: number;
+  days: ProgramDay[];
+}
 
-#### 4.2 Custom Session Builder
-- Save up to 5 named custom presets
+interface ProgramDay {
+  dayNumber: number;
+  label: string;
+  breathingConfig?: SessionConfig;
+  coldTarget?: number;
+  mindsetTask?: string;
+  isRestDay: boolean;
+}
+
+interface ProgramProgress {
+  programId: string;
+  startDate: string;
+  completedDays: number[];
+  paused: boolean;
+  pausedDate?: string;
+}
+```
+
+### 3.2 Program Screen
+New route `app/(app)/program/page.tsx` with:
+- Calendar view showing program progress (completed/upcoming/rest days)
+- Today's session card with prescribed breathing config + cold target
+- "Start Today's Session" button that launches SessionRunner with the day's config
+- Pause/resume controls
+- Week-by-week progression following the spec: Week 1 (2 rounds, 30 breaths), Week 2 (3/30 + cold), Week 3 (3/40 + longer cold), Week 4 (4 rounds, silence mode)
+
+### 3.3 Navigation Update
+Add a "Program" tab to `BottomNav.tsx` (between Breathe and Cold, or replacing the current 4-tab layout with a 5-tab layout).
 
 ---
 
-### Module 5 — Safety and Education
+## Module 4: Content and Education
 
-#### 5.1 Mandatory Onboarding Safety Screen
-- Cannot be skipped on first launch
-- Critical safety rules listed
-- User must acknowledge
+### 4.1 Method Guide
+New route `app/(app)/learn/page.tsx` with 8 chapters of structured text content (600-1000 words each):
+1. Who is Wim Hof and why does it matter
+2. The breathing technique — complete technical description
+3. Cold exposure — from showers to ice baths
+4. The mindset pillar
+5. The science
+6. Common side effects and what they mean
+7. Combining all three pillars
+8. Advanced practices
 
-#### 5.2 In-Session Safety Reminder
-- Before every breathing session
-- Dismiss button required
+Content stored as static data in `lib/content.ts`. Chapters 1-3 available immediately; chapters 4-8 unlock after completing 7 days of practice (progression mechanic, not paywall).
 
-#### 5.3 Method Education Library
-- Articles on each pillar (500–800 words)
-- FAQ: tingling, lightheadedness, muscle cramps
+### 4.2 Session Preparation Tips
+Contextual tips shown on the breathing config screen before starting a session. Based on time of day and recent activity:
+- Morning: "You're breathing on an empty stomach — retention times tend to be longer"
+- After recent cold session: "Your nervous system is already activated"
+- Evening: "Evening sessions tend to be calming — focus on slower pace"
 
----
-
-### Module 6 — Notifications and Habit Support
-
-- Daily reminders for breathing and cold exposure
-- Streak milestone alerts
-- Gentle nudge after 2 days no session
-
----
-
-### Module 7 — Audio Engine
-
-- Voice guidance, tone guidance, or silent mode
-- Background ambient soundscape optional
-- Must work with screen locked
-- Background audio required
+Implemented as a small `components/SessionTip.tsx` component using current time and recent session data from storage.
 
 ---
 
-### Module 8 — Optional: Biometric Integration
+## Module 5: Advanced Analytics
 
-- Heart rate via Apple Watch / Wear OS
-- SpO2 display during retention
-- Apple Health / Google Fit sync
+### 5.1 Combined Dashboard
+Refactor `app/(app)/progress/page.tsx` to add a third tab: "Overview" (shown first) with:
+- Weekly summary: sessions this week vs last week
+- Average retention time trend (up/down/flat arrow)
+- Cold exposure total minutes this week
+- Current streaks (breathing + cold)
+- Consistency score (sessions / 7 as percentage)
+
+### 5.2 Weekly Insights Card
+After 2 weeks of data, show a smart insight card on the progress overview:
+- Retention time patterns (morning vs evening)
+- Progression suggestions ("Try adding a 4th round")
+- Streak analysis
+
+### 5.3 Enhanced Retention Chart
+Add to existing `RetentionChart`:
+- Per-round breakdown view (toggle)
+- Weekly average overlay
+- Trend line
+
+---
+
+## Module 6: Notifications and Engagement
+
+### 6.1 Daily Reminder System
+Implement using the Notification API (with permission request):
+- One reminder per day at user's preferred practice time (from practice profile)
+- Skip if user practiced within last 2 hours
+- Configurable in settings (on/off + time picker)
+
+### 6.2 Milestone Notifications
+In-app milestone celebrations (toast/modal):
+- First retention over 2 minutes
+- First full cold shower (3+ minutes)
+- 7-day, 30-day, 100-day streaks
+- Personal best retention broken
+- Program day/week completed
+
+### 6.3 Weekly Summary
+In-app weekly summary card shown on Monday (or first app open after Monday):
+- Sessions last week vs week before
+- Average retention trend
+- Cold exposure total
+- Current streak
+- One actionable suggestion
+
+---
+
+## Module 7: Shareable Session Cards
+
+### 7.1 Post-Session Share Card
+After session completion, add a "Share" button on `SessionComplete` that generates a shareable image using `html2canvas` or Canvas API:
+- Session type and duration
+- Retention time visualization (bar chart, not raw numbers)
+- Day streak badge
+- App name/logo (subtle, bottom corner)
+- Designed for Instagram Stories (9:16) and square (1:1)
+
+### 7.2 Progress Share
+On the progress page, add an "Export" button that generates a shareable image of:
+- Retention time graph
+- Cold streak calendar
+- Key stats
+
+---
+
+## Module 8: Accessibility
+
+### 8.1 Screen Reader Support
+- Add ARIA labels to all interactive elements (breathing circle, timer, option buttons)
+- Announce phase transitions during breathing session via `aria-live` regions
+- Ensure all charts have text alternatives
+
+### 8.2 Vestibular-Safe Mode
+- Setting to disable the expanding/contracting `BreathingCircle` animation
+- Replace with a simple color shift or progress bar
+- Respect `prefers-reduced-motion` media query
+
+### 8.3 Haptic-Only Mode
+- Full session guided through vibration patterns alone (for deaf users or silent practice)
+- Distinct vibration patterns for inhale, exhale, hold start, hold end, countdown
+- Added as an audio mode option: "tone" | "silent" | "haptic"
+
+---
+
+## Module 9: Settings Enhancements
+
+### 9.1 Temperature Unit Toggle
+Add Celsius / Fahrenheit toggle in settings. Apply to cold session temperature input and display.
+
+### 9.2 Notification Settings
+On/off toggle for daily reminder + time picker for preferred reminder time.
+
+### 9.3 Practice Profile Access
+Link to edit practice profile from settings.
+
+### 9.4 Data Export
+Export all session data as JSON file (GDPR compliance).
+
+### 9.5 Wake Lock
+Keep screen on during active breathing and cold sessions using the Screen Wake Lock API. Add a toggle in settings.
+
+---
+
+## Module 10: Session Reliability
+
+### 10.1 Wake Lock During Sessions
+Use the Screen Wake Lock API to prevent screen dimming during active breathing and cold sessions. Release on session end.
+
+### 10.2 Background Audio
+Ensure audio tones continue when app is backgrounded (PWA limitation — document this and use audio element workaround if needed).
+
+### 10.3 Session Recovery
+If the app is closed mid-session, save session state to storage. On next open, offer to resume or discard the interrupted session.
+
+---
+
+## Storage Migration Plan
+
+Current localStorage structure stays as the read API but IndexedDB becomes the backend:
+- `whm_breathing_sessions` → IndexedDB `breathing_sessions` store
+- `whm_cold_sessions` → IndexedDB `cold_sessions` store
+- `whm_preferences` → IndexedDB `preferences` store
+- New stores: `program_progress`, `custom_presets`, `milestones`
+
+Migration: on first load after v2 update, copy existing localStorage data to IndexedDB, then clear localStorage keys. The `lib/storage.ts` exports remain identical — callers don't change.
 
 ---
 
 ## Technical Notes
 
-| Area | Recommendation |
-|---|---|
-| Platform | PWA — Next.js + TypeScript + Tailwind CSS |
-| Auth | Clerk |
-| Local storage | localStorage + IndexedDB for session history |
-| Charts | Recharts |
-| Audio | Web Audio API |
-| Offline-first | All core features work offline |
-| PWA | Installable on iPhone home screen |
+| Area | v1 | v2 |
+|---|---|---|
+| Storage | localStorage | IndexedDB (via idb) |
+| Strings | Hardcoded | Externalized in `lib/i18n.ts` |
+| Audio modes | tone / silent | tone / silent / haptic |
+| Session config | Fixed breath count | Per-round breath counts, mindset prompts, retention modes |
+| Navigation | 4 tabs | 5 tabs (+ Program) |
+| Notifications | None | Notification API + in-app |
+| Sharing | None | Canvas-based image generation |
+| Accessibility | Basic | ARIA labels, reduced motion, haptic mode |
 
 ---
 
-## MVP Scope (Build First)
+## Out of Scope for v2
 
-1. Breathing session engine (Module 1, complete)
-2. Safety screens (Module 5.1 and 5.2)
-3. Session history with retention times (Module 3.1, basic)
-4. Cold shower timer (Module 2.1)
-5. Tone audio guidance (Module 7, tones only)
+These features from the production spec are deferred to v3+:
+- Video library (requires hosting infrastructure)
+- Community features (feed, challenges, groups, accountability partners)
+- Subscription/payment system
+- Apple Watch / Wear OS app
+- Biometric integration (HealthKit, SpO2, Oura, Garmin)
+- Referral program
+- Full internationalization (actual translations beyond string externalization)
+- Additional programs beyond the 30-day beginner program
+- Website / landing page
+- Account system / authentication
