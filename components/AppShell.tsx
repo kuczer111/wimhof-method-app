@@ -2,6 +2,7 @@ import BottomNav from "./BottomNav";
 import SafetyOnboarding from "./SafetyOnboarding";
 import StorageProvider from "./StorageProvider";
 import MilestoneToast from "./MilestoneToast";
+import WeeklySummary from "./WeeklySummary";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <BottomNav />
         <SafetyOnboarding />
         <MilestoneToast />
+        <WeeklySummary />
       </div>
     </StorageProvider>
   );

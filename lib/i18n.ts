@@ -364,6 +364,26 @@ export const strings = {
       `Unlocks after ${required} days of practice (${current}/${required})`,
   },
 
+  weeklySummary: {
+    title: "Last Week's Recap",
+    sessions: "Sessions",
+    avgRetention: "Avg Retention",
+    coldTotal: "Cold Total",
+    breathingStreak: "Breathing Streak",
+    coldStreak: "Cold Streak",
+    days: "days",
+    suggestionLabel: "Tip for this week",
+    dismiss: "Got It",
+    suggestions: {
+      startStreak: "Try practicing daily to build a streak — even one round counts.",
+      moreSessions: "You did fewer sessions than the week before. Aim to match or beat it this week.",
+      focusRetention: "Your retention dipped. Focus on full, deep breaths and relaxing during holds.",
+      tryCold: "No cold exposure last week. Even 30 seconds of cold water can make a difference.",
+      addRound: "Things are steady — try adding an extra round to push your limits.",
+      keepItUp: "Great progress! Keep the momentum going this week.",
+    },
+  },
+
   common: {
     feelingLabels: ["Rough", "Meh", "OK", "Good", "Great"],
     saveSession: "Save Session",
