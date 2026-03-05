@@ -16,7 +16,7 @@
 - [x] 014: Session completion screen | Build `components/breathing/SessionComplete.tsx` showing total duration, retention times per round, personal best highlight, and a 1–5 feeling scale with optional text note, then save to storage.
 - [x] 015: Audio engine for tones | Build `lib/audio.ts` using Web Audio API to generate inhale tone, exhale tone, hold start chime, hold end chime, and countdown beeps, with a mute toggle stored in preferences.
 - [x] 016: Wire audio to breathing phases | Integrate `lib/audio.ts` into PowerBreaths, RetentionHold, and RecoveryBreath components so tones play in sync with each phase transition and breath cycle.
-- [ ] 017: Cold shower timer | Build `app/cold/page.tsx` with a configurable target duration (30s–3min), start/stop controls, elapsed time display, circular progress bar, and alert vibration when target is reached.
+- [x] 017: Cold shower timer | Build `app/cold/page.tsx` with a configurable target duration (30s–3min), start/stop controls, elapsed time display, circular progress bar, and alert vibration when target is reached.
 - [ ] 018: Cold session logging | After cold timer ends, show a log form with duration (auto-filled), temperature (optional), type (shower/bath/outdoor), and 1–5 rating, then save to localStorage via `lib/storage.ts`.
 - [ ] 019: Session history list | Build `app/progress/page.tsx` with two tabs (Breathing / Cold) listing past sessions from localStorage, showing date, duration, retention times or cold duration, sorted newest-first.
 - [ ] 020: Breathing retention chart | Add a Recharts line chart to the Breathing tab in `app/progress/page.tsx` plotting retention time over sessions, with average line and personal record marker.
