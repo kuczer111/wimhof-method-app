@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { playHoldStartChime, playHoldEndChime } from "@/lib/audio";
 
 interface RetentionHoldProps {
   onComplete: (durationMs: number) => void;
@@ -19,6 +20,7 @@ export default function RetentionHold({ onComplete }: RetentionHoldProps) {
   const startTimeRef = useRef(Date.now());
 
   useEffect(() => {
+    playHoldStartChime();
     const id = setInterval(() => {
       setElapsedMs(Date.now() - startTimeRef.current);
     }, 200);
@@ -26,6 +28,7 @@ export default function RetentionHold({ onComplete }: RetentionHoldProps) {
   }, []);
 
   const handleTap = () => {
+    playHoldEndChime();
     const duration = Date.now() - startTimeRef.current;
     onComplete(duration);
   };

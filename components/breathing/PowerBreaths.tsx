@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import BreathingCircle from "./BreathingCircle";
+import { playInhaleTone, playExhaleTone } from "@/lib/audio";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -25,25 +26,39 @@ export default function PowerBreaths({
   const [currentBreath, setCurrentBreath] = useState(1);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const completedRef = useRef(false);
+  const isInhaleRef = useRef(true);
+
+  // Play inhale tone on mount (first breath starts with inhale)
+  useEffect(() => {
+    playInhaleTone();
+  }, []);
 
   useEffect(() => {
-    const durationMs = paceDurations[pace] * 1000;
+    const halfCycleMs = (paceDurations[pace] * 1000) / 2;
 
     intervalRef.current = setInterval(() => {
-      setCurrentBreath((prev) => {
-        const next = prev + 1;
-        if (next > breathCount) {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-          if (!completedRef.current) {
-            completedRef.current = true;
-            // Defer to avoid setState during render
-            setTimeout(onComplete, 0);
+      isInhaleRef.current = !isInhaleRef.current;
+
+      if (isInhaleRef.current) {
+        // Inhale starts — this means we completed one full breath cycle
+        setCurrentBreath((prev) => {
+          const next = prev + 1;
+          if (next > breathCount) {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (!completedRef.current) {
+              completedRef.current = true;
+              setTimeout(onComplete, 0);
+            }
+            return prev;
           }
-          return prev;
-        }
-        return next;
-      });
-    }, durationMs);
+          playInhaleTone();
+          return next;
+        });
+      } else {
+        // Exhale
+        playExhaleTone();
+      }
+    }, halfCycleMs);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

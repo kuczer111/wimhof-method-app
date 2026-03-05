@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { playCountdownBeep, playCountdownFinalBeep } from "@/lib/audio";
 
 const RECOVERY_DURATION_S = 15;
 
@@ -11,6 +12,7 @@ interface RecoveryBreathProps {
 export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
   const [remaining, setRemaining] = useState(RECOVERY_DURATION_S);
   const completedRef = useRef(false);
+  const lastBeepRef = useRef<number | null>(null);
 
   useEffect(() => {
     const start = Date.now();
@@ -22,10 +24,16 @@ export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
         setRemaining(0);
         if (!completedRef.current) {
           completedRef.current = true;
+          playCountdownFinalBeep();
           setTimeout(onComplete, 0);
         }
       } else {
         setRemaining(left);
+        // Play countdown beeps for last 3 seconds
+        if (left <= 3 && lastBeepRef.current !== left) {
+          lastBeepRef.current = left;
+          playCountdownBeep();
+        }
       }
     }, 200);
     return () => clearInterval(id);

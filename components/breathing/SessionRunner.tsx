@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { unlockAudio, disposeAudio } from "@/lib/audio";
 import PowerBreaths from "./PowerBreaths";
 import RetentionHold from "./RetentionHold";
 import RecoveryBreath from "./RecoveryBreath";
@@ -27,6 +28,11 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
   const [retentionTimes, setRetentionTimes] = useState<number[]>([]);
   const sessionStartRef = useRef(Date.now());
   const [totalDurationMs, setTotalDurationMs] = useState(0);
+
+  useEffect(() => {
+    unlockAudio();
+    return () => disposeAudio();
+  }, []);
 
   const handlePowerBreathsComplete = useCallback(() => {
     setPhase("retention");
