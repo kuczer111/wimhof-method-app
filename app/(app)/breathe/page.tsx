@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import SafetyReminder from "@/components/SafetyReminder";
+import PowerBreaths from "@/components/breathing/PowerBreaths";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
@@ -45,16 +46,41 @@ function OptionButton({
   );
 }
 
+type SessionPhase = "config" | "power-breaths" | "retention";
+
 export default function BreathePage() {
   const [safetyDismissed, setSafetyDismissed] = useState(false);
+  const [phase, setPhase] = useState<SessionPhase>("config");
   const [config, setConfig] = useState<BreathingConfig>({
     rounds: 3,
     breathsPerRound: 30,
     pace: "medium",
   });
 
+  const handlePowerBreathsComplete = useCallback(() => {
+    setPhase("retention");
+  }, []);
+
   if (!safetyDismissed) {
     return <SafetyReminder onProceed={() => setSafetyDismissed(true)} />;
+  }
+
+  if (phase === "power-breaths") {
+    return (
+      <PowerBreaths
+        breathCount={config.breathsPerRound}
+        pace={config.pace}
+        onComplete={handlePowerBreathsComplete}
+      />
+    );
+  }
+
+  if (phase === "retention") {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 px-4 pt-24 pb-24">
+        <p className="text-lg text-gray-300">Retention phase coming soon...</p>
+      </div>
+    );
   }
 
   return (
@@ -112,7 +138,7 @@ export default function BreathePage() {
         </div>
       </Card>
 
-      <Button size="lg" className="mt-2 w-full">
+      <Button size="lg" className="mt-2 w-full" onClick={() => setPhase("power-breaths")}>
         Start Session
       </Button>
     </div>
