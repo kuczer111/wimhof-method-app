@@ -2,6 +2,7 @@
 
 import { BreathingSession, ColdSession } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
+import InsightCard from "@/components/progress/InsightCard";
 
 interface OverviewProps {
   breathingSessions: BreathingSession[];
@@ -206,6 +207,9 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
           </p>
         </div>
       </div>
+
+      {/* Insight card */}
+      <InsightCard sessions={breathingSessions} />
 
       {/* Consistency */}
       <div className="rounded-2xl bg-gray-100 p-4 dark:bg-gray-900">
