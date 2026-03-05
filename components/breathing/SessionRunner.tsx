@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { unlockAudio, disposeAudio } from "@/lib/audio";
 import { strings } from "@/lib/i18n";
-import { getPreferences } from "@/lib/storage";
+import { getPreferences, getBreathingSessions } from "@/lib/storage";
 import type { SessionConfig } from "@/lib/storage";
 import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
 import GuidedOverlay from "./GuidedOverlay";
@@ -105,12 +105,29 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
   }
 
   if (phase === "retention") {
+    const mindsetPrompt = config.mindsetPrompts?.[currentRound - 1] || undefined;
+    let personalBestMs: number | undefined;
+    if (config.retentionMode === "target") {
+      const sessions = getBreathingSessions();
+      let maxSeconds = 0;
+      for (const s of sessions) {
+        for (const t of s.retentionTimes) {
+          if (t > maxSeconds) maxSeconds = t;
+        }
+      }
+      if (maxSeconds > 0) personalBestMs = maxSeconds * 1000;
+    }
     return (
       <div>
         <p className="pt-4 text-center text-xs font-medium text-gray-500">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
-        <RetentionHold onComplete={handleRetentionComplete} />
+        <RetentionHold
+          onComplete={handleRetentionComplete}
+          mindsetPrompt={mindsetPrompt}
+          retentionMode={config.retentionMode}
+          personalBestMs={personalBestMs}
+        />
       </div>
     );
   }

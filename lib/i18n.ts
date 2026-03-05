@@ -64,6 +64,17 @@ export const strings = {
       fast: "Fast",
     },
     startSession: "Start Session",
+    retentionMode: "Retention Mode",
+    retentionModeOptions: {
+      free: "Free",
+      target: "Target",
+    },
+    retentionModeDescriptions: {
+      free: "Open-ended hold, tap when done",
+      target: "Visual indicator when approaching PB",
+    },
+    mindsetPrompts: "Mindset Prompts",
+    mindsetPromptPlaceholder: (n: number) => `Round ${n} prompt (optional)`,
   },
 
   breathing: {
@@ -78,6 +89,9 @@ export const strings = {
       label: "Retention Hold",
       instruction: "Exhale and hold your breath",
       tapButton: "I breathed",
+      approachingPb: "Approaching PB",
+      newPb: "New PB!",
+      pbTarget: (time: string) => `PB: ${time}`,
     },
     recovery: {
       label: "Recovery Breath",
