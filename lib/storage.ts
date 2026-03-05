@@ -30,6 +30,7 @@ export interface UserPreferences {
   defaultPace: "slow" | "medium" | "fast";
   defaultColdTarget: number; // seconds
   audioMode: "voice" | "tone" | "silent";
+  muted: boolean;
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
 }
@@ -50,6 +51,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   defaultPace: "medium",
   defaultColdTarget: 60,
   audioMode: "tone",
+  muted: false,
   safetyAcknowledged: false,
   onboardingComplete: false,
 };
