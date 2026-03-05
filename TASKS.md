@@ -13,7 +13,7 @@
 - [x] 011: Retention hold phase | Build `components/breathing/RetentionHold.tsx` showing an elapsed stopwatch timer (not countdown), a tap-to-end button, and recording the retention duration when the user taps.
 - [x] 012: Recovery breath phase | Build `components/breathing/RecoveryBreath.tsx` with a fixed 15-second countdown, distinct color scheme, and auto-advance to the next round or session complete.
 - [x] 013: Breathing session orchestrator | Create `components/breathing/SessionRunner.tsx` that sequences PowerBreaths → RetentionHold → RecoveryBreath for N rounds, tracks per-round retention times, and transitions to session complete.
-- [ ] 014: Session completion screen | Build `components/breathing/SessionComplete.tsx` showing total duration, retention times per round, personal best highlight, and a 1–5 feeling scale with optional text note, then save to storage.
+- [x] 014: Session completion screen | Build `components/breathing/SessionComplete.tsx` showing total duration, retention times per round, personal best highlight, and a 1–5 feeling scale with optional text note, then save to storage.
 - [ ] 015: Audio engine for tones | Build `lib/audio.ts` using Web Audio API to generate inhale tone, exhale tone, hold start chime, hold end chime, and countdown beeps, with a mute toggle stored in preferences.
 - [ ] 016: Wire audio to breathing phases | Integrate `lib/audio.ts` into PowerBreaths, RetentionHold, and RecoveryBreath components so tones play in sync with each phase transition and breath cycle.
 - [ ] 017: Cold shower timer | Build `app/cold/page.tsx` with a configurable target duration (30s–3min), start/stop controls, elapsed time display, circular progress bar, and alert vibration when target is reached.

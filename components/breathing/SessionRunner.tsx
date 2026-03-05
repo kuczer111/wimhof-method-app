@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import PowerBreaths from "./PowerBreaths";
 import RetentionHold from "./RetentionHold";
 import RecoveryBreath from "./RecoveryBreath";
-import Button from "@/components/ui/Button";
+import SessionComplete from "./SessionComplete";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -16,13 +16,6 @@ export interface SessionConfig {
 
 type Phase = "power-breaths" | "retention" | "recovery" | "complete";
 
-function formatDuration(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
 interface SessionRunnerProps {
   config: SessionConfig;
   onFinish: () => void;
@@ -32,6 +25,8 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
   const [phase, setPhase] = useState<Phase>("power-breaths");
   const [currentRound, setCurrentRound] = useState(1);
   const [retentionTimes, setRetentionTimes] = useState<number[]>([]);
+  const sessionStartRef = useRef(Date.now());
+  const [totalDurationMs, setTotalDurationMs] = useState(0);
 
   const handlePowerBreathsComplete = useCallback(() => {
     setPhase("retention");
@@ -47,6 +42,7 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
       setCurrentRound((r) => r + 1);
       setPhase("power-breaths");
     } else {
+      setTotalDurationMs(Date.now() - sessionStartRef.current);
       setPhase("complete");
     }
   }, [currentRound, config.rounds]);
@@ -90,39 +86,13 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
 
   // complete
   return (
-    <div className="flex flex-col items-center justify-center gap-6 px-4 pt-12 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-emerald-400">
-        Session Complete
-      </p>
-      <p className="text-4xl font-bold text-gray-50">Well done!</p>
-      <p className="text-sm text-gray-400">
-        {config.rounds} round{config.rounds > 1 ? "s" : ""} completed
-      </p>
-
-      {retentionTimes.length > 0 && (
-        <div className="w-full max-w-xs rounded-2xl bg-gray-800/60 p-4">
-          <h3 className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">
-            Retention Times
-          </h3>
-          <ul className="flex flex-col gap-2">
-            {retentionTimes.map((ms, i) => (
-              <li
-                key={i}
-                className="flex items-center justify-between text-sm"
-              >
-                <span className="text-gray-400">Round {i + 1}</span>
-                <span className="font-mono font-semibold tabular-nums text-gray-50">
-                  {formatDuration(ms)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <Button size="lg" className="mt-4" onClick={onFinish}>
-        Done
-      </Button>
-    </div>
+    <SessionComplete
+      rounds={config.rounds}
+      breathsPerRound={config.breathsPerRound}
+      pace={config.pace}
+      retentionTimes={retentionTimes}
+      totalDurationMs={totalDurationMs}
+      onDone={onFinish}
+    />
   );
 }
