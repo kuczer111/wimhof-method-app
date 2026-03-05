@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   getPreferences,
   savePreferences,
+  clearAllData,
   type UserPreferences,
 } from "@/lib/storage";
 import Button from "@/components/ui/Button";
@@ -74,8 +75,8 @@ export default function SettingsPage() {
     savePreferences(patch);
   }
 
-  function handleClearData() {
-    localStorage.clear();
+  async function handleClearData() {
+    await clearAllData();
     setShowClearConfirm(false);
     setCleared(true);
     setPrefs(getPreferences());

@@ -1,4 +1,8 @@
-// Typed localStorage helpers for the Wim Hof Method app
+// Typed storage helpers for the Wim Hof Method app
+// Backed by IndexedDB with an in-memory cache for synchronous reads.
+// On first load, migrates any existing localStorage data to IndexedDB.
+
+import { getDB } from "./db";
 
 // --- Types ---
 
@@ -10,7 +14,7 @@ export interface BreathingSession {
   totalDuration: number; // seconds
   breathsPerRound: number;
   pace: "slow" | "medium" | "fast";
-  feelingRating?: number; // 1–5
+  feelingRating?: number; // 1-5
   note?: string;
 }
 
@@ -21,11 +25,11 @@ export interface ColdSession {
   targetDuration: number; // seconds
   type: "shower" | "bath" | "outdoor" | "other";
   temperature?: number; // celsius, optional
-  rating?: number; // 1–5
+  rating?: number; // 1-5
 }
 
 export interface UserPreferences {
-  defaultRounds: number; // 1–5, default 3
+  defaultRounds: number; // 1-5, default 3
   defaultBreathCount: 20 | 30 | 40;
   defaultPace: "slow" | "medium" | "fast";
   defaultColdTarget: number; // seconds
@@ -34,14 +38,6 @@ export interface UserPreferences {
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
 }
-
-// --- Storage keys ---
-
-const KEYS = {
-  breathingSessions: "whm_breathing_sessions",
-  coldSessions: "whm_cold_sessions",
-  preferences: "whm_preferences",
-} as const;
 
 // --- Default preferences ---
 
@@ -56,66 +52,177 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   onboardingComplete: false,
 };
 
-// --- Generic helpers ---
+// --- In-memory cache ---
 
-function readJSON<T>(key: string): T | null {
-  if (typeof window === "undefined") return null;
+let cache: {
+  breathingSessions: BreathingSession[];
+  coldSessions: ColdSession[];
+  preferences: UserPreferences;
+} = {
+  breathingSessions: [],
+  coldSessions: [],
+  preferences: { ...DEFAULT_PREFERENCES },
+};
+
+let initialized = false;
+let initPromise: Promise<void> | null = null;
+
+// --- localStorage migration keys ---
+
+const LS_KEYS = {
+  breathingSessions: "whm_breathing_sessions",
+  coldSessions: "whm_cold_sessions",
+  preferences: "whm_preferences",
+  migrated: "whm_idb_migrated",
+} as const;
+
+// --- Migration: localStorage -> IndexedDB (one-time) ---
+
+async function migrateFromLocalStorage(): Promise<void> {
+  if (typeof window === "undefined") return;
+
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
+    if (localStorage.getItem(LS_KEYS.migrated)) return;
   } catch {
-    return null;
+    return;
+  }
+
+  const db = await getDB();
+
+  try {
+    // Migrate breathing sessions
+    const rawBreathing = localStorage.getItem(LS_KEYS.breathingSessions);
+    if (rawBreathing) {
+      const sessions: BreathingSession[] = JSON.parse(rawBreathing);
+      const tx = db.transaction("breathing_sessions", "readwrite");
+      for (const s of sessions) {
+        await tx.store.put(s);
+      }
+      await tx.done;
+    }
+
+    // Migrate cold sessions
+    const rawCold = localStorage.getItem(LS_KEYS.coldSessions);
+    if (rawCold) {
+      const sessions: ColdSession[] = JSON.parse(rawCold);
+      const tx = db.transaction("cold_sessions", "readwrite");
+      for (const s of sessions) {
+        await tx.store.put(s);
+      }
+      await tx.done;
+    }
+
+    // Migrate preferences
+    const rawPrefs = localStorage.getItem(LS_KEYS.preferences);
+    if (rawPrefs) {
+      const prefs: UserPreferences = JSON.parse(rawPrefs);
+      await db.put("preferences", prefs, "user");
+    }
+
+    // Mark migration complete
+    localStorage.setItem(LS_KEYS.migrated, "1");
+  } catch {
+    // Migration failed — data remains in localStorage for next attempt
   }
 }
 
-function writeJSON<T>(key: string, value: T): void {
+// --- Initialization: load IndexedDB data into cache ---
+
+async function loadCache(): Promise<void> {
   if (typeof window === "undefined") return;
-  localStorage.setItem(key, JSON.stringify(value));
+
+  await migrateFromLocalStorage();
+
+  const db = await getDB();
+
+  const [breathingSessions, coldSessions, prefs] = await Promise.all([
+    db.getAll("breathing_sessions"),
+    db.getAll("cold_sessions"),
+    db.get("preferences", "user"),
+  ]);
+
+  cache.breathingSessions = breathingSessions;
+  cache.coldSessions = coldSessions;
+  cache.preferences = prefs
+    ? { ...DEFAULT_PREFERENCES, ...(prefs as UserPreferences) }
+    : { ...DEFAULT_PREFERENCES };
+
+  initialized = true;
+}
+
+/** Initialize the storage layer. Call once at app startup. */
+export function initStorage(): Promise<void> {
+  if (initialized) return Promise.resolve();
+  if (!initPromise) {
+    initPromise = loadCache();
+  }
+  return initPromise;
+}
+
+/** Returns true if the cache has been loaded from IndexedDB. */
+export function isStorageReady(): boolean {
+  return initialized;
 }
 
 // --- Breathing sessions ---
 
 export function getBreathingSessions(): BreathingSession[] {
-  return readJSON<BreathingSession[]>(KEYS.breathingSessions) ?? [];
+  return cache.breathingSessions;
 }
 
 export function saveBreathingSession(session: BreathingSession): void {
-  const sessions = getBreathingSessions();
-  sessions.push(session);
-  writeJSON(KEYS.breathingSessions, sessions);
+  cache.breathingSessions.push(session);
+  // Persist async — fire and forget
+  getDB().then((db) => db.put("breathing_sessions", session));
 }
 
 export function deleteBreathingSession(id: string): void {
-  const sessions = getBreathingSessions().filter((s) => s.id !== id);
-  writeJSON(KEYS.breathingSessions, sessions);
+  cache.breathingSessions = cache.breathingSessions.filter((s) => s.id !== id);
+  getDB().then((db) => db.delete("breathing_sessions", id));
 }
 
 // --- Cold sessions ---
 
 export function getColdSessions(): ColdSession[] {
-  return readJSON<ColdSession[]>(KEYS.coldSessions) ?? [];
+  return cache.coldSessions;
 }
 
 export function saveColdSession(session: ColdSession): void {
-  const sessions = getColdSessions();
-  sessions.push(session);
-  writeJSON(KEYS.coldSessions, sessions);
+  cache.coldSessions.push(session);
+  getDB().then((db) => db.put("cold_sessions", session));
 }
 
 export function deleteColdSession(id: string): void {
-  const sessions = getColdSessions().filter((s) => s.id !== id);
-  writeJSON(KEYS.coldSessions, sessions);
+  cache.coldSessions = cache.coldSessions.filter((s) => s.id !== id);
+  getDB().then((db) => db.delete("cold_sessions", id));
 }
 
 // --- User preferences ---
 
 export function getPreferences(): UserPreferences {
-  return readJSON<UserPreferences>(KEYS.preferences) ?? { ...DEFAULT_PREFERENCES };
+  return cache.preferences;
 }
 
 export function savePreferences(prefs: Partial<UserPreferences>): void {
-  const current = getPreferences();
-  writeJSON(KEYS.preferences, { ...current, ...prefs });
+  cache.preferences = { ...cache.preferences, ...prefs };
+  getDB().then((db) => db.put("preferences", cache.preferences, "user"));
+}
+
+// --- Clear all data ---
+
+export async function clearAllData(): Promise<void> {
+  const db = await getDB();
+  await Promise.all([
+    db.clear("breathing_sessions"),
+    db.clear("cold_sessions"),
+    db.clear("preferences"),
+    db.clear("program_progress"),
+    db.clear("custom_presets"),
+    db.clear("milestones"),
+  ]);
+  cache.breathingSessions = [];
+  cache.coldSessions = [];
+  cache.preferences = { ...DEFAULT_PREFERENCES };
 }
 
 // --- Utility ---
