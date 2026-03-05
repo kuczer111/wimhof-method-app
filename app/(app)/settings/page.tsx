@@ -7,6 +7,7 @@ import {
   profileToDefaults,
   clearAllData,
   type UserPreferences,
+  type CustomPreset,
 } from "@/lib/storage";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -44,9 +45,12 @@ export default function SettingsPage() {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [cleared, setCleared] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [customPresets, setCustomPresets] = useState<CustomPreset[]>([]);
 
   useEffect(() => {
-    setPrefs(getPreferences());
+    const p = getPreferences();
+    setPrefs(p);
+    setCustomPresets(p.customPresets ?? []);
   }, []);
 
   function update(patch: Partial<UserPreferences>) {
@@ -126,6 +130,44 @@ export default function SettingsPage() {
         <Button variant="secondary" size="sm" onClick={() => setShowProfile(true)}>
           {strings.settings.editProfile}
         </Button>
+      </Card>
+
+      {/* Custom Presets */}
+      <Card>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          {strings.settings.customPresets}
+        </h2>
+        {customPresets.length === 0 ? (
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            {strings.settings.noCustomPresets}
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {customPresets.map((preset) => (
+              <li key={preset.id} className="flex items-center justify-between rounded-xl bg-gray-100 px-3 py-2 dark:bg-gray-800/60">
+                <div>
+                  <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100">
+                    {preset.name}
+                  </span>
+                  <span className="block text-xs text-gray-500 dark:text-gray-400">
+                    {strings.settings.presetRounds(preset.config.rounds)} · {preset.config.breathsPerRound[0]}b · {preset.config.pace}
+                  </span>
+                </div>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => {
+                    const updated = customPresets.filter((p) => p.id !== preset.id);
+                    setCustomPresets(updated);
+                    savePreferences({ customPresets: updated });
+                  }}
+                >
+                  {strings.settings.deletePreset}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
 
       {/* Default Breathing Config */}

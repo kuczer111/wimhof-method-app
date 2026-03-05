@@ -3,7 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { unlockAudio, disposeAudio } from "@/lib/audio";
 import { strings } from "@/lib/i18n";
-import { getPreferences, getBreathingSessions } from "@/lib/storage";
+import {
+  getPreferences,
+  getBreathingSessions,
+  saveBreathingSession,
+  savePreferences,
+  generateId,
+  type BreathingSession,
+} from "@/lib/storage";
 import type { SessionConfig } from "@/lib/storage";
 import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
 import GuidedOverlay from "./GuidedOverlay";
@@ -19,9 +26,10 @@ type Phase = "power-breaths" | "retention" | "recovery" | "complete";
 interface SessionRunnerProps {
   config: SessionConfig;
   onFinish: () => void;
+  onAutoCold?: () => void;
 }
 
-export default function SessionRunner({ config, onFinish }: SessionRunnerProps) {
+export default function SessionRunner({ config, onFinish, onAutoCold }: SessionRunnerProps) {
   const [phase, setPhase] = useState<Phase>("power-breaths");
   const [currentRound, setCurrentRound] = useState(1);
   const [retentionTimes, setRetentionTimes] = useState<number[]>([]);
@@ -62,10 +70,32 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
         setPhase("power-breaths");
       }
     } else {
-      setTotalDurationMs(Date.now() - sessionStartRef.current);
+      const elapsed = Date.now() - sessionStartRef.current;
+      setTotalDurationMs(elapsed);
+
+      // Auto-cold: save session immediately and transition to cold timer
+      if (config.autoCold && onAutoCold) {
+        const retentionTimesSeconds = retentionTimes.map((ms) => Math.round(ms / 1000));
+        if (isFirstSession) {
+          savePreferences({ firstSessionComplete: true });
+        }
+        const session: BreathingSession = {
+          id: generateId(),
+          date: new Date().toISOString(),
+          rounds: config.rounds,
+          retentionTimes: retentionTimesSeconds,
+          totalDuration: Math.round(elapsed / 1000),
+          breathsPerRound: config.breathsPerRound[0],
+          pace: config.pace,
+        };
+        saveBreathingSession(session);
+        onAutoCold();
+        return;
+      }
+
       setPhase("complete");
     }
-  }, [currentRound, config.rounds, isFirstSession]);
+  }, [currentRound, config, isFirstSession, onAutoCold, retentionTimes]);
 
   if (showPreBreathingGuide) {
     return (

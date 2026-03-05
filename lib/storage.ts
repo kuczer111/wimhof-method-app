@@ -33,6 +33,12 @@ export type AvailableTime = "10" | "20" | "30+";
 export type ExperienceLevel = "beginner" | "some" | "regular";
 export type PreferredTime = "morning" | "midday" | "evening";
 
+export interface CustomPreset {
+  id: string;
+  name: string;
+  config: SessionConfig;
+}
+
 export interface UserPreferences {
   defaultRounds: number; // 1-5, default 3
   defaultBreathCount: 20 | 30 | 40;
@@ -49,6 +55,7 @@ export interface UserPreferences {
   availableTime?: AvailableTime;
   experienceLevel?: ExperienceLevel;
   preferredSessionTime?: PreferredTime;
+  customPresets?: CustomPreset[];
 }
 
 export interface SessionConfig {
