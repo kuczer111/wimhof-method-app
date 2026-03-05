@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   getPreferences,
   savePreferences,
+  profileToDefaults,
   clearAllData,
   type UserPreferences,
 } from "@/lib/storage";
@@ -11,6 +12,7 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Modal from "@/components/ui/Modal";
 import OptionButton from "@/components/ui/OptionButton";
+import ProfileSetup from "@/components/ProfileSetup";
 import { strings } from "@/lib/i18n";
 
 type AudioMode = UserPreferences["audioMode"];
@@ -41,6 +43,7 @@ export default function SettingsPage() {
   const [prefs, setPrefs] = useState<UserPreferences | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [cleared, setCleared] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     setPrefs(getPreferences());
@@ -113,6 +116,16 @@ export default function SettingsPage() {
             />
           </button>
         </div>
+      </Card>
+
+      {/* Practice Profile */}
+      <Card>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          {strings.settings.practiceProfile}
+        </h2>
+        <Button variant="secondary" size="sm" onClick={() => setShowProfile(true)}>
+          {strings.settings.editProfile}
+        </Button>
       </Card>
 
       {/* Default Breathing Config */}
@@ -211,6 +224,25 @@ export default function SettingsPage() {
       <p className="text-center text-xs text-gray-600">
         {strings.app.version}
       </p>
+
+      {/* Profile Setup Modal */}
+      <Modal
+        open={showProfile}
+        onClose={() => setShowProfile(false)}
+        title={strings.settings.practiceProfile}
+      >
+        <ProfileSetup
+          initialGoal={prefs.primaryGoal}
+          initialTime={prefs.availableTime}
+          initialLevel={prefs.experienceLevel}
+          initialSessionTime={prefs.preferredSessionTime}
+          onSave={(profile) => {
+            const defaults = profileToDefaults(profile);
+            update(defaults);
+            setShowProfile(false);
+          }}
+        />
+      </Modal>
 
       {/* Clear Confirmation Modal */}
       <Modal

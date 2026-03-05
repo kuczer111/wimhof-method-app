@@ -130,6 +130,8 @@ export const strings = {
     } as Record<string, string>,
     screenWakeLock: "Screen Wake Lock",
     wakeLockDescription: "Keep screen on during sessions",
+    practiceProfile: "Practice Profile",
+    editProfile: "Edit Profile",
     data: "Data",
     allDataCleared: "All data cleared.",
     clearAllData: "Clear All Data",
@@ -212,6 +214,39 @@ export const strings = {
     skip: "Skip",
     next: "Next",
     getStarted: "Get Started",
+  },
+
+  profile: {
+    title: "Your Practice Profile",
+    subtitle: "Help us personalize your experience.",
+    primaryGoal: "Primary Goal",
+    goals: {
+      stress: "Stress Reduction",
+      athletic: "Athletic Performance",
+      immune: "Immune Health",
+      curiosity: "Curiosity",
+      cold: "Cold Focus",
+    },
+    availableTime: "Available Time Per Day",
+    timeOptions: {
+      "10": "10 min",
+      "20": "20 min",
+      "30+": "30+ min",
+    },
+    experienceLevel: "Experience Level",
+    levels: {
+      beginner: "Complete Beginner",
+      some: "Some Experience",
+      regular: "Regular Practitioner",
+    },
+    preferredTime: "Preferred Session Time",
+    times: {
+      morning: "Morning",
+      midday: "Midday",
+      evening: "Evening",
+    },
+    save: "Save Profile",
+    skipForNow: "Skip for Now",
   },
 
   common: {

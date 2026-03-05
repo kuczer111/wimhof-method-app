@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getPreferences, savePreferences } from "@/lib/storage";
+import { getPreferences, savePreferences, profileToDefaults } from "@/lib/storage";
 import StorageProvider from "@/components/StorageProvider";
+import ProfileSetup from "@/components/ProfileSetup";
 import Button from "@/components/ui/Button";
 import { strings } from "@/lib/i18n";
 
@@ -18,7 +19,8 @@ function OnboardingFlow() {
   const touchEndX = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const totalScreens = 5;
+  const [experience, setExperience] = useState<"new" | "experienced">("new");
+  const totalScreens = 6;
   const safetyScreenIndex = 3;
 
   useEffect(() => {
@@ -41,7 +43,25 @@ function OnboardingFlow() {
     if (current > 0) setCurrent((c) => c - 1);
   }, [current]);
 
-  function handleComplete(experience: "new" | "experienced") {
+  function handleStartingPointSelect(exp: "new" | "experienced") {
+    setExperience(exp);
+    setCurrent(5);
+  }
+
+  function handleProfileSave(profile: Parameters<typeof profileToDefaults>[0]) {
+    const defaults = profileToDefaults(profile);
+    savePreferences({
+      onboardingComplete: true,
+      safetyAcknowledged: true,
+      ...(experience === "new"
+        ? { defaultPace: "slow" as const }
+        : {}),
+      ...defaults,
+    });
+    router.replace("/breathe");
+  }
+
+  function handleProfileSkip() {
     savePreferences({
       onboardingComplete: true,
       safetyAcknowledged: true,
@@ -88,7 +108,8 @@ function OnboardingFlow() {
     <PillarsScreen key="pillars" />,
     <ExpectationsScreen key="expectations" />,
     <SafetyScreen key="safety" acknowledged={safetyAcked} onAcknowledge={handleSafetyAcknowledge} />,
-    <StartingPointScreen key="starting" onSelect={handleComplete} />,
+    <StartingPointScreen key="starting" onSelect={handleStartingPointSelect} />,
+    <ProfileSetup key="profile" onSave={handleProfileSave} onSkip={handleProfileSkip} />,
   ];
 
   return (

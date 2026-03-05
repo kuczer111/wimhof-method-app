@@ -28,6 +28,11 @@ export interface ColdSession {
   rating?: number; // 1-5
 }
 
+export type PrimaryGoal = "stress" | "athletic" | "immune" | "curiosity" | "cold";
+export type AvailableTime = "10" | "20" | "30+";
+export type ExperienceLevel = "beginner" | "some" | "regular";
+export type PreferredTime = "morning" | "midday" | "evening";
+
 export interface UserPreferences {
   defaultRounds: number; // 1-5, default 3
   defaultBreathCount: 20 | 30 | 40;
@@ -38,6 +43,11 @@ export interface UserPreferences {
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
   wakeLockEnabled: boolean;
+  profileComplete?: boolean;
+  primaryGoal?: PrimaryGoal;
+  availableTime?: AvailableTime;
+  experienceLevel?: ExperienceLevel;
+  preferredSessionTime?: PreferredTime;
 }
 
 export interface SessionConfig {
@@ -82,6 +92,65 @@ export function normalizeSessionConfig(raw: Record<string, unknown>): SessionCon
   }
 
   return config as SessionConfig;
+}
+
+/**
+ * Map practice profile selections to sensible default preferences.
+ */
+export function profileToDefaults(profile: {
+  primaryGoal: PrimaryGoal;
+  availableTime: AvailableTime;
+  experienceLevel: ExperienceLevel;
+  preferredSessionTime: PreferredTime;
+}): Partial<UserPreferences> {
+  const { primaryGoal, availableTime, experienceLevel } = profile;
+
+  let defaultRounds = 3;
+  let defaultBreathCount: 20 | 30 | 40 = 30;
+  let defaultPace: "slow" | "medium" | "fast" = "medium";
+  let defaultColdTarget = 60;
+
+  // Experience level adjustments
+  if (experienceLevel === "beginner") {
+    defaultRounds = 3;
+    defaultBreathCount = 30;
+    defaultPace = "slow";
+    defaultColdTarget = 30;
+  } else if (experienceLevel === "regular") {
+    defaultRounds = 4;
+    defaultBreathCount = 40;
+    defaultPace = "medium";
+    defaultColdTarget = 120;
+  }
+
+  // Goal-specific tweaks
+  if (primaryGoal === "athletic") {
+    defaultRounds = Math.min(defaultRounds + 1, 5);
+    defaultBreathCount = 40;
+  } else if (primaryGoal === "cold") {
+    defaultColdTarget = Math.min(defaultColdTarget + 60, 180);
+  } else if (primaryGoal === "stress") {
+    defaultPace = "slow";
+  }
+
+  // Time budget adjustments
+  if (availableTime === "10") {
+    defaultRounds = Math.min(defaultRounds, 3);
+  } else if (availableTime === "30+") {
+    defaultRounds = Math.min(defaultRounds + 1, 5);
+  }
+
+  return {
+    defaultRounds,
+    defaultBreathCount,
+    defaultPace,
+    defaultColdTarget,
+    profileComplete: true,
+    primaryGoal: profile.primaryGoal,
+    availableTime: profile.availableTime,
+    experienceLevel: profile.experienceLevel,
+    preferredSessionTime: profile.preferredSessionTime,
+  };
 }
 
 // --- Default preferences ---
