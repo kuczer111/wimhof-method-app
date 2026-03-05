@@ -3,7 +3,7 @@
 - [x] 001: Project setup | Initialize Next.js 14 app with TypeScript, Tailwind CSS, ESLint, and PWA manifest in `next.config.ts`, `tailwind.config.ts`, `app/layout.tsx`, `app/page.tsx`, and `public/manifest.json`.
 - [x] 002: PWA service worker | Add next-pwa config, offline fallback page `app/offline/page.tsx`, meta tags, and icons in `public/` so the app is installable on mobile home screens.
 - [x] 003: App shell and navigation | Build bottom tab navigation component `components/BottomNav.tsx`, app layout wrapper `components/AppShell.tsx`, and route pages: `app/breathe/page.tsx`, `app/cold/page.tsx`, `app/progress/page.tsx`, `app/settings/page.tsx`.
-- [ ] 004: Design tokens and shared UI | Create `lib/constants.ts` for colors/sizes, reusable `components/ui/Button.tsx`, `components/ui/Card.tsx`, `components/ui/Modal.tsx`, and global Tailwind theme extensions.
+- [x] 004: Design tokens and shared UI | Create `lib/constants.ts` for colors/sizes, reusable `components/ui/Button.tsx`, `components/ui/Card.tsx`, `components/ui/Modal.tsx`, and global Tailwind theme extensions.
 - [ ] 005: Local storage service | Build `lib/storage.ts` with typed helpers to read/write breathing sessions, cold sessions, and user preferences to localStorage with JSON serialization.
 - [ ] 006: Safety onboarding screen | Create `components/SafetyOnboarding.tsx` as a full-screen modal shown on first launch, listing safety rules with an acknowledge button that sets a flag in localStorage.
 - [ ] 007: In-session safety reminder | Build `components/SafetyReminder.tsx` dismiss dialog shown before every breathing session starts, with a "I understand" button to proceed.
