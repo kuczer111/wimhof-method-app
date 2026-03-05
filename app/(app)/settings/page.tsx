@@ -10,6 +10,7 @@ import {
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Modal from "@/components/ui/Modal";
+import OptionButton from "@/components/ui/OptionButton";
 
 type AudioMode = UserPreferences["audioMode"];
 type Pace = UserPreferences["defaultPace"];
@@ -34,30 +35,6 @@ const COLD_TARGET_OPTIONS = [
   { value: 120, label: "2 min" },
   { value: 180, label: "3 min" },
 ];
-
-function OptionButton({
-  selected,
-  onClick,
-  children,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-        selected
-          ? "bg-sky-500 text-white"
-          : "bg-gray-200 text-gray-500 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:active:bg-gray-700"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
 
 export default function SettingsPage() {
   const [prefs, setPrefs] = useState<UserPreferences | null>(null);

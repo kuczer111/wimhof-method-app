@@ -6,6 +6,7 @@ import SessionRunner from "@/components/breathing/SessionRunner";
 import type { SessionConfig } from "@/components/breathing/SessionRunner";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import OptionButton from "@/components/ui/OptionButton";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -23,30 +24,6 @@ const PRESETS: { name: string; description: string; config: SessionConfig }[] = 
   { name: "Deep Practice", description: "4 rounds · 40 breaths · medium", config: { rounds: 4, breathsPerRound: 40, pace: "medium" } },
   { name: "Morning Activation", description: "3 rounds · 30 breaths · fast", config: { rounds: 3, breathsPerRound: 30, pace: "fast" } },
 ];
-
-function OptionButton({
-  selected,
-  onClick,
-  children,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
-        selected
-          ? "bg-sky-500 text-white"
-          : "bg-gray-200 text-gray-600 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:active:bg-gray-700"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
 
 export default function BreathePage() {
   const [safetyDismissed, setSafetyDismissed] = useState(false);

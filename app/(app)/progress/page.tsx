@@ -18,6 +18,7 @@ import {
   BreathingSession,
   ColdSession,
 } from "@/lib/storage";
+import { formatDuration } from "@/lib/format";
 
 type Tab = "breathing" | "cold";
 
@@ -30,12 +31,6 @@ function formatDate(iso: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = Math.round(seconds % 60);
-  return m > 0 ? `${m}m ${s}s` : `${s}s`;
 }
 
 interface ChartPoint {

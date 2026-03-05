@@ -4,16 +4,11 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { saveColdSession, generateId, type ColdSession } from "@/lib/storage";
+import { formatTime } from "@/lib/format";
 
 const DURATION_OPTIONS = [30, 60, 90, 120, 180];
 const COLD_TYPES: ColdSession["type"][] = ["shower", "bath", "outdoor", "other"];
 const FEELING_LABELS = ["Rough", "Meh", "OK", "Good", "Great"];
-
-function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
 
 function formatLabel(seconds: number): string {
   if (seconds < 60) return `${seconds}s`;

@@ -8,6 +8,7 @@ import {
   generateId,
   type BreathingSession,
 } from "@/lib/storage";
+import { formatTimeMs } from "@/lib/format";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -18,13 +19,6 @@ interface SessionCompleteProps {
   retentionTimes: number[]; // ms per round
   totalDurationMs: number;
   onDone: () => void;
-}
-
-function formatDuration(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 function getPersonalBests(): Map<number, number> {
@@ -103,7 +97,7 @@ export default function SessionComplete({
       <div className="flex gap-6 text-center">
         <div>
           <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
-            {formatDuration(totalDurationMs)}
+            {formatTimeMs(totalDurationMs)}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">Total Time</p>
         </div>
@@ -129,7 +123,7 @@ export default function SessionComplete({
                 <span className="text-gray-500 dark:text-gray-400">Round {i + 1}</span>
                 <span className="flex items-center gap-2">
                   <span className="font-mono font-semibold tabular-nums text-gray-900 dark:text-gray-50">
-                    {formatDuration(ms)}
+                    {formatTimeMs(ms)}
                   </span>
                   {newPersonalBests.has(i) && (
                     <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
