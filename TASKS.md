@@ -11,7 +11,7 @@
 - [x] 009: Breathing animation component | Create `components/breathing/BreathingCircle.tsx` — an expanding/contracting circle animation driven by a pace prop (1.5s/2s/2.5s cycle) using CSS transitions or framer-motion.
 - [x] 010: Power breaths phase | Build `components/breathing/PowerBreaths.tsx` that counts 20/30/40 breaths at the configured pace, displays current breath number prominently, drives the breathing animation, and auto-advances to retention phase.
 - [x] 011: Retention hold phase | Build `components/breathing/RetentionHold.tsx` showing an elapsed stopwatch timer (not countdown), a tap-to-end button, and recording the retention duration when the user taps.
-- [ ] 012: Recovery breath phase | Build `components/breathing/RecoveryBreath.tsx` with a fixed 15-second countdown, distinct color scheme, and auto-advance to the next round or session complete.
+- [x] 012: Recovery breath phase | Build `components/breathing/RecoveryBreath.tsx` with a fixed 15-second countdown, distinct color scheme, and auto-advance to the next round or session complete.
 - [ ] 013: Breathing session orchestrator | Create `components/breathing/SessionRunner.tsx` that sequences PowerBreaths → RetentionHold → RecoveryBreath for N rounds, tracks per-round retention times, and transitions to session complete.
 - [ ] 014: Session completion screen | Build `components/breathing/SessionComplete.tsx` showing total duration, retention times per round, personal best highlight, and a 1–5 feeling scale with optional text note, then save to storage.
 - [ ] 015: Audio engine for tones | Build `lib/audio.ts` using Web Audio API to generate inhale tone, exhale tone, hold start chime, hold end chime, and countdown beeps, with a mute toggle stored in preferences.

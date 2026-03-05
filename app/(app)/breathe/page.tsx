@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import SafetyReminder from "@/components/SafetyReminder";
 import PowerBreaths from "@/components/breathing/PowerBreaths";
+import RecoveryBreath from "@/components/breathing/RecoveryBreath";
 import RetentionHold from "@/components/breathing/RetentionHold";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -47,11 +48,12 @@ function OptionButton({
   );
 }
 
-type SessionPhase = "config" | "power-breaths" | "retention";
+type SessionPhase = "config" | "power-breaths" | "retention" | "recovery" | "complete";
 
 export default function BreathePage() {
   const [safetyDismissed, setSafetyDismissed] = useState(false);
   const [phase, setPhase] = useState<SessionPhase>("config");
+  const [currentRound, setCurrentRound] = useState(1);
   const [config, setConfig] = useState<BreathingConfig>({
     rounds: 3,
     breathsPerRound: 30,
@@ -61,6 +63,20 @@ export default function BreathePage() {
   const handlePowerBreathsComplete = useCallback(() => {
     setPhase("retention");
   }, []);
+
+  const handleRetentionComplete = useCallback((_durationMs: number) => {
+    // TODO: store durationMs for session history
+    setPhase("recovery");
+  }, []);
+
+  const handleRecoveryComplete = useCallback(() => {
+    if (currentRound < config.rounds) {
+      setCurrentRound((r) => r + 1);
+      setPhase("power-breaths");
+    } else {
+      setPhase("complete");
+    }
+  }, [currentRound, config.rounds]);
 
   if (!safetyDismissed) {
     return <SafetyReminder onProceed={() => setSafetyDismissed(true)} />;
@@ -77,13 +93,34 @@ export default function BreathePage() {
   }
 
   if (phase === "retention") {
+    return <RetentionHold onComplete={handleRetentionComplete} />;
+  }
+
+  if (phase === "recovery") {
+    return <RecoveryBreath onComplete={handleRecoveryComplete} />;
+  }
+
+  if (phase === "complete") {
     return (
-      <RetentionHold
-        onComplete={(durationMs) => {
-          // TODO: store durationMs for session history
-          setPhase("config");
-        }}
-      />
+      <div className="flex flex-col items-center justify-center gap-6 px-4 pt-12 pb-24">
+        <p className="text-sm font-medium uppercase tracking-wider text-emerald-400">
+          Session Complete
+        </p>
+        <p className="text-4xl font-bold text-gray-50">Well done!</p>
+        <p className="text-sm text-gray-400">
+          {config.rounds} round{config.rounds > 1 ? "s" : ""} completed
+        </p>
+        <Button
+          size="lg"
+          className="mt-4"
+          onClick={() => {
+            setPhase("config");
+            setCurrentRound(1);
+          }}
+        >
+          Done
+        </Button>
+      </div>
     );
   }
 
