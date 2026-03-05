@@ -21,7 +21,7 @@
 - [x] 019: Session history list | Build `app/progress/page.tsx` with two tabs (Breathing / Cold) listing past sessions from localStorage, showing date, duration, retention times or cold duration, sorted newest-first.
 - [x] 020: Breathing retention chart | Add a Recharts line chart to the Breathing tab in `app/progress/page.tsx` plotting retention time over sessions, with average line and personal record marker.
 - [x] 021: Cold exposure stats | Add cold exposure stats to the Cold tab: total minutes, current streak counter, and a simple heatmap-style calendar showing days with cold sessions using Recharts or CSS grid.
-- [ ] 022: Settings page | Build `app/settings/page.tsx` with audio mode toggle (tones/silent), default breathing config, cold target default, clear data button with confirmation, and app version display.
+- [x] 022: Settings page | Build `app/settings/page.tsx` with audio mode toggle (tones/silent), default breathing config, cold target default, clear data button with confirmation, and app version display.
 - [ ] 023: Session presets | Add preset cards to the breathing config screen: Beginner (3 rounds, 30 breaths, slow), Standard (3/30/medium), Deep Practice (4/40/medium), Morning Activation (3/30/fast) that auto-fill settings.
 - [ ] 024: Responsive polish and dark mode | Add dark mode support via Tailwind `dark:` classes and `prefers-color-scheme`, ensure all screens are responsive on mobile viewports (375px–428px), and add smooth page transitions.
 - [ ] 025: Final QA and build verification | Fix any TypeScript errors, ensure `npm run build` passes with zero warnings, test full breathing session flow end-to-end, verify PWA installability, and confirm offline functionality.
