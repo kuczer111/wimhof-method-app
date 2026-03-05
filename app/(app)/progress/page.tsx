@@ -205,6 +205,88 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
   );
 }
 
+function ColdStats({ sessions }: { sessions: ColdSession[] }) {
+  const { totalMinutes, streak, calendarDays } = useMemo(() => {
+    const totalSec = sessions.reduce((sum, s) => sum + s.duration, 0);
+    const totalMin = Math.round(totalSec / 60);
+
+    // Build set of session date strings (YYYY-MM-DD)
+    const sessionDates = new Set(
+      sessions.map((s) => new Date(s.date).toISOString().slice(0, 10))
+    );
+
+    // Calculate current streak (consecutive days ending today or yesterday)
+    let streakCount = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkDate = new Date(today);
+
+    // Allow streak to start from today or yesterday
+    if (!sessionDates.has(checkDate.toISOString().slice(0, 10))) {
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+    while (sessionDates.has(checkDate.toISOString().slice(0, 10))) {
+      streakCount++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    // Build 12-week (84 days) calendar grid
+    const days: { date: string; hasSession: boolean }[] = [];
+    for (let i = 83; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      days.push({ date: key, hasSession: sessionDates.has(key) });
+    }
+
+    return { totalMinutes: totalMin, streak: streakCount, calendarDays: days };
+  }, [sessions]);
+
+  if (sessions.length === 0) return null;
+
+  // Group days into weeks (columns of 7)
+  const weeks: typeof calendarDays[] = [];
+  for (let i = 0; i < calendarDays.length; i += 7) {
+    weeks.push(calendarDays.slice(i, i + 7));
+  }
+
+  return (
+    <Card>
+      <h3 className="mb-3 text-sm font-semibold text-gray-300">
+        Cold Exposure Stats
+      </h3>
+      <div className="mb-4 flex gap-4">
+        <div className="flex-1 rounded-lg bg-gray-900 p-3 text-center">
+          <p className="text-2xl font-bold text-cyan-400">{totalMinutes}</p>
+          <p className="text-xs text-gray-500">Total minutes</p>
+        </div>
+        <div className="flex-1 rounded-lg bg-gray-900 p-3 text-center">
+          <p className="text-2xl font-bold text-cyan-400">{streak}</p>
+          <p className="text-xs text-gray-500">Day streak</p>
+        </div>
+      </div>
+      <p className="mb-2 text-xs text-gray-500">Last 12 weeks</p>
+      <div className="flex gap-[3px]">
+        {weeks.map((week, wi) => (
+          <div key={wi} className="flex flex-col gap-[3px]">
+            {week.map((day) => (
+              <div
+                key={day.date}
+                title={day.date}
+                className={`h-3 w-3 rounded-sm ${
+                  day.hasSession
+                    ? "bg-cyan-500"
+                    : "bg-gray-800"
+                }`}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 function ColdList({ sessions }: { sessions: ColdSession[] }) {
   if (sessions.length === 0) {
     return (
@@ -286,7 +368,10 @@ export default function ProgressPage() {
             <BreathingList sessions={breathingSessions} />
           </div>
         ) : (
-          <ColdList sessions={coldSessions} />
+          <div className="flex flex-col gap-4">
+            <ColdStats sessions={coldSessions} />
+            <ColdList sessions={coldSessions} />
+          </div>
         )}
       </div>
     </div>
