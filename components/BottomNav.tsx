@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { strings } from "@/lib/i18n";
 
 const tabs = [
   {
     href: "/breathe",
-    label: "Breathe",
+    label: strings.nav.breathe,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-6 w-6">
         <circle cx="12" cy="12" r="10" />
@@ -16,7 +17,7 @@ const tabs = [
   },
   {
     href: "/cold",
-    label: "Cold",
+    label: strings.nav.cold,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-6 w-6">
         <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93 4.93 19.07" />
@@ -25,7 +26,7 @@ const tabs = [
   },
   {
     href: "/progress",
-    label: "Progress",
+    label: strings.nav.progress,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-6 w-6">
         <path d="M3 3v18h18" />
@@ -35,7 +36,7 @@ const tabs = [
   },
   {
     href: "/settings",
-    label: "Settings",
+    label: strings.nav.settings,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-6 w-6">
         <circle cx="12" cy="12" r="3" />

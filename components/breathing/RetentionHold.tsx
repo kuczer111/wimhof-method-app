@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { playHoldStartChime, playHoldEndChime } from "@/lib/audio";
 import { formatTimeMs } from "@/lib/format";
+import { strings } from "@/lib/i18n";
 
 interface RetentionHoldProps {
   onComplete: (durationMs: number) => void;
@@ -29,11 +30,11 @@ export default function RetentionHold({ onComplete }: RetentionHoldProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
       <p className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-        Retention Hold
+        {strings.breathing.retention.label}
       </p>
 
       <p className="text-center text-sm text-gray-500">
-        Exhale and hold your breath
+        {strings.breathing.retention.instruction}
       </p>
 
       <span className="text-8xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
@@ -45,7 +46,7 @@ export default function RetentionHold({ onComplete }: RetentionHoldProps) {
         onClick={handleTap}
         className="mt-4 rounded-full bg-sky-500 px-10 py-4 text-lg font-semibold text-white transition-colors active:bg-sky-600"
       >
-        I breathed
+        {strings.breathing.retention.tapButton}
       </button>
     </div>
   );

@@ -3,15 +3,9 @@
 import { useEffect, useState } from "react";
 import { getPreferences, savePreferences } from "@/lib/storage";
 import Button from "@/components/ui/Button";
+import { strings } from "@/lib/i18n";
 
-const SAFETY_RULES = [
-  "Never practice breathing exercises in or near water",
-  "Never practice while driving or operating machinery",
-  "Always sit or lie down — fainting is possible",
-  "Do not force the exhale hold beyond comfort",
-  "Contraindicated for epilepsy, cardiac conditions, high blood pressure, and pregnancy",
-  "Stop immediately if you feel unwell",
-];
+const SAFETY_RULES = strings.safety.onboarding.rules;
 
 export default function SafetyOnboarding() {
   const [visible, setVisible] = useState(false);
@@ -36,10 +30,10 @@ export default function SafetyOnboarding() {
         <div className="mb-4 text-center">
           <span className="text-3xl">&#9888;&#65039;</span>
           <h2 className="mt-2 text-xl font-bold text-gray-900 dark:text-white">
-            Important Safety Information
+            {strings.safety.onboarding.title}
           </h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Please read before continuing
+            {strings.safety.onboarding.subtitle}
           </p>
         </div>
 
@@ -57,7 +51,7 @@ export default function SafetyOnboarding() {
           className="w-full"
           onClick={handleAcknowledge}
         >
-          I Understand and Accept
+          {strings.safety.onboarding.acknowledge}
         </Button>
       </div>
     </div>

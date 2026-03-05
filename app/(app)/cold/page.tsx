@@ -5,10 +5,11 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { saveColdSession, generateId, type ColdSession } from "@/lib/storage";
 import { formatTime } from "@/lib/format";
+import { strings } from "@/lib/i18n";
 
 const DURATION_OPTIONS = [30, 60, 90, 120, 180];
 const COLD_TYPES: ColdSession["type"][] = ["shower", "bath", "outdoor", "other"];
-const FEELING_LABELS = ["Rough", "Meh", "OK", "Good", "Great"];
+const FEELING_LABELS = strings.common.feelingLabels;
 
 function formatLabel(seconds: number): string {
   if (seconds < 60) return `${seconds}s`;
@@ -162,7 +163,7 @@ export default function ColdPage() {
     const exceeded = elapsed > target;
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">Cold Shower</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">{strings.cold.heading}</h1>
 
         <div className="relative">
           <CircularProgress elapsed={elapsed} target={target} />
@@ -171,13 +172,13 @@ export default function ColdPage() {
               {formatTime(elapsed)}
             </span>
             <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {exceeded ? "Target reached!" : `Target: ${formatLabel(target)}`}
+              {exceeded ? strings.cold.targetReached : strings.cold.targetLabel(formatLabel(target))}
             </span>
           </div>
         </div>
 
         <Button size="lg" variant="danger" className="w-full max-w-xs" onClick={stop}>
-          Stop
+          {strings.cold.stop}
         </Button>
       </div>
     );
@@ -188,17 +189,17 @@ export default function ColdPage() {
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
         <p className="text-sm font-medium uppercase tracking-wider text-cyan-400">
-          Session Complete
+          {strings.cold.sessionComplete}
         </p>
         <p className="text-4xl font-bold text-gray-900 dark:text-gray-50">{formatTime(elapsed)}</p>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Target: {formatLabel(target)}
+          {strings.cold.targetLabel(formatLabel(target))}
         </p>
 
         {/* Type selector */}
         <div className="w-full max-w-xs">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            Type
+            {strings.cold.type}
           </h3>
           <div className="flex flex-wrap gap-2">
             {COLD_TYPES.map((t) => (
@@ -221,7 +222,7 @@ export default function ColdPage() {
         {/* Temperature (optional) */}
         <div className="w-full max-w-xs">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            Water Temperature (optional)
+            {strings.cold.waterTemperature}
           </h3>
           <div className="flex items-center gap-2">
             <input
@@ -229,17 +230,17 @@ export default function ColdPage() {
               inputMode="decimal"
               value={temperature}
               onChange={(e) => setTemperature(e.target.value)}
-              placeholder="e.g. 10"
+              placeholder={strings.cold.temperaturePlaceholder}
               className="w-full rounded-xl border border-gray-300 bg-gray-100/60 px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-100 dark:placeholder:text-gray-500"
             />
-            <span className="text-sm text-gray-500 dark:text-gray-400">°C</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{strings.cold.temperatureUnit}</span>
           </div>
         </div>
 
         {/* Rating */}
         <div className="w-full max-w-xs">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            How did it feel?
+            {strings.cold.howDidItFeel}
           </h3>
           <div className="flex justify-center gap-2">
             {FEELING_LABELS.map((label, i) => {
@@ -268,7 +269,7 @@ export default function ColdPage() {
         <div className="flex w-full max-w-xs flex-col gap-3 pt-2">
           {!saved && (
             <Button size="lg" className="w-full bg-cyan-500 active:bg-cyan-600" onClick={handleSave}>
-              Save Session
+              {strings.common.saveSession}
             </Button>
           )}
           <Button
@@ -277,7 +278,7 @@ export default function ColdPage() {
             className="w-full"
             onClick={handleDone}
           >
-            {saved ? "Done" : "Skip & Finish"}
+            {saved ? strings.common.done : strings.common.skipAndFinish}
           </Button>
         </div>
       </div>
@@ -287,11 +288,11 @@ export default function ColdPage() {
   // Config view
   return (
     <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">Cold Shower</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{strings.cold.heading}</h1>
 
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Target Duration
+          {strings.cold.targetDuration}
         </h2>
         <div className="flex flex-wrap gap-2">
           {DURATION_OPTIONS.map((d) => (
@@ -312,7 +313,7 @@ export default function ColdPage() {
       </Card>
 
       <Button size="lg" className="mt-2 w-full bg-cyan-500 active:bg-cyan-600" onClick={start}>
-        Start Timer
+        {strings.cold.startTimer}
       </Button>
     </div>
   );

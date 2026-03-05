@@ -9,6 +9,7 @@ import {
   type BreathingSession,
 } from "@/lib/storage";
 import { formatTimeMs } from "@/lib/format";
+import { strings } from "@/lib/i18n";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -37,7 +38,7 @@ function getPersonalBests(): Map<number, number> {
   return bests;
 }
 
-const FEELING_LABELS = ["Rough", "Meh", "OK", "Good", "Great"];
+const FEELING_LABELS = strings.common.feelingLabels;
 
 export default function SessionComplete({
   rounds,
@@ -89,9 +90,9 @@ export default function SessionComplete({
   return (
     <div className="flex flex-col items-center gap-6 px-4 pt-12 pb-24">
       <p className="text-sm font-medium uppercase tracking-wider text-emerald-500 dark:text-emerald-400">
-        Session Complete
+        {strings.breathing.sessionComplete.status}
       </p>
-      <p className="text-4xl font-bold text-gray-900 dark:text-gray-50">Well done!</p>
+      <p className="text-4xl font-bold text-gray-900 dark:text-gray-50">{strings.breathing.sessionComplete.message}</p>
 
       {/* Summary stats */}
       <div className="flex gap-6 text-center">
@@ -99,14 +100,14 @@ export default function SessionComplete({
           <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
             {formatTimeMs(totalDurationMs)}
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Total Time</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{strings.breathing.sessionComplete.totalTime}</p>
         </div>
         <div>
           <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
             {rounds}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Round{rounds > 1 ? "s" : ""}
+            {strings.breathing.sessionComplete.roundLabel(rounds)}
           </p>
         </div>
       </div>
@@ -115,19 +116,19 @@ export default function SessionComplete({
       {retentionTimes.length > 0 && (
         <div className="w-full max-w-xs rounded-2xl bg-gray-100 p-4 dark:bg-gray-800/60">
           <h3 className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            Retention Times
+            {strings.breathing.sessionComplete.retentionTimes}
           </h3>
           <ul className="flex flex-col gap-2">
             {retentionTimes.map((ms, i) => (
               <li key={i} className="flex items-center justify-between text-sm">
-                <span className="text-gray-500 dark:text-gray-400">Round {i + 1}</span>
+                <span className="text-gray-500 dark:text-gray-400">{strings.breathing.sessionComplete.roundNumber(i + 1)}</span>
                 <span className="flex items-center gap-2">
                   <span className="font-mono font-semibold tabular-nums text-gray-900 dark:text-gray-50">
                     {formatTimeMs(ms)}
                   </span>
                   {newPersonalBests.has(i) && (
                     <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
-                      PB
+                      {strings.breathing.sessionComplete.personalBest}
                     </span>
                   )}
                 </span>
@@ -140,7 +141,7 @@ export default function SessionComplete({
       {/* Feeling scale */}
       <div className="w-full max-w-xs">
         <h3 className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          How do you feel?
+          {strings.breathing.sessionComplete.howDoYouFeel}
         </h3>
         <div className="flex justify-center gap-2">
           {FEELING_LABELS.map((label, i) => {
@@ -169,7 +170,7 @@ export default function SessionComplete({
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Add a note (optional)..."
+          placeholder={strings.breathing.sessionComplete.notePlaceholder}
           rows={2}
           className="w-full resize-none rounded-xl border border-gray-300 bg-gray-100/60 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-100 dark:placeholder:text-gray-500"
         />
@@ -179,7 +180,7 @@ export default function SessionComplete({
       <div className="flex w-full max-w-xs flex-col gap-3 pt-2">
         {!saved && (
           <Button size="lg" className="w-full" onClick={handleSave}>
-            Save Session
+            {strings.common.saveSession}
           </Button>
         )}
         <Button
@@ -188,7 +189,7 @@ export default function SessionComplete({
           className="w-full"
           onClick={handleDone}
         >
-          {saved ? "Done" : "Skip & Finish"}
+          {saved ? strings.common.done : strings.common.skipAndFinish}
         </Button>
       </div>
     </div>

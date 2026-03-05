@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import BreathingCircle from "./BreathingCircle";
 import { playInhaleTone, playExhaleTone } from "@/lib/audio";
+import { strings } from "@/lib/i18n";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -68,7 +69,7 @@ export default function PowerBreaths({
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
       <p className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-        Power Breaths
+        {strings.breathing.powerBreaths.label}
       </p>
 
       <BreathingCircle pace={pace} isActive />
@@ -78,12 +79,12 @@ export default function PowerBreaths({
           {currentBreath}
         </span>
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          of {breathCount}
+          {strings.breathing.powerBreaths.breathCounter(breathCount)}
         </span>
       </div>
 
       <p className="text-center text-sm text-gray-500">
-        Breathe in deeply, let go
+        {strings.breathing.powerBreaths.instruction}
       </p>
     </div>
   );

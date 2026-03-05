@@ -19,6 +19,7 @@ import {
   ColdSession,
 } from "@/lib/storage";
 import { formatDuration } from "@/lib/format";
+import { strings } from "@/lib/i18n";
 
 type Tab = "breathing" | "cold";
 
@@ -96,14 +97,14 @@ function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
     <Card>
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-          Avg. Retention Per Session
+          {strings.progress.chart.title}
         </h3>
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <span className="flex items-center gap-1">
-            <span className="inline-block h-0.5 w-3 bg-blue-400" /> avg
+            <span className="inline-block h-0.5 w-3 bg-blue-400" /> {strings.progress.chart.avgLegend}
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block h-2 w-2 rounded-full bg-yellow-400" /> PR
+            <span className="inline-block h-2 w-2 rounded-full bg-yellow-400" /> {strings.progress.chart.prLegend}
           </span>
         </div>
       </div>
@@ -129,7 +130,7 @@ function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
               fontSize: 12,
             }}
             labelStyle={{ color: "#9ca3af" }}
-            formatter={(value: number) => [`${value}s`, "Avg retention"]}
+            formatter={(value: number) => [`${value}s`, strings.progress.chart.tooltipLabel]}
           />
           <ReferenceLine
             y={avg}
@@ -148,8 +149,8 @@ function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
         </LineChart>
       </ResponsiveContainer>
       <div className="mt-1 flex justify-between text-xs text-gray-500">
-        <span>Overall avg: {avg}s</span>
-        <span>PR: {prValue}s</span>
+        <span>{strings.progress.chart.overallAvg(avg)}</span>
+        <span>{strings.progress.chart.pr(prValue)}</span>
       </div>
     </Card>
   );
@@ -159,7 +160,7 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
   if (sessions.length === 0) {
     return (
       <p className="mt-8 text-center text-gray-500">
-        No breathing sessions yet. Start one from the Breathe tab.
+        {strings.progress.breathingEmpty}
       </p>
     );
   }
@@ -172,7 +173,7 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(s.date)}</p>
               <p className="mt-1 font-semibold">
-                {s.rounds} round{s.rounds !== 1 ? "s" : ""}
+                {strings.progress.roundLabel(s.rounds)}
               </p>
             </div>
             {s.feelingRating && (
@@ -192,7 +193,7 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
             ))}
           </div>
           <p className="mt-2 text-xs text-gray-500">
-            Total: {formatDuration(s.totalDuration)}
+            {strings.progress.totalLabel(formatDuration(s.totalDuration))}
           </p>
         </Card>
       ))}
@@ -248,19 +249,19 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
   return (
     <Card>
       <h3 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">
-        Cold Exposure Stats
+        {strings.progress.coldStats.title}
       </h3>
       <div className="mb-4 flex gap-4">
         <div className="flex-1 rounded-lg bg-gray-100 p-3 text-center dark:bg-gray-900">
           <p className="text-2xl font-bold text-cyan-400">{totalMinutes}</p>
-          <p className="text-xs text-gray-500">Total minutes</p>
+          <p className="text-xs text-gray-500">{strings.progress.coldStats.totalMinutes}</p>
         </div>
         <div className="flex-1 rounded-lg bg-gray-100 p-3 text-center dark:bg-gray-900">
           <p className="text-2xl font-bold text-cyan-400">{streak}</p>
-          <p className="text-xs text-gray-500">Day streak</p>
+          <p className="text-xs text-gray-500">{strings.progress.coldStats.dayStreak}</p>
         </div>
       </div>
-      <p className="mb-2 text-xs text-gray-500">Last 12 weeks</p>
+      <p className="mb-2 text-xs text-gray-500">{strings.progress.coldStats.last12Weeks}</p>
       <div className="flex gap-[3px]">
         {weeks.map((week, wi) => (
           <div key={wi} className="flex flex-col gap-[3px]">
@@ -286,7 +287,7 @@ function ColdList({ sessions }: { sessions: ColdSession[] }) {
   if (sessions.length === 0) {
     return (
       <p className="mt-8 text-center text-gray-500">
-        No cold sessions yet. Start one from the Cold tab.
+        {strings.progress.coldEmpty}
       </p>
     );
   }
@@ -305,9 +306,9 @@ function ColdList({ sessions }: { sessions: ColdSession[] }) {
             </span>
           </div>
           <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
-            <span>Target: {formatDuration(s.targetDuration)}</span>
-            {s.temperature != null && <span>{s.temperature}°C</span>}
-            {s.rating && <span>Rating: {s.rating}/5</span>}
+            <span>{strings.progress.coldTarget(formatDuration(s.targetDuration))}</span>
+            {s.temperature != null && <span>{s.temperature}{strings.cold.temperatureUnit}</span>}
+            {s.rating && <span>{strings.progress.coldRating(s.rating)}</span>}
           </div>
         </Card>
       ))}
@@ -335,8 +336,8 @@ export default function ProgressPage() {
 
   return (
     <div className="flex flex-col px-4 pb-24 pt-8">
-      <h1 className="text-2xl font-bold">Progress</h1>
-      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Your session history</p>
+      <h1 className="text-2xl font-bold">{strings.progress.heading}</h1>
+      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{strings.progress.subtitle}</p>
 
       {/* Tabs */}
       <div className="mt-6 flex rounded-xl bg-gray-100 p-1 dark:bg-gray-900">

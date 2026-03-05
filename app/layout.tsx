@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import { strings } from "@/lib/i18n";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Wim Hof Method",
-  description: "Guided Wim Hof Method breathing and cold exposure tracker",
+  title: strings.app.title,
+  description: strings.app.description,
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "WHM",
+    title: strings.app.shortTitle,
   },
 };
 

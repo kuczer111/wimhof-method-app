@@ -7,22 +7,23 @@ import type { SessionConfig } from "@/components/breathing/SessionRunner";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import OptionButton from "@/components/ui/OptionButton";
+import { strings } from "@/lib/i18n";
 
 type Pace = "slow" | "medium" | "fast";
 
 const ROUND_OPTIONS = [1, 2, 3, 4, 5];
 const BREATH_OPTIONS = [20, 30, 40];
 const PACE_OPTIONS: { value: Pace; label: string }[] = [
-  { value: "slow", label: "Slow" },
-  { value: "medium", label: "Medium" },
-  { value: "fast", label: "Fast" },
+  { value: "slow", label: strings.breathe.paceOptions.slow },
+  { value: "medium", label: strings.breathe.paceOptions.medium },
+  { value: "fast", label: strings.breathe.paceOptions.fast },
 ];
 
 const PRESETS: { name: string; description: string; config: SessionConfig }[] = [
-  { name: "Beginner", description: "3 rounds · 30 breaths · slow", config: { rounds: 3, breathsPerRound: 30, pace: "slow" } },
-  { name: "Standard", description: "3 rounds · 30 breaths · medium", config: { rounds: 3, breathsPerRound: 30, pace: "medium" } },
-  { name: "Deep Practice", description: "4 rounds · 40 breaths · medium", config: { rounds: 4, breathsPerRound: 40, pace: "medium" } },
-  { name: "Morning Activation", description: "3 rounds · 30 breaths · fast", config: { rounds: 3, breathsPerRound: 30, pace: "fast" } },
+  { name: strings.breathe.presets.beginner.name, description: strings.breathe.presets.beginner.description, config: { rounds: 3, breathsPerRound: 30, pace: "slow" } },
+  { name: strings.breathe.presets.standard.name, description: strings.breathe.presets.standard.description, config: { rounds: 3, breathsPerRound: 30, pace: "medium" } },
+  { name: strings.breathe.presets.deepPractice.name, description: strings.breathe.presets.deepPractice.description, config: { rounds: 4, breathsPerRound: 40, pace: "medium" } },
+  { name: strings.breathe.presets.morningActivation.name, description: strings.breathe.presets.morningActivation.description, config: { rounds: 3, breathsPerRound: 30, pace: "fast" } },
 ];
 
 export default function BreathePage() {
@@ -49,7 +50,7 @@ export default function BreathePage() {
 
   return (
     <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">Breathing Session</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{strings.breathe.heading}</h1>
 
       <div className="grid grid-cols-2 gap-3">
         {PRESETS.map((preset) => {
@@ -81,7 +82,7 @@ export default function BreathePage() {
 
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Rounds
+          {strings.breathe.rounds}
         </h2>
         <div className="flex gap-2">
           {ROUND_OPTIONS.map((n) => (
@@ -98,7 +99,7 @@ export default function BreathePage() {
 
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Breaths per Round
+          {strings.breathe.breathsPerRound}
         </h2>
         <div className="flex gap-2">
           {BREATH_OPTIONS.map((n) => (
@@ -115,7 +116,7 @@ export default function BreathePage() {
 
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Pace
+          {strings.breathe.pace}
         </h2>
         <div className="flex gap-2">
           {PACE_OPTIONS.map((p) => (
@@ -131,7 +132,7 @@ export default function BreathePage() {
       </Card>
 
       <Button size="lg" className="mt-2 w-full" onClick={() => setRunning(true)}>
-        Start Session
+        {strings.breathe.startSession}
       </Button>
     </div>
   );

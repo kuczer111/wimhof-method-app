@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { playCountdownBeep, playCountdownFinalBeep } from "@/lib/audio";
+import { strings } from "@/lib/i18n";
 
 const RECOVERY_DURATION_S = 15;
 
@@ -42,11 +43,11 @@ export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
       <p className="text-sm font-medium uppercase tracking-wider text-emerald-500 dark:text-emerald-400">
-        Recovery Breath
+        {strings.breathing.recovery.label}
       </p>
 
       <p className="text-center text-sm text-emerald-600/70 dark:text-emerald-300/70">
-        Take a deep breath in and hold
+        {strings.breathing.recovery.instruction}
       </p>
 
       <span className="text-8xl font-bold tabular-nums text-emerald-500 dark:text-emerald-300">

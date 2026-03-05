@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { unlockAudio, disposeAudio } from "@/lib/audio";
+import { strings } from "@/lib/i18n";
 import PowerBreaths from "./PowerBreaths";
 import RetentionHold from "./RetentionHold";
 import RecoveryBreath from "./RecoveryBreath";
@@ -57,7 +58,7 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
     return (
       <div>
         <p className="pt-4 text-center text-xs font-medium text-gray-500">
-          Round {currentRound} of {config.rounds}
+          {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <PowerBreaths
           breathCount={config.breathsPerRound}
@@ -72,7 +73,7 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
     return (
       <div>
         <p className="pt-4 text-center text-xs font-medium text-gray-500">
-          Round {currentRound} of {config.rounds}
+          {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <RetentionHold onComplete={handleRetentionComplete} />
       </div>
@@ -83,7 +84,7 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
     return (
       <div>
         <p className="pt-4 text-center text-xs font-medium text-gray-500">
-          Round {currentRound} of {config.rounds}
+          {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <RecoveryBreath onComplete={handleRecoveryComplete} />
       </div>

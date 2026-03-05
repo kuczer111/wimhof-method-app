@@ -3,13 +3,9 @@
 import { useState } from "react";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import { strings } from "@/lib/i18n";
 
-const SAFETY_POINTS = [
-  "Sit or lie down in a safe place",
-  "Never practice in or near water",
-  "Never practice while driving",
-  "Stop if you feel unwell",
-];
+const SAFETY_POINTS = strings.safety.reminder.points;
 
 interface SafetyReminderProps {
   onProceed: () => void;
@@ -24,7 +20,7 @@ export default function SafetyReminder({ onProceed }: SafetyReminderProps) {
   }
 
   return (
-    <Modal open={open} onClose={() => setOpen(false)} title="Before You Begin">
+    <Modal open={open} onClose={() => setOpen(false)} title={strings.safety.reminder.title}>
       <ul className="mb-6 space-y-2">
         {SAFETY_POINTS.map((point) => (
           <li key={point} className="flex gap-2 text-sm text-gray-600 dark:text-gray-300">
@@ -34,7 +30,7 @@ export default function SafetyReminder({ onProceed }: SafetyReminderProps) {
         ))}
       </ul>
       <Button size="lg" className="w-full" onClick={handleProceed}>
-        I Understand
+        {strings.safety.reminder.acknowledge}
       </Button>
     </Modal>
   );

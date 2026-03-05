@@ -11,29 +11,30 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Modal from "@/components/ui/Modal";
 import OptionButton from "@/components/ui/OptionButton";
+import { strings } from "@/lib/i18n";
 
 type AudioMode = UserPreferences["audioMode"];
 type Pace = UserPreferences["defaultPace"];
 
 const AUDIO_OPTIONS: { value: AudioMode; label: string }[] = [
-  { value: "tone", label: "Tones" },
-  { value: "silent", label: "Silent" },
+  { value: "tone", label: strings.settings.audioOptions.tones },
+  { value: "silent", label: strings.settings.audioOptions.silent },
 ];
 
 const ROUND_OPTIONS = [1, 2, 3, 4, 5];
 const BREATH_OPTIONS = [20, 30, 40] as const;
 const PACE_OPTIONS: { value: Pace; label: string }[] = [
-  { value: "slow", label: "Slow" },
-  { value: "medium", label: "Medium" },
-  { value: "fast", label: "Fast" },
+  { value: "slow", label: strings.breathe.paceOptions.slow },
+  { value: "medium", label: strings.breathe.paceOptions.medium },
+  { value: "fast", label: strings.breathe.paceOptions.fast },
 ];
 
 const COLD_TARGET_OPTIONS = [
-  { value: 30, label: "30s" },
-  { value: 60, label: "1 min" },
-  { value: 90, label: "1.5 min" },
-  { value: 120, label: "2 min" },
-  { value: 180, label: "3 min" },
+  { value: 30, label: strings.settings.coldTargetOptions["30"] },
+  { value: 60, label: strings.settings.coldTargetOptions["60"] },
+  { value: 90, label: strings.settings.coldTargetOptions["90"] },
+  { value: 120, label: strings.settings.coldTargetOptions["120"] },
+  { value: 180, label: strings.settings.coldTargetOptions["180"] },
 ];
 
 export default function SettingsPage() {
@@ -63,12 +64,12 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6 px-4 pb-28 pt-12">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="text-2xl font-bold">{strings.settings.heading}</h1>
 
       {/* Audio Mode */}
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Audio Mode
+          {strings.settings.audioMode}
         </h2>
         <div className="flex gap-2">
           {AUDIO_OPTIONS.map((opt) => (
@@ -86,12 +87,12 @@ export default function SettingsPage() {
       {/* Default Breathing Config */}
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Default Breathing Config
+          {strings.settings.defaultBreathingConfig}
         </h2>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">Rounds</label>
+            <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">{strings.settings.rounds}</label>
             <div className="flex gap-2">
               {ROUND_OPTIONS.map((n) => (
                 <OptionButton
@@ -107,7 +108,7 @@ export default function SettingsPage() {
 
           <div>
             <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">
-              Breaths per round
+              {strings.settings.breathsPerRound}
             </label>
             <div className="flex gap-2">
               {BREATH_OPTIONS.map((n) => (
@@ -123,7 +124,7 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">Pace</label>
+            <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">{strings.settings.pace}</label>
             <div className="flex gap-2">
               {PACE_OPTIONS.map((opt) => (
                 <OptionButton
@@ -142,7 +143,7 @@ export default function SettingsPage() {
       {/* Cold Target Default */}
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Default Cold Target
+          {strings.settings.defaultColdTarget}
         </h2>
         <div className="flex flex-wrap gap-2">
           {COLD_TARGET_OPTIONS.map((opt) => (
@@ -160,35 +161,34 @@ export default function SettingsPage() {
       {/* Clear Data */}
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-          Data
+          {strings.settings.data}
         </h2>
         {cleared ? (
-          <p className="text-sm text-green-600 dark:text-green-400">All data cleared.</p>
+          <p className="text-sm text-green-600 dark:text-green-400">{strings.settings.allDataCleared}</p>
         ) : (
           <Button
             variant="danger"
             size="sm"
             onClick={() => setShowClearConfirm(true)}
           >
-            Clear All Data
+            {strings.settings.clearAllData}
           </Button>
         )}
       </Card>
 
       {/* App Version */}
       <p className="text-center text-xs text-gray-600">
-        Wim Hof Method App v0.1.0
+        {strings.app.version}
       </p>
 
       {/* Clear Confirmation Modal */}
       <Modal
         open={showClearConfirm}
         onClose={() => setShowClearConfirm(false)}
-        title="Clear All Data?"
+        title={strings.settings.clearConfirm.title}
       >
         <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
-          This will permanently delete all your breathing sessions, cold
-          sessions, and preferences. This action cannot be undone.
+          {strings.settings.clearConfirm.description}
         </p>
         <div className="flex gap-3">
           <Button
@@ -197,7 +197,7 @@ export default function SettingsPage() {
             className="flex-1"
             onClick={() => setShowClearConfirm(false)}
           >
-            Cancel
+            {strings.settings.clearConfirm.cancel}
           </Button>
           <Button
             variant="danger"
@@ -205,7 +205,7 @@ export default function SettingsPage() {
             className="flex-1"
             onClick={handleClearData}
           >
-            Clear Data
+            {strings.settings.clearConfirm.confirm}
           </Button>
         </div>
       </Modal>
