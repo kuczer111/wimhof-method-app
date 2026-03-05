@@ -24,4 +24,4 @@
 - [x] 022: Settings page | Build `app/settings/page.tsx` with audio mode toggle (tones/silent), default breathing config, cold target default, clear data button with confirmation, and app version display.
 - [x] 023: Session presets | Add preset cards to the breathing config screen: Beginner (3 rounds, 30 breaths, slow), Standard (3/30/medium), Deep Practice (4/40/medium), Morning Activation (3/30/fast) that auto-fill settings.
 - [x] 024: Responsive polish and dark mode | Add dark mode support via Tailwind `dark:` classes and `prefers-color-scheme`, ensure all screens are responsive on mobile viewports (375px–428px), and add smooth page transitions.
-- [ ] 025: Final QA and build verification | Fix any TypeScript errors, ensure `npm run build` passes with zero warnings, test full breathing session flow end-to-end, verify PWA installability, and confirm offline functionality.
+- [x] 025: Final QA and build verification | Fix any TypeScript errors, ensure `npm run build` passes with zero warnings, test full breathing session flow end-to-end, verify PWA installability, and confirm offline functionality.
