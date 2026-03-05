@@ -1,10 +1,27 @@
 {
+  "name": "wimhof-method-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
-    "framer-motion": "^12.35.0",
-    "next-pwa": "^2.0.2",
-    "recharts": "^3.7.0"
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "framer-motion": "^11.0.0",
+    "next-pwa": "^5.6.0",
+    "recharts": "^2.12.0"
   },
   "devDependencies": {
-    "@types/node": "^25.3.3"
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "14.2.5"
   }
 }

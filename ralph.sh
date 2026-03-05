@@ -5,6 +5,9 @@ NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
 # ─────────────────────────────────────────────
 
 notify() {
+  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
+    return
+  fi
   osascript -e "display notification \"$1\" with title \"Ralph 🤖\""
 }
 
