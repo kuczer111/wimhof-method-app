@@ -74,8 +74,8 @@ export default function PowerBreaths({
 
       <BreathingCircle pace={pace} isActive />
 
-      <div className="flex flex-col items-center gap-1">
-        <span className="text-7xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
+      <div className="flex flex-col items-center gap-1" role="status" aria-label={`Breath ${currentBreath} of ${breathCount}`}>
+        <span className="text-7xl font-bold tabular-nums text-gray-900 dark:text-gray-50" aria-hidden="true">
           {currentBreath}
         </span>
         <span className="text-sm text-gray-500 dark:text-gray-400">

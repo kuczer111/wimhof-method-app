@@ -23,6 +23,13 @@ export type { SessionConfig } from "@/lib/storage";
 
 type Phase = "power-breaths" | "retention" | "recovery" | "complete";
 
+const PHASE_ANNOUNCEMENTS: Record<Phase, string> = {
+  "power-breaths": "Power breaths phase. Breathe in and out.",
+  retention: "Retention phase. Hold your breath.",
+  recovery: "Recovery breath. Breathe in and hold.",
+  complete: "Session complete.",
+};
+
 interface SessionRunnerProps {
   config: SessionConfig;
   onFinish: () => void;
@@ -119,9 +126,12 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     );
   }
 
+  const phaseAnnouncement = `Round ${currentRound} of ${config.rounds}. ${PHASE_ANNOUNCEMENTS[phase]}`;
+
   if (phase === "power-breaths") {
     return (
       <div>
+        <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
         <p className="pt-4 text-center text-xs font-medium text-gray-500">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -149,6 +159,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     }
     return (
       <div>
+        <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
         <p className="pt-4 text-center text-xs font-medium text-gray-500">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -165,6 +176,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
   if (phase === "recovery") {
     return (
       <div>
+        <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
         <p className="pt-4 text-center text-xs font-medium text-gray-500">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -175,12 +187,15 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
 
   // complete
   return (
-    <SessionComplete
-      config={config}
-      retentionTimes={retentionTimes}
-      totalDurationMs={totalDurationMs}
-      onDone={onFinish}
-      isFirstSession={isFirstSession}
-    />
+    <>
+      <div className="sr-only" aria-live="assertive" role="status">{PHASE_ANNOUNCEMENTS.complete}</div>
+      <SessionComplete
+        config={config}
+        retentionTimes={retentionTimes}
+        totalDurationMs={totalDurationMs}
+        onDone={onFinish}
+        isFirstSession={isFirstSession}
+      />
+    </>
   );
 }

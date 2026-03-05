@@ -58,6 +58,9 @@ export default function RetentionHold({
       </p>
 
       <span
+        role="timer"
+        aria-label="Retention hold time"
+        aria-live="off"
         className={`text-8xl font-bold tabular-nums transition-colors ${
           isPastPb
             ? "text-amber-500 dark:text-amber-400"
@@ -91,7 +94,14 @@ export default function RetentionHold({
                   : ""}
             </span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <div
+            role="progressbar"
+            aria-label="Personal best progress"
+            aria-valuenow={Math.round(pbProgress * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
+          >
             <div
               className={`h-full rounded-full transition-all duration-300 ${
                 isPastPb
@@ -109,6 +119,7 @@ export default function RetentionHold({
       <button
         type="button"
         onClick={handleTap}
+        aria-label="End breath hold"
         className="mt-4 rounded-full bg-sky-500 px-10 py-4 text-lg font-semibold text-white transition-colors active:bg-sky-600"
       >
         {strings.breathing.retention.tapButton}

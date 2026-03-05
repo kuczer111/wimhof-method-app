@@ -175,6 +175,8 @@ export default function SessionComplete({
               <button
                 key={value}
                 onClick={() => setFeelingRating(value)}
+                aria-pressed={isSelected}
+                aria-label={`${value} - ${label}`}
                 className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
                   isSelected
                     ? "bg-sky-500 text-white"
@@ -194,6 +196,7 @@ export default function SessionComplete({
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
+          aria-label="Session note"
           placeholder={strings.breathing.sessionComplete.notePlaceholder}
           rows={2}
           className="w-full resize-none rounded-xl border border-gray-300 bg-gray-100/60 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-100 dark:placeholder:text-gray-500"

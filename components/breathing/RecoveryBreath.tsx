@@ -50,11 +50,18 @@ export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
         {strings.breathing.recovery.instruction}
       </p>
 
-      <span className="text-8xl font-bold tabular-nums text-emerald-500 dark:text-emerald-300">
+      <span role="timer" aria-label={`Recovery countdown: ${remaining} seconds`} className="text-8xl font-bold tabular-nums text-emerald-500 dark:text-emerald-300">
         {remaining}
       </span>
 
-      <div className="h-2 w-48 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-900">
+      <div
+        role="progressbar"
+        aria-label="Recovery time remaining"
+        aria-valuenow={remaining}
+        aria-valuemin={0}
+        aria-valuemax={RECOVERY_DURATION_S}
+        className="h-2 w-48 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-900"
+      >
         <div
           className="h-full rounded-full bg-emerald-400 transition-all duration-200 ease-linear"
           style={{

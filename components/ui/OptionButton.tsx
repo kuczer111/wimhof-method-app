@@ -4,18 +4,22 @@ export default function OptionButton({
   children,
   className,
   size = "md",
+  "aria-label": ariaLabel,
 }: {
   selected: boolean;
   onClick: () => void;
   children: React.ReactNode;
   className?: string;
   size?: "sm" | "md";
+  "aria-label"?: string;
 }) {
   const sizeClasses = size === "sm" ? "rounded-lg px-3 py-1.5 text-xs" : "rounded-xl px-4 py-2.5 text-sm";
   return (
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={selected}
+      aria-label={ariaLabel}
       className={`${sizeClasses} font-medium transition-colors ${
         selected
           ? "bg-sky-500 text-white"

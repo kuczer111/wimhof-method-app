@@ -148,6 +148,8 @@ function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setMode("avg")}
+            aria-pressed={mode === "avg"}
+            aria-label="Show average retention"
             className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${
               mode === "avg"
                 ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
@@ -158,6 +160,8 @@ function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
           </button>
           <button
             onClick={() => setMode("rounds")}
+            aria-pressed={mode === "rounds"}
+            aria-label="Show per-round breakdown"
             className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${
               mode === "rounds"
                 ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"
@@ -199,8 +203,14 @@ function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
         )}
       </div>
 
+      <div className="sr-only">
+        Retention chart showing {data.length} sessions. Overall average: {avg} seconds. Personal record: {prValue} seconds.
+        {mode === "rounds"
+          ? ` Showing per-round breakdown for up to ${maxRounds} rounds.`
+          : ` Showing average retention with trend line and weekly averages.`}
+      </div>
       <ResponsiveContainer width="100%" height={200}>
-        <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
+        <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }} role="img" aria-label={`Retention chart: ${data.length} sessions, average ${avg}s, PR ${prValue}s`}>
           <XAxis
             dataKey="label"
             tick={{ fontSize: 10, fill: "#9ca3af" }}
@@ -314,7 +324,7 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
               </p>
             </div>
             {s.feelingRating && (
-              <span className="text-lg">
+              <span className="text-lg" aria-label={`Feeling rating: ${s.feelingRating} out of 5`}>
                 {"*".repeat(s.feelingRating)}
               </span>
             )}

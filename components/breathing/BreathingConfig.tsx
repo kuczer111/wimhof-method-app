@@ -94,6 +94,8 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
               key={preset.name}
               type="button"
               onClick={() => onConfigChange(preset.config)}
+              aria-pressed={isActive}
+              aria-label={`${preset.name} preset: ${preset.description}`}
               className={`rounded-2xl border p-3 text-left transition-colors ${
                 isActive
                   ? "border-sky-500 bg-sky-500/10"

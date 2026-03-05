@@ -117,6 +117,7 @@ export default function SettingsPage() {
             type="button"
             role="switch"
             aria-checked={prefs.wakeLockEnabled}
+            aria-label="Screen wake lock"
             onClick={() => update({ wakeLockEnabled: !prefs.wakeLockEnabled })}
             className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${
               prefs.wakeLockEnabled
@@ -127,6 +128,38 @@ export default function SettingsPage() {
             <span
               className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
                 prefs.wakeLockEnabled ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
+        </div>
+      </Card>
+
+      {/* Reduced Motion */}
+      <Card>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Reduced Motion
+            </h2>
+            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+              Replace breathing animation with a simple progress bar
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={prefs.reducedMotion}
+            aria-label="Reduced motion"
+            onClick={() => update({ reducedMotion: !prefs.reducedMotion })}
+            className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${
+              prefs.reducedMotion
+                ? "bg-cyan-500"
+                : "bg-gray-300 dark:bg-gray-700"
+            }`}
+          >
+            <span
+              className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                prefs.reducedMotion ? "translate-x-6" : "translate-x-1"
               }`}
             />
           </button>
@@ -148,6 +181,7 @@ export default function SettingsPage() {
             type="button"
             role="switch"
             aria-checked={reminder.enabled}
+            aria-label="Daily reminder"
             onClick={async () => {
               if (!reminder.enabled) {
                 const perm = await requestNotificationPermission();

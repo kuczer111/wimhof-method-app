@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 
 type Pace = "slow" | "medium" | "fast";
 
@@ -15,15 +17,65 @@ const paceDurations: Record<Pace, number> = {
   fast: 1.5,
 };
 
+function BreathingProgressBar({ pace, isActive }: { pace: Pace; isActive: boolean }) {
+  const duration = paceDurations[pace] * 1000;
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isActive) {
+      setProgress(0);
+      return;
+    }
+    let animFrame: number;
+    let start = performance.now();
+    const tick = (now: number) => {
+      const elapsed = (now - start) % duration;
+      setProgress(elapsed / duration);
+      animFrame = requestAnimationFrame(tick);
+    };
+    animFrame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animFrame);
+  }, [isActive, duration]);
+
+  return (
+    <div className="flex items-center justify-center" role="img" aria-label="Breathing pace indicator">
+      <div className="w-48">
+        <div
+          role="progressbar"
+          aria-label="Breathing cycle progress"
+          aria-valuenow={Math.round(progress * 100)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          className="h-3 w-full overflow-hidden rounded-full bg-sky-200 dark:bg-sky-900"
+        >
+          <div
+            className="h-full rounded-full bg-sky-500 transition-none"
+            style={{ width: `${(progress <= 0.5 ? progress * 2 : 2 - progress * 2) * 100}%` }}
+          />
+        </div>
+        <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
+          {progress <= 0.5 ? "Inhale" : "Exhale"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function BreathingCircle({
   pace,
   isActive = true,
 }: BreathingCircleProps) {
+  const reducedMotion = useReducedMotion();
   const duration = paceDurations[pace];
 
+  if (reducedMotion) {
+    return <BreathingProgressBar pace={pace} isActive={isActive} />;
+  }
+
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center" role="img" aria-label="Breathing animation guide">
       <motion.div
+        aria-hidden="true"
         className="rounded-full bg-sky-500/30 flex items-center justify-center"
         style={{ width: 200, height: 200 }}
         animate={

@@ -219,7 +219,14 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
           </h3>
           <span className="text-2xl font-bold">{consistency}%</span>
         </div>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+        <div
+          role="progressbar"
+          aria-label="Weekly consistency"
+          aria-valuenow={consistency}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800"
+        >
           <div
             className="h-full rounded-full bg-blue-500 transition-all"
             style={{ width: `${Math.min(consistency, 100)}%` }}

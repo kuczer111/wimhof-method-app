@@ -49,6 +49,7 @@ export interface UserPreferences {
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
   wakeLockEnabled: boolean;
+  reducedMotion: boolean;
   firstSessionComplete?: boolean;
   profileComplete?: boolean;
   primaryGoal?: PrimaryGoal;
@@ -173,6 +174,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   safetyAcknowledged: false,
   onboardingComplete: false,
   wakeLockEnabled: true,
+  reducedMotion: false,
 };
 
 // --- In-memory cache ---
