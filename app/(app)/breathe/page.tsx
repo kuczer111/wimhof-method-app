@@ -1,20 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import SafetyReminder from "@/components/SafetyReminder";
-import PowerBreaths from "@/components/breathing/PowerBreaths";
-import RecoveryBreath from "@/components/breathing/RecoveryBreath";
-import RetentionHold from "@/components/breathing/RetentionHold";
+import SessionRunner from "@/components/breathing/SessionRunner";
+import type { SessionConfig } from "@/components/breathing/SessionRunner";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 
 type Pace = "slow" | "medium" | "fast";
-
-export interface BreathingConfig {
-  rounds: number;
-  breathsPerRound: number;
-  pace: Pace;
-}
 
 const ROUND_OPTIONS = [1, 2, 3, 4, 5];
 const BREATH_OPTIONS = [20, 30, 40];
@@ -48,79 +41,25 @@ function OptionButton({
   );
 }
 
-type SessionPhase = "config" | "power-breaths" | "retention" | "recovery" | "complete";
-
 export default function BreathePage() {
   const [safetyDismissed, setSafetyDismissed] = useState(false);
-  const [phase, setPhase] = useState<SessionPhase>("config");
-  const [currentRound, setCurrentRound] = useState(1);
-  const [config, setConfig] = useState<BreathingConfig>({
+  const [running, setRunning] = useState(false);
+  const [config, setConfig] = useState<SessionConfig>({
     rounds: 3,
     breathsPerRound: 30,
     pace: "medium",
   });
 
-  const handlePowerBreathsComplete = useCallback(() => {
-    setPhase("retention");
-  }, []);
-
-  const handleRetentionComplete = useCallback((_durationMs: number) => {
-    // TODO: store durationMs for session history
-    setPhase("recovery");
-  }, []);
-
-  const handleRecoveryComplete = useCallback(() => {
-    if (currentRound < config.rounds) {
-      setCurrentRound((r) => r + 1);
-      setPhase("power-breaths");
-    } else {
-      setPhase("complete");
-    }
-  }, [currentRound, config.rounds]);
-
   if (!safetyDismissed) {
     return <SafetyReminder onProceed={() => setSafetyDismissed(true)} />;
   }
 
-  if (phase === "power-breaths") {
+  if (running) {
     return (
-      <PowerBreaths
-        breathCount={config.breathsPerRound}
-        pace={config.pace}
-        onComplete={handlePowerBreathsComplete}
+      <SessionRunner
+        config={config}
+        onFinish={() => setRunning(false)}
       />
-    );
-  }
-
-  if (phase === "retention") {
-    return <RetentionHold onComplete={handleRetentionComplete} />;
-  }
-
-  if (phase === "recovery") {
-    return <RecoveryBreath onComplete={handleRecoveryComplete} />;
-  }
-
-  if (phase === "complete") {
-    return (
-      <div className="flex flex-col items-center justify-center gap-6 px-4 pt-12 pb-24">
-        <p className="text-sm font-medium uppercase tracking-wider text-emerald-400">
-          Session Complete
-        </p>
-        <p className="text-4xl font-bold text-gray-50">Well done!</p>
-        <p className="text-sm text-gray-400">
-          {config.rounds} round{config.rounds > 1 ? "s" : ""} completed
-        </p>
-        <Button
-          size="lg"
-          className="mt-4"
-          onClick={() => {
-            setPhase("config");
-            setCurrentRound(1);
-          }}
-        >
-          Done
-        </Button>
-      </div>
     );
   }
 
@@ -179,7 +118,7 @@ export default function BreathePage() {
         </div>
       </Card>
 
-      <Button size="lg" className="mt-2 w-full" onClick={() => setPhase("power-breaths")}>
+      <Button size="lg" className="mt-2 w-full" onClick={() => setRunning(true)}>
         Start Session
       </Button>
     </div>
