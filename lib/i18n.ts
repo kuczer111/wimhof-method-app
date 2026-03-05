@@ -11,6 +11,7 @@ export const strings = {
     program: "Program",
     cold: "Cold",
     progress: "Progress",
+    learn: "Learn",
     settings: "Settings",
   },
 
@@ -318,6 +319,15 @@ export const strings = {
     resetProgram: "Reset Program",
     resetConfirm: "Reset progress? This cannot be undone.",
     week: (n: number) => `Week ${n}`,
+  },
+
+  learn: {
+    heading: "Method Guide",
+    subtitle: "Learn the science and practice behind the Wim Hof Method.",
+    chapterLabel: "Chapter",
+    back: "Back to chapters",
+    locked: (required: number, current: number) =>
+      `Unlocks after ${required} days of practice (${current}/${required})`,
   },
 
   common: {
