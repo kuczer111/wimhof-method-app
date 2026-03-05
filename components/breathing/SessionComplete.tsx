@@ -94,24 +94,24 @@ export default function SessionComplete({
 
   return (
     <div className="flex flex-col items-center gap-6 px-4 pt-12 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-emerald-400">
+      <p className="text-sm font-medium uppercase tracking-wider text-emerald-500 dark:text-emerald-400">
         Session Complete
       </p>
-      <p className="text-4xl font-bold text-gray-50">Well done!</p>
+      <p className="text-4xl font-bold text-gray-900 dark:text-gray-50">Well done!</p>
 
       {/* Summary stats */}
       <div className="flex gap-6 text-center">
         <div>
-          <p className="text-2xl font-bold tabular-nums text-gray-50">
+          <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
             {formatDuration(totalDurationMs)}
           </p>
-          <p className="text-xs text-gray-400">Total Time</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Total Time</p>
         </div>
         <div>
-          <p className="text-2xl font-bold tabular-nums text-gray-50">
+          <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
             {rounds}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Round{rounds > 1 ? "s" : ""}
           </p>
         </div>
@@ -119,20 +119,20 @@ export default function SessionComplete({
 
       {/* Retention times */}
       {retentionTimes.length > 0 && (
-        <div className="w-full max-w-xs rounded-2xl bg-gray-800/60 p-4">
-          <h3 className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <div className="w-full max-w-xs rounded-2xl bg-gray-100 p-4 dark:bg-gray-800/60">
+          <h3 className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
             Retention Times
           </h3>
           <ul className="flex flex-col gap-2">
             {retentionTimes.map((ms, i) => (
               <li key={i} className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">Round {i + 1}</span>
+                <span className="text-gray-500 dark:text-gray-400">Round {i + 1}</span>
                 <span className="flex items-center gap-2">
-                  <span className="font-mono font-semibold tabular-nums text-gray-50">
+                  <span className="font-mono font-semibold tabular-nums text-gray-900 dark:text-gray-50">
                     {formatDuration(ms)}
                   </span>
                   {newPersonalBests.has(i) && (
-                    <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-400">
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
                       PB
                     </span>
                   )}
@@ -145,7 +145,7 @@ export default function SessionComplete({
 
       {/* Feeling scale */}
       <div className="w-full max-w-xs">
-        <h3 className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <h3 className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           How do you feel?
         </h3>
         <div className="flex justify-center gap-2">
@@ -159,7 +159,7 @@ export default function SessionComplete({
                 className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
                   isSelected
                     ? "bg-sky-500 text-white"
-                    : "bg-gray-800 text-gray-400 active:bg-gray-700"
+                    : "bg-gray-200 text-gray-500 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:active:bg-gray-700"
                 }`}
               >
                 <span className="text-lg font-bold">{value}</span>
@@ -177,7 +177,7 @@ export default function SessionComplete({
           onChange={(e) => setNote(e.target.value)}
           placeholder="Add a note (optional)..."
           rows={2}
-          className="w-full resize-none rounded-xl border border-gray-700 bg-gray-800/60 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+          className="w-full resize-none rounded-xl border border-gray-300 bg-gray-100/60 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-100 dark:placeholder:text-gray-500"
         />
       </div>
 

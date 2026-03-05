@@ -52,7 +52,7 @@ function CircularProgress({
         fill="none"
         stroke="currentColor"
         strokeWidth={stroke}
-        className="text-gray-800"
+        className="text-gray-200 dark:text-gray-800"
       />
       {/* Progress ring */}
       <circle
@@ -167,15 +167,15 @@ export default function ColdPage() {
     const exceeded = elapsed > target;
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-        <h1 className="text-xl font-bold text-gray-50">Cold Shower</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">Cold Shower</h1>
 
         <div className="relative">
           <CircularProgress elapsed={elapsed} target={target} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-4xl font-bold tabular-nums text-gray-50">
+            <span className="text-4xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
               {formatTime(elapsed)}
             </span>
-            <span className="mt-1 text-sm text-gray-400">
+            <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {exceeded ? "Target reached!" : `Target: ${formatLabel(target)}`}
             </span>
           </div>
@@ -195,14 +195,14 @@ export default function ColdPage() {
         <p className="text-sm font-medium uppercase tracking-wider text-cyan-400">
           Session Complete
         </p>
-        <p className="text-4xl font-bold text-gray-50">{formatTime(elapsed)}</p>
-        <p className="text-sm text-gray-400">
+        <p className="text-4xl font-bold text-gray-900 dark:text-gray-50">{formatTime(elapsed)}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Target: {formatLabel(target)}
         </p>
 
         {/* Type selector */}
         <div className="w-full max-w-xs">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
             Type
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -214,7 +214,7 @@ export default function ColdPage() {
                 className={`rounded-xl px-4 py-2 text-sm font-medium capitalize transition-colors ${
                   coldType === t
                     ? "bg-cyan-500 text-white"
-                    : "bg-gray-800 text-gray-300 active:bg-gray-700"
+                    : "bg-gray-200 text-gray-600 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:active:bg-gray-700"
                 }`}
               >
                 {t}
@@ -225,7 +225,7 @@ export default function ColdPage() {
 
         {/* Temperature (optional) */}
         <div className="w-full max-w-xs">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
             Water Temperature (optional)
           </h3>
           <div className="flex items-center gap-2">
@@ -235,15 +235,15 @@ export default function ColdPage() {
               value={temperature}
               onChange={(e) => setTemperature(e.target.value)}
               placeholder="e.g. 10"
-              className="w-full rounded-xl border border-gray-700 bg-gray-800/60 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+              className="w-full rounded-xl border border-gray-300 bg-gray-100/60 px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-100 dark:placeholder:text-gray-500"
             />
-            <span className="text-sm text-gray-400">°C</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">°C</span>
           </div>
         </div>
 
         {/* Rating */}
         <div className="w-full max-w-xs">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
             How did it feel?
           </h3>
           <div className="flex justify-center gap-2">
@@ -258,7 +258,7 @@ export default function ColdPage() {
                   className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
                     isSelected
                       ? "bg-cyan-500 text-white"
-                      : "bg-gray-800 text-gray-400 active:bg-gray-700"
+                      : "bg-gray-200 text-gray-500 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:active:bg-gray-700"
                   }`}
                 >
                   <span className="text-lg font-bold">{value}</span>
@@ -292,10 +292,10 @@ export default function ColdPage() {
   // Config view
   return (
     <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
-      <h1 className="text-2xl font-bold text-gray-50">Cold Shower</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">Cold Shower</h1>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Target Duration
         </h2>
         <div className="flex flex-wrap gap-2">

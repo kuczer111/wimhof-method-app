@@ -100,7 +100,7 @@ function RetentionChart({ sessions }: { sessions: BreathingSession[] }) {
   return (
     <Card>
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-300">
+        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">
           Avg. Retention Per Session
         </h3>
         <div className="flex items-center gap-3 text-xs text-gray-500">
@@ -175,7 +175,7 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
         <Card key={s.id}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-gray-400">{formatDate(s.date)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(s.date)}</p>
               <p className="mt-1 font-semibold">
                 {s.rounds} round{s.rounds !== 1 ? "s" : ""}
               </p>
@@ -190,7 +190,7 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
             {s.retentionTimes.map((t, i) => (
               <span
                 key={i}
-                className="rounded-full bg-blue-900/50 px-2 py-0.5 text-xs text-blue-300"
+                className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-600 dark:bg-blue-900/50 dark:text-blue-300"
               >
                 R{i + 1}: {formatDuration(t)}
               </span>
@@ -252,15 +252,15 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
 
   return (
     <Card>
-      <h3 className="mb-3 text-sm font-semibold text-gray-300">
+      <h3 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">
         Cold Exposure Stats
       </h3>
       <div className="mb-4 flex gap-4">
-        <div className="flex-1 rounded-lg bg-gray-900 p-3 text-center">
+        <div className="flex-1 rounded-lg bg-gray-100 p-3 text-center dark:bg-gray-900">
           <p className="text-2xl font-bold text-cyan-400">{totalMinutes}</p>
           <p className="text-xs text-gray-500">Total minutes</p>
         </div>
-        <div className="flex-1 rounded-lg bg-gray-900 p-3 text-center">
+        <div className="flex-1 rounded-lg bg-gray-100 p-3 text-center dark:bg-gray-900">
           <p className="text-2xl font-bold text-cyan-400">{streak}</p>
           <p className="text-xs text-gray-500">Day streak</p>
         </div>
@@ -276,7 +276,7 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
                 className={`h-3 w-3 rounded-sm ${
                   day.hasSession
                     ? "bg-cyan-500"
-                    : "bg-gray-800"
+                    : "bg-gray-200 dark:bg-gray-800"
                 }`}
               />
             ))}
@@ -302,10 +302,10 @@ function ColdList({ sessions }: { sessions: ColdSession[] }) {
         <Card key={s.id}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-gray-400">{formatDate(s.date)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(s.date)}</p>
               <p className="mt-1 font-semibold">{formatDuration(s.duration)}</p>
             </div>
-            <span className="rounded-full bg-cyan-900/50 px-2 py-0.5 text-xs capitalize text-cyan-300">
+            <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-xs capitalize text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-300">
               {s.type}
             </span>
           </div>
@@ -341,18 +341,18 @@ export default function ProgressPage() {
   return (
     <div className="flex flex-col px-4 pb-24 pt-8">
       <h1 className="text-2xl font-bold">Progress</h1>
-      <p className="mt-1 text-sm text-gray-400">Your session history</p>
+      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Your session history</p>
 
       {/* Tabs */}
-      <div className="mt-6 flex rounded-xl bg-gray-900 p-1">
+      <div className="mt-6 flex rounded-xl bg-gray-100 p-1 dark:bg-gray-900">
         {(["breathing", "cold"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 rounded-lg py-2 text-sm font-medium capitalize transition-colors ${
               tab === t
-                ? "bg-gray-700 text-white"
-                : "text-gray-400 hover:text-gray-200"
+                ? "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white"
+                : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
           >
             {t}

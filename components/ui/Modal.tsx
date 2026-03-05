@@ -23,7 +23,7 @@ export default function Modal({ open, onClose, children, title }: ModalProps) {
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      className="m-auto max-w-sm w-full rounded-2xl border border-gray-800 bg-gray-900 p-6 text-white backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+      className="m-auto max-w-sm w-full rounded-2xl border border-gray-200 bg-white p-6 text-gray-900 backdrop:bg-black/60 backdrop:backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900 dark:text-white"
     >
       {title && (
         <h2 className="mb-4 text-lg font-semibold">{title}</h2>

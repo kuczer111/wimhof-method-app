@@ -50,7 +50,7 @@ function OptionButton({
       className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
         selected
           ? "bg-sky-500 text-white"
-          : "bg-gray-800 text-gray-400 active:bg-gray-700"
+          : "bg-gray-200 text-gray-500 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:active:bg-gray-700"
       }`}
     >
       {children}
@@ -89,7 +89,7 @@ export default function SettingsPage() {
 
       {/* Audio Mode */}
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Audio Mode
         </h2>
         <div className="flex gap-2">
@@ -107,13 +107,13 @@ export default function SettingsPage() {
 
       {/* Default Breathing Config */}
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Default Breathing Config
         </h2>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-2 block text-sm text-gray-300">Rounds</label>
+            <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">Rounds</label>
             <div className="flex gap-2">
               {ROUND_OPTIONS.map((n) => (
                 <OptionButton
@@ -128,7 +128,7 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-gray-300">
+            <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">
               Breaths per round
             </label>
             <div className="flex gap-2">
@@ -145,7 +145,7 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm text-gray-300">Pace</label>
+            <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">Pace</label>
             <div className="flex gap-2">
               {PACE_OPTIONS.map((opt) => (
                 <OptionButton
@@ -163,7 +163,7 @@ export default function SettingsPage() {
 
       {/* Cold Target Default */}
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Default Cold Target
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -181,11 +181,11 @@ export default function SettingsPage() {
 
       {/* Clear Data */}
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Data
         </h2>
         {cleared ? (
-          <p className="text-sm text-green-400">All data cleared.</p>
+          <p className="text-sm text-green-600 dark:text-green-400">All data cleared.</p>
         ) : (
           <Button
             variant="danger"
@@ -208,7 +208,7 @@ export default function SettingsPage() {
         onClose={() => setShowClearConfirm(false)}
         title="Clear All Data?"
       >
-        <p className="mb-6 text-sm text-gray-300">
+        <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
           This will permanently delete all your breathing sessions, cold
           sessions, and preferences. This action cannot be undone.
         </p>

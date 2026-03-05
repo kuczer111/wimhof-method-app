@@ -35,7 +35,7 @@ export default function RetentionHold({ onComplete }: RetentionHoldProps) {
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-gray-400">
+      <p className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
         Retention Hold
       </p>
 
@@ -43,7 +43,7 @@ export default function RetentionHold({ onComplete }: RetentionHoldProps) {
         Exhale and hold your breath
       </p>
 
-      <span className="text-8xl font-bold tabular-nums text-gray-50">
+      <span className="text-8xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
         {formatTime(elapsedMs)}
       </span>
 

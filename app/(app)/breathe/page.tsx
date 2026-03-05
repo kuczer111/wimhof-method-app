@@ -40,7 +40,7 @@ function OptionButton({
       className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
         selected
           ? "bg-sky-500 text-white"
-          : "bg-gray-800 text-gray-300 active:bg-gray-700"
+          : "bg-gray-200 text-gray-600 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:active:bg-gray-700"
       }`}
     >
       {children}
@@ -72,7 +72,7 @@ export default function BreathePage() {
 
   return (
     <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
-      <h1 className="text-2xl font-bold text-gray-50">Breathing Session</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">Breathing Session</h1>
 
       <div className="grid grid-cols-2 gap-3">
         {PRESETS.map((preset) => {
@@ -88,13 +88,13 @@ export default function BreathePage() {
               className={`rounded-2xl border p-3 text-left transition-colors ${
                 isActive
                   ? "border-sky-500 bg-sky-500/10"
-                  : "border-gray-700 bg-gray-800/50 active:bg-gray-700"
+                  : "border-gray-200 bg-gray-100/50 active:bg-gray-200 dark:border-gray-700 dark:bg-gray-800/50 dark:active:bg-gray-700"
               }`}
             >
-              <span className={`block text-sm font-semibold ${isActive ? "text-sky-400" : "text-gray-100"}`}>
+              <span className={`block text-sm font-semibold ${isActive ? "text-sky-500 dark:text-sky-400" : "text-gray-800 dark:text-gray-100"}`}>
                 {preset.name}
               </span>
-              <span className="mt-0.5 block text-xs text-gray-400">
+              <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">
                 {preset.description}
               </span>
             </button>
@@ -103,7 +103,7 @@ export default function BreathePage() {
       </div>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Rounds
         </h2>
         <div className="flex gap-2">
@@ -120,7 +120,7 @@ export default function BreathePage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Breaths per Round
         </h2>
         <div className="flex gap-2">
@@ -137,7 +137,7 @@ export default function BreathePage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Pace
         </h2>
         <div className="flex gap-2">

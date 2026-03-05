@@ -67,17 +67,17 @@ export default function PowerBreaths({
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-gray-400">
+      <p className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
         Power Breaths
       </p>
 
       <BreathingCircle pace={pace} isActive />
 
       <div className="flex flex-col items-center gap-1">
-        <span className="text-7xl font-bold tabular-nums text-gray-50">
+        <span className="text-7xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
           {currentBreath}
         </span>
-        <span className="text-sm text-gray-400">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           of {breathCount}
         </span>
       </div>

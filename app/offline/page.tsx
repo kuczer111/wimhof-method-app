@@ -4,7 +4,7 @@ export default function OfflinePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
       <h1 className="text-3xl font-bold tracking-tight">You are offline</h1>
-      <p className="mt-4 text-lg text-gray-400">
+      <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
         Check your connection and try again.
       </p>
       <button
