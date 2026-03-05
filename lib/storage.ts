@@ -39,6 +39,50 @@ export interface UserPreferences {
   onboardingComplete: boolean;
 }
 
+export interface SessionConfig {
+  rounds: number;
+  breathsPerRound: number[]; // breaths per round, e.g. [30, 40, 40]
+  pace: "slow" | "medium" | "fast";
+  mindsetPrompts?: string[]; // optional prompt per round during retention
+  retentionMode: "free" | "target"; // free = open-ended, target = aim for a time
+  autoCold: boolean; // auto-transition to cold exposure after session
+}
+
+export const DEFAULT_SESSION_CONFIG: SessionConfig = {
+  rounds: 3,
+  breathsPerRound: [30, 30, 30],
+  pace: "medium",
+  retentionMode: "free",
+  autoCold: false,
+};
+
+/**
+ * Normalize a saved SessionConfig for backward compatibility.
+ * Handles the case where breathsPerRound was previously a single number.
+ */
+export function normalizeSessionConfig(raw: Record<string, unknown>): SessionConfig {
+  const config = { ...DEFAULT_SESSION_CONFIG, ...raw };
+
+  // Backward compat: breathsPerRound was previously a single number
+  if (typeof config.breathsPerRound === "number") {
+    const count = config.breathsPerRound as number;
+    const rounds = typeof config.rounds === "number" ? config.rounds : DEFAULT_SESSION_CONFIG.rounds;
+    config.breathsPerRound = Array.from({ length: rounds }, () => count);
+  }
+
+  // Ensure retentionMode has a valid value
+  if (config.retentionMode !== "free" && config.retentionMode !== "target") {
+    config.retentionMode = DEFAULT_SESSION_CONFIG.retentionMode;
+  }
+
+  // Ensure autoCold is boolean
+  if (typeof config.autoCold !== "boolean") {
+    config.autoCold = DEFAULT_SESSION_CONFIG.autoCold;
+  }
+
+  return config as SessionConfig;
+}
+
 // --- Default preferences ---
 
 const DEFAULT_PREFERENCES: UserPreferences = {

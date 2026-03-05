@@ -1,7 +1,7 @@
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import OptionButton from "@/components/ui/OptionButton";
-import type { SessionConfig } from "@/components/breathing/SessionRunner";
+import type { SessionConfig } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
 
 type Pace = "slow" | "medium" | "fast";
@@ -15,10 +15,10 @@ const PACE_OPTIONS: { value: Pace; label: string }[] = [
 ];
 
 const PRESETS: { name: string; description: string; config: SessionConfig }[] = [
-  { name: strings.breathe.presets.beginner.name, description: strings.breathe.presets.beginner.description, config: { rounds: 3, breathsPerRound: 30, pace: "slow" } },
-  { name: strings.breathe.presets.standard.name, description: strings.breathe.presets.standard.description, config: { rounds: 3, breathsPerRound: 30, pace: "medium" } },
-  { name: strings.breathe.presets.deepPractice.name, description: strings.breathe.presets.deepPractice.description, config: { rounds: 4, breathsPerRound: 40, pace: "medium" } },
-  { name: strings.breathe.presets.morningActivation.name, description: strings.breathe.presets.morningActivation.description, config: { rounds: 3, breathsPerRound: 30, pace: "fast" } },
+  { name: strings.breathe.presets.beginner.name, description: strings.breathe.presets.beginner.description, config: { rounds: 3, breathsPerRound: [30, 30, 30], pace: "slow", retentionMode: "free", autoCold: false } },
+  { name: strings.breathe.presets.standard.name, description: strings.breathe.presets.standard.description, config: { rounds: 3, breathsPerRound: [30, 30, 30], pace: "medium", retentionMode: "free", autoCold: false } },
+  { name: strings.breathe.presets.deepPractice.name, description: strings.breathe.presets.deepPractice.description, config: { rounds: 4, breathsPerRound: [40, 40, 40, 40], pace: "medium", retentionMode: "free", autoCold: false } },
+  { name: strings.breathe.presets.morningActivation.name, description: strings.breathe.presets.morningActivation.description, config: { rounds: 3, breathsPerRound: [30, 30, 30], pace: "fast", retentionMode: "free", autoCold: false } },
 ];
 
 interface BreathingConfigProps {
@@ -36,7 +36,8 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
         {PRESETS.map((preset) => {
           const isActive =
             config.rounds === preset.config.rounds &&
-            config.breathsPerRound === preset.config.breathsPerRound &&
+            config.breathsPerRound.length === preset.config.breathsPerRound.length &&
+            config.breathsPerRound.every((v, i) => v === preset.config.breathsPerRound[i]) &&
             config.pace === preset.config.pace;
           return (
             <button
@@ -69,7 +70,11 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
             <OptionButton
               key={n}
               selected={config.rounds === n}
-              onClick={() => onConfigChange({ ...config, rounds: n })}
+              onClick={() => {
+                const lastBreathCount = config.breathsPerRound[config.breathsPerRound.length - 1] ?? 30;
+                const newBreaths = Array.from({ length: n }, (_, i) => config.breathsPerRound[i] ?? lastBreathCount);
+                onConfigChange({ ...config, rounds: n, breathsPerRound: newBreaths });
+              }}
             >
               {n}
             </OptionButton>
@@ -85,8 +90,8 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
           {BREATH_OPTIONS.map((n) => (
             <OptionButton
               key={n}
-              selected={config.breathsPerRound === n}
-              onClick={() => onConfigChange({ ...config, breathsPerRound: n })}
+              selected={config.breathsPerRound[0] === n && config.breathsPerRound.every((v) => v === n)}
+              onClick={() => onConfigChange({ ...config, breathsPerRound: Array.from({ length: config.rounds }, () => n) })}
             >
               {n}
             </OptionButton>

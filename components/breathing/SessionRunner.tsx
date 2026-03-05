@@ -3,18 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { unlockAudio, disposeAudio } from "@/lib/audio";
 import { strings } from "@/lib/i18n";
+import type { SessionConfig } from "@/lib/storage";
 import PowerBreaths from "./PowerBreaths";
 import RetentionHold from "./RetentionHold";
 import RecoveryBreath from "./RecoveryBreath";
 import SessionComplete from "./SessionComplete";
 
-type Pace = "slow" | "medium" | "fast";
-
-export interface SessionConfig {
-  rounds: number;
-  breathsPerRound: number;
-  pace: Pace;
-}
+export type { SessionConfig } from "@/lib/storage";
 
 type Phase = "power-breaths" | "retention" | "recovery" | "complete";
 
@@ -61,7 +56,7 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <PowerBreaths
-          breathCount={config.breathsPerRound}
+          breathCount={config.breathsPerRound[currentRound - 1] ?? config.breathsPerRound[0]}
           pace={config.pace}
           onComplete={handlePowerBreathsComplete}
         />
@@ -94,9 +89,7 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
   // complete
   return (
     <SessionComplete
-      rounds={config.rounds}
-      breathsPerRound={config.breathsPerRound}
-      pace={config.pace}
+      config={config}
       retentionTimes={retentionTimes}
       totalDurationMs={totalDurationMs}
       onDone={onFinish}

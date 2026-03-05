@@ -7,16 +7,13 @@ import {
   getBreathingSessions,
   generateId,
   type BreathingSession,
+  type SessionConfig,
 } from "@/lib/storage";
 import { formatTimeMs } from "@/lib/format";
 import { strings } from "@/lib/i18n";
 
-type Pace = "slow" | "medium" | "fast";
-
 interface SessionCompleteProps {
-  rounds: number;
-  breathsPerRound: number;
-  pace: Pace;
+  config: SessionConfig;
   retentionTimes: number[]; // ms per round
   totalDurationMs: number;
   onDone: () => void;
@@ -41,13 +38,12 @@ function getPersonalBests(): Map<number, number> {
 const FEELING_LABELS = strings.common.feelingLabels;
 
 export default function SessionComplete({
-  rounds,
-  breathsPerRound,
-  pace,
+  config,
   retentionTimes,
   totalDurationMs,
   onDone,
 }: SessionCompleteProps) {
+  const { rounds, breathsPerRound, pace } = config;
   const [feelingRating, setFeelingRating] = useState<number | null>(null);
   const [note, setNote] = useState("");
   const [saved, setSaved] = useState(false);
@@ -73,7 +69,7 @@ export default function SessionComplete({
       rounds,
       retentionTimes: retentionTimesSeconds,
       totalDuration: Math.round(totalDurationMs / 1000),
-      breathsPerRound,
+      breathsPerRound: breathsPerRound[0],
       pace,
       ...(feelingRating !== null && { feelingRating }),
       ...(note.trim() && { note: note.trim() }),
