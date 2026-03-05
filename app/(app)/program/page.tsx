@@ -13,6 +13,7 @@ import {
 } from "@/lib/storage";
 import type { ProgramProgress } from "@/lib/program";
 import { BEGINNER_PROGRAM, type ProgramDay } from "@/lib/program";
+import { checkProgramMilestone } from "@/lib/milestones";
 
 type PageView = "overview" | "breathing" | "cold";
 
@@ -107,6 +108,12 @@ export default function ProgramPage() {
     };
     await saveProgramProgress(updated);
     setProgress(updated);
+
+    // Check if program is now complete
+    const nonRestDays = program.days.filter((d) => !d.isRestDay).length;
+    if (updated.completedDays.length >= nonRestDays) {
+      checkProgramMilestone(program.id);
+    }
   }
 
   async function handleReset() {

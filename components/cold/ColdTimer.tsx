@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import { saveColdSession, generateId, getPreferences, type ColdSession } from "@/lib/storage";
+import { checkColdMilestones } from "@/lib/milestones";
 import { formatTime } from "@/lib/format";
 import { strings } from "@/lib/i18n";
 import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
@@ -130,6 +131,7 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
       ...(rating !== null && { rating }),
     };
     saveColdSession(session);
+    checkColdMilestones(session);
     setSaved(true);
   }
 

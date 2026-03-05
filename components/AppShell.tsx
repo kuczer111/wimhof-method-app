@@ -1,6 +1,7 @@
 import BottomNav from "./BottomNav";
 import SafetyOnboarding from "./SafetyOnboarding";
 import StorageProvider from "./StorageProvider";
+import MilestoneToast from "./MilestoneToast";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <main className="flex-1 pb-20 animate-page-enter">{children}</main>
         <BottomNav />
         <SafetyOnboarding />
+        <MilestoneToast />
       </div>
     </StorageProvider>
   );

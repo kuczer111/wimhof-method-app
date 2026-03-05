@@ -12,6 +12,7 @@ import {
 } from "@/lib/storage";
 import { formatTimeMs } from "@/lib/format";
 import { strings } from "@/lib/i18n";
+import { checkBreathingMilestones } from "@/lib/milestones";
 
 interface SessionCompleteProps {
   config: SessionConfig;
@@ -81,6 +82,7 @@ export default function SessionComplete({
       ...(note.trim() && { note: note.trim() }),
     };
     saveBreathingSession(session);
+    checkBreathingMilestones(session);
     setSaved(true);
   }
 
