@@ -3,8 +3,11 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import { saveColdSession, generateId, type ColdSession } from "@/lib/storage";
 
 const DURATION_OPTIONS = [30, 60, 90, 120, 180];
+const COLD_TYPES: ColdSession["type"][] = ["shower", "bath", "outdoor", "other"];
+const FEELING_LABELS = ["Rough", "Meh", "OK", "Good", "Great"];
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -130,8 +133,37 @@ export default function ColdPage() {
     };
   }, []);
 
-  // Timer running or finished view
-  if (running || finished) {
+  // Log form state
+  const [coldType, setColdType] = useState<ColdSession["type"]>("shower");
+  const [temperature, setTemperature] = useState("");
+  const [rating, setRating] = useState<number | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  function handleSave() {
+    const session: ColdSession = {
+      id: generateId(),
+      date: new Date().toISOString(),
+      duration: elapsed,
+      targetDuration: target,
+      type: coldType,
+      ...(temperature.trim() && { temperature: Number(temperature) }),
+      ...(rating !== null && { rating }),
+    };
+    saveColdSession(session);
+    setSaved(true);
+  }
+
+  function handleDone() {
+    if (!saved) handleSave();
+    reset();
+    setSaved(false);
+    setTemperature("");
+    setRating(null);
+    setColdType("shower");
+  }
+
+  // Timer running view
+  if (running) {
     const exceeded = elapsed > target;
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
@@ -149,20 +181,110 @@ export default function ColdPage() {
           </div>
         </div>
 
-        {running ? (
-          <Button size="lg" variant="danger" className="w-full max-w-xs" onClick={stop}>
-            Stop
-          </Button>
-        ) : (
-          <div className="flex w-full max-w-xs flex-col gap-3">
-            <p className="text-center text-lg font-semibold text-gray-50">
-              {elapsed >= target ? "Great job!" : `${formatTime(elapsed)} / ${formatLabel(target)}`}
-            </p>
-            <Button size="lg" className="w-full" onClick={reset}>
-              Done
-            </Button>
+        <Button size="lg" variant="danger" className="w-full max-w-xs" onClick={stop}>
+          Stop
+        </Button>
+      </div>
+    );
+  }
+
+  // Log form after timer ends
+  if (finished) {
+    return (
+      <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
+        <p className="text-sm font-medium uppercase tracking-wider text-cyan-400">
+          Session Complete
+        </p>
+        <p className="text-4xl font-bold text-gray-50">{formatTime(elapsed)}</p>
+        <p className="text-sm text-gray-400">
+          Target: {formatLabel(target)}
+        </p>
+
+        {/* Type selector */}
+        <div className="w-full max-w-xs">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Type
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {COLD_TYPES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setColdType(t)}
+                className={`rounded-xl px-4 py-2 text-sm font-medium capitalize transition-colors ${
+                  coldType === t
+                    ? "bg-cyan-500 text-white"
+                    : "bg-gray-800 text-gray-300 active:bg-gray-700"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
+
+        {/* Temperature (optional) */}
+        <div className="w-full max-w-xs">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Water Temperature (optional)
+          </h3>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              inputMode="decimal"
+              value={temperature}
+              onChange={(e) => setTemperature(e.target.value)}
+              placeholder="e.g. 10"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800/60 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            />
+            <span className="text-sm text-gray-400">°C</span>
+          </div>
+        </div>
+
+        {/* Rating */}
+        <div className="w-full max-w-xs">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            How did it feel?
+          </h3>
+          <div className="flex justify-center gap-2">
+            {FEELING_LABELS.map((label, i) => {
+              const value = i + 1;
+              const isSelected = rating === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRating(value)}
+                  className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
+                    isSelected
+                      ? "bg-cyan-500 text-white"
+                      : "bg-gray-800 text-gray-400 active:bg-gray-700"
+                  }`}
+                >
+                  <span className="text-lg font-bold">{value}</span>
+                  <span className="text-[9px] leading-none">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex w-full max-w-xs flex-col gap-3 pt-2">
+          {!saved && (
+            <Button size="lg" className="w-full bg-cyan-500 active:bg-cyan-600" onClick={handleSave}>
+              Save Session
+            </Button>
+          )}
+          <Button
+            size="lg"
+            variant={saved ? "primary" : "secondary"}
+            className="w-full"
+            onClick={handleDone}
+          >
+            {saved ? "Done" : "Skip & Finish"}
+          </Button>
+        </div>
       </div>
     );
   }
