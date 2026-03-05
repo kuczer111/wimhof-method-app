@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Button from "@/components/ui/Button";
-import { saveColdSession, generateId, type ColdSession } from "@/lib/storage";
+import { saveColdSession, generateId, getPreferences, type ColdSession } from "@/lib/storage";
 import { formatTime } from "@/lib/format";
 import { strings } from "@/lib/i18n";
+import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
 
 const COLD_TYPES: ColdSession["type"][] = ["shower", "bath", "outdoor", "other"];
 const FEELING_LABELS = strings.common.feelingLabels;
@@ -88,6 +89,9 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
   // Start timer on mount
   useEffect(() => {
     startTimeRef.current = Date.now();
+    if (getPreferences().wakeLockEnabled) {
+      requestWakeLock();
+    }
     intervalRef.current = setInterval(() => {
       const now = Date.now();
       const secs = Math.floor((now - startTimeRef.current) / 1000);
@@ -95,6 +99,7 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
     }, 250);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      releaseWakeLock();
     };
   }, []);
 

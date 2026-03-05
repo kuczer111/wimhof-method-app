@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { unlockAudio, disposeAudio } from "@/lib/audio";
 import { strings } from "@/lib/i18n";
+import { getPreferences } from "@/lib/storage";
 import type { SessionConfig } from "@/lib/storage";
+import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
 import PowerBreaths from "./PowerBreaths";
 import RetentionHold from "./RetentionHold";
 import RecoveryBreath from "./RecoveryBreath";
@@ -27,7 +29,13 @@ export default function SessionRunner({ config, onFinish }: SessionRunnerProps) 
 
   useEffect(() => {
     unlockAudio();
-    return () => disposeAudio();
+    if (getPreferences().wakeLockEnabled) {
+      requestWakeLock();
+    }
+    return () => {
+      disposeAudio();
+      releaseWakeLock();
+    };
   }, []);
 
   const handlePowerBreathsComplete = useCallback(() => {

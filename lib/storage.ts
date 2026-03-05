@@ -37,6 +37,7 @@ export interface UserPreferences {
   muted: boolean;
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
+  wakeLockEnabled: boolean;
 }
 
 export interface SessionConfig {
@@ -94,6 +95,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   muted: false,
   safetyAcknowledged: false,
   onboardingComplete: false,
+  wakeLockEnabled: true,
 };
 
 // --- In-memory cache ---

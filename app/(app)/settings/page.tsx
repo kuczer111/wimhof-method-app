@@ -84,6 +84,37 @@ export default function SettingsPage() {
         </div>
       </Card>
 
+      {/* Screen Wake Lock */}
+      <Card>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              {strings.settings.screenWakeLock}
+            </h2>
+            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+              {strings.settings.wakeLockDescription}
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={prefs.wakeLockEnabled}
+            onClick={() => update({ wakeLockEnabled: !prefs.wakeLockEnabled })}
+            className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${
+              prefs.wakeLockEnabled
+                ? "bg-cyan-500"
+                : "bg-gray-300 dark:bg-gray-700"
+            }`}
+          >
+            <span
+              className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                prefs.wakeLockEnabled ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
+        </div>
+      </Card>
+
       {/* Default Breathing Config */}
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">

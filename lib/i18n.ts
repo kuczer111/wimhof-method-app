@@ -128,6 +128,8 @@ export const strings = {
       "120": "2 min",
       "180": "3 min",
     } as Record<string, string>,
+    screenWakeLock: "Screen Wake Lock",
+    wakeLockDescription: "Keep screen on during sessions",
     data: "Data",
     allDataCleared: "All data cleared.",
     clearAllData: "Clear All Data",
