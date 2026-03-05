@@ -164,6 +164,11 @@ export const strings = {
     data: "Data",
     allDataCleared: "All data cleared.",
     clearAllData: "Clear All Data",
+    dailyReminder: "Daily Reminder",
+    reminderDescription: "Get a notification to practice",
+    reminderTime: "Reminder Time",
+    notificationsBlocked: "Notifications are blocked. Enable them in your browser settings.",
+    notificationsUnsupported: "Notifications are not supported on this device.",
     clearConfirm: {
       title: "Clear All Data?",
       description:

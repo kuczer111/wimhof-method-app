@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { initStorage } from "@/lib/storage";
+import { initReminders } from "@/lib/notifications";
 
 export default function StorageProvider({
   children,
@@ -11,7 +12,10 @@ export default function StorageProvider({
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    initStorage().then(() => setReady(true));
+    initStorage().then(() => {
+      initReminders();
+      setReady(true);
+    });
   }, []);
 
   if (!ready) return null;
