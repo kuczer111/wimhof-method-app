@@ -17,6 +17,13 @@ const PACE_OPTIONS: { value: Pace; label: string }[] = [
   { value: "fast", label: "Fast" },
 ];
 
+const PRESETS: { name: string; description: string; config: SessionConfig }[] = [
+  { name: "Beginner", description: "3 rounds · 30 breaths · slow", config: { rounds: 3, breathsPerRound: 30, pace: "slow" } },
+  { name: "Standard", description: "3 rounds · 30 breaths · medium", config: { rounds: 3, breathsPerRound: 30, pace: "medium" } },
+  { name: "Deep Practice", description: "4 rounds · 40 breaths · medium", config: { rounds: 4, breathsPerRound: 40, pace: "medium" } },
+  { name: "Morning Activation", description: "3 rounds · 30 breaths · fast", config: { rounds: 3, breathsPerRound: 30, pace: "fast" } },
+];
+
 function OptionButton({
   selected,
   onClick,
@@ -66,6 +73,34 @@ export default function BreathePage() {
   return (
     <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
       <h1 className="text-2xl font-bold text-gray-50">Breathing Session</h1>
+
+      <div className="grid grid-cols-2 gap-3">
+        {PRESETS.map((preset) => {
+          const isActive =
+            config.rounds === preset.config.rounds &&
+            config.breathsPerRound === preset.config.breathsPerRound &&
+            config.pace === preset.config.pace;
+          return (
+            <button
+              key={preset.name}
+              type="button"
+              onClick={() => setConfig(preset.config)}
+              className={`rounded-2xl border p-3 text-left transition-colors ${
+                isActive
+                  ? "border-sky-500 bg-sky-500/10"
+                  : "border-gray-700 bg-gray-800/50 active:bg-gray-700"
+              }`}
+            >
+              <span className={`block text-sm font-semibold ${isActive ? "text-sky-400" : "text-gray-100"}`}>
+                {preset.name}
+              </span>
+              <span className="mt-0.5 block text-xs text-gray-400">
+                {preset.description}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
       <Card>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">
