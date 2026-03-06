@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { playHoldStartChime, playHoldEndChime } from "@/lib/audio";
 import { formatTimeMs } from "@/lib/format";
 import { strings } from "@/lib/i18n";
+
+const LONG_PRESS_MS = 500;
+const DOUBLE_TAP_MS = 400;
+const CIRCLE_RADIUS = 22;
+const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
 interface RetentionHoldProps {
   onComplete: (durationMs: number) => void;
@@ -29,11 +34,91 @@ export default function RetentionHold({
     return () => clearInterval(id);
   }, []);
 
-  const handleTap = () => {
+  // --- Long-press & double-tap state ---
+  const [pressing, setPressing] = useState(false);
+  const [pressProgress, setPressProgress] = useState(0);
+  const pressStartRef = useRef<number | null>(null);
+  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pressRafRef = useRef<number | null>(null);
+  const lastTapRef = useRef<number>(0);
+  const completedRef = useRef(false);
+  const pointerActiveRef = useRef(false);
+
+  const completeHold = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
     playHoldEndChime();
     const duration = Date.now() - startTimeRef.current;
     onComplete(duration);
-  };
+  }, [onComplete]);
+
+  const cancelPress = useCallback(() => {
+    setPressing(false);
+    setPressProgress(0);
+    pressStartRef.current = null;
+    if (pressTimerRef.current) {
+      clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+    if (pressRafRef.current) {
+      cancelAnimationFrame(pressRafRef.current);
+      pressRafRef.current = null;
+    }
+  }, []);
+
+  const animateProgress = useCallback(() => {
+    if (pressStartRef.current == null) return;
+    const elapsed = Date.now() - pressStartRef.current;
+    const progress = Math.min(elapsed / LONG_PRESS_MS, 1);
+    setPressProgress(progress);
+    if (progress < 1) {
+      pressRafRef.current = requestAnimationFrame(animateProgress);
+    }
+  }, []);
+
+  const handlePointerDown = useCallback(() => {
+    if (completedRef.current) return;
+    pointerActiveRef.current = true;
+    setPressing(true);
+    pressStartRef.current = Date.now();
+    pressRafRef.current = requestAnimationFrame(animateProgress);
+    pressTimerRef.current = setTimeout(() => {
+      setPressProgress(1);
+      completeHold();
+    }, LONG_PRESS_MS);
+  }, [animateProgress, completeHold]);
+
+  const handlePointerUp = useCallback(() => {
+    if (!pressing) return;
+    cancelPress();
+    // Check double-tap
+    const now = Date.now();
+    if (now - lastTapRef.current < DOUBLE_TAP_MS) {
+      completeHold();
+    }
+    lastTapRef.current = now;
+  }, [pressing, cancelPress, completeHold]);
+
+  const handlePointerLeave = useCallback(() => {
+    if (pressing) cancelPress();
+  }, [pressing, cancelPress]);
+
+  // Screen reader / keyboard click – only fires if no pointer interaction preceded it
+  const handleClick = useCallback(() => {
+    if (pointerActiveRef.current) {
+      pointerActiveRef.current = false;
+      return;
+    }
+    completeHold();
+  }, [completeHold]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
+      if (pressRafRef.current) cancelAnimationFrame(pressRafRef.current);
+    };
+  }, []);
 
   // PB approach indicator for target mode
   const showPbIndicator = retentionMode === "target" && personalBestMs != null;
@@ -118,11 +203,37 @@ export default function RetentionHold({
 
       <button
         type="button"
-        onClick={handleTap}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerLeave}
+        onPointerCancel={handlePointerLeave}
+        onClick={handleClick}
         aria-label="End breath hold"
-        className="mt-4 rounded-full bg-brand px-10 py-4 text-lg font-semibold text-white transition-colors active:bg-brand-dark"
+        aria-description="Hold for half a second or double-tap to end"
+        className="relative mt-4 select-none touch-none rounded-full bg-brand px-10 py-4 text-lg font-semibold text-white transition-colors active:bg-brand-dark"
       >
         {strings.breathing.retention.tapButton}
+        {pressing && (
+          <svg
+            className="pointer-events-none absolute inset-0 -rotate-90"
+            width="100%"
+            height="100%"
+            viewBox="0 0 52 52"
+            aria-hidden="true"
+          >
+            <circle
+              cx="26"
+              cy="26"
+              r={CIRCLE_RADIUS}
+              fill="none"
+              stroke="rgba(255,255,255,0.5)"
+              strokeWidth="3"
+              strokeDasharray={CIRCLE_CIRCUMFERENCE}
+              strokeDashoffset={CIRCLE_CIRCUMFERENCE * (1 - pressProgress)}
+              strokeLinecap="round"
+            />
+          </svg>
+        )}
       </button>
     </div>
   );
