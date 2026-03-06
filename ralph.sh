@@ -61,7 +61,7 @@ while true; do
       exit 1
     fi
 
-    git commit -m "feat: $TASK"
+    git commit -m "fix: $TASK"
     git push || { notify "⚠️ Push failed on task $TASK_COUNT"; exit 1; }
 
     echo "$(date): ✅ Task $TASK_COUNT (${TASK_ELAPSED}min): $TASK" >> ralph.log
