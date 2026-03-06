@@ -67,7 +67,7 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
               key={t}
               type="button"
               onClick={() => setColdType(t)}
-              className={`rounded-xl px-4 py-2 text-sm font-medium capitalize transition-colors ${
+              className={`rounded-xl px-4 py-3 text-sm font-medium capitalize transition-colors ${
                 coldType === t
                   ? "bg-cold text-white"
                   : "bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint"
