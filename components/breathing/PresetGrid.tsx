@@ -90,11 +90,15 @@ export default function PresetGrid({ config, onConfigChange, customPresets, onDe
                   <button
                     type="button"
                     onClick={() => onDeletePreset(preset.id)}
-                    className="absolute right-2 top-2 rounded-full p-1 text-on-surface-light-muted hover:text-danger dark:text-on-surface-faint dark:hover:text-danger-light"
+                    className="absolute -right-1 -top-1 flex h-[44px] w-[44px] items-center justify-center rounded-full text-on-surface-light-muted hover:text-danger active:text-danger dark:text-on-surface-faint dark:hover:text-danger-light dark:active:text-danger-light"
                     aria-label={`Delete ${preset.name}`}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
                     </svg>
                   </button>
                 </div>
