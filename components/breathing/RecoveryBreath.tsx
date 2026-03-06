@@ -42,15 +42,15 @@ export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-emerald-500 dark:text-emerald-400">
+      <p className="text-sm font-medium uppercase tracking-wider text-success dark:text-success-light">
         {strings.breathing.recovery.label}
       </p>
 
-      <p className="text-center text-sm text-emerald-600/70 dark:text-emerald-300/70">
+      <p className="text-center text-sm text-success-dark/70 dark:text-success-light/70">
         {strings.breathing.recovery.instruction}
       </p>
 
-      <span role="timer" aria-label={`Recovery countdown: ${remaining} seconds`} className="text-8xl font-bold tabular-nums text-emerald-500 dark:text-emerald-300">
+      <span role="timer" aria-label={`Recovery countdown: ${remaining} seconds`} className="text-8xl font-bold tabular-nums text-success dark:text-success-light">
         {remaining}
       </span>
 
@@ -60,10 +60,10 @@ export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
         aria-valuenow={remaining}
         aria-valuemin={0}
         aria-valuemax={RECOVERY_DURATION_S}
-        className="h-2 w-48 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-900"
+        className="h-2 w-48 overflow-hidden rounded-full bg-success/20 dark:bg-success-dark/30"
       >
         <div
-          className="h-full rounded-full bg-emerald-400 transition-all duration-200 ease-linear"
+          className="h-full rounded-full bg-success-light transition-all duration-200 ease-linear"
           style={{
             width: `${(remaining / RECOVERY_DURATION_S) * 100}%`,
           }}

@@ -68,22 +68,22 @@ export default function PowerBreaths({
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      <p className="text-sm font-medium uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.breathing.powerBreaths.label}
       </p>
 
       <BreathingCircle pace={pace} isActive />
 
       <div className="flex flex-col items-center gap-1" role="status" aria-label={`Breath ${currentBreath} of ${breathCount}`}>
-        <span className="text-7xl font-bold tabular-nums text-gray-900 dark:text-gray-50" aria-hidden="true">
+        <span className="text-7xl font-bold tabular-nums text-on-surface-light dark:text-on-surface" aria-hidden="true">
           {currentBreath}
         </span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.breathing.powerBreaths.breathCounter(breathCount)}
         </span>
       </div>
 
-      <p className="text-center text-sm text-gray-500">
+      <p className="text-center text-sm text-on-surface-light-muted">
         {strings.breathing.powerBreaths.instruction}
       </p>
     </div>

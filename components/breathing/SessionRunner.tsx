@@ -132,7 +132,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     return (
       <div>
         <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
-        <p className="pt-4 text-center text-xs font-medium text-gray-500">
+        <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <PowerBreaths
@@ -160,7 +160,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     return (
       <div>
         <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
-        <p className="pt-4 text-center text-xs font-medium text-gray-500">
+        <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <RetentionHold
@@ -177,7 +177,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     return (
       <div>
         <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
-        <p className="pt-4 text-center text-xs font-medium text-gray-500">
+        <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <RecoveryBreath onComplete={handleRecoveryComplete} />

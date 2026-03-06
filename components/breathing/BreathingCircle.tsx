@@ -45,14 +45,14 @@ function BreathingProgressBar({ pace, isActive }: { pace: Pace; isActive: boolea
           aria-valuenow={Math.round(progress * 100)}
           aria-valuemin={0}
           aria-valuemax={100}
-          className="h-3 w-full overflow-hidden rounded-full bg-sky-200 dark:bg-sky-900"
+          className="h-3 w-full overflow-hidden rounded-full bg-brand-light/30 dark:bg-brand-dark/30"
         >
           <div
-            className="h-full rounded-full bg-sky-500 transition-none"
+            className="h-full rounded-full bg-brand transition-none"
             style={{ width: `${(progress <= 0.5 ? progress * 2 : 2 - progress * 2) * 100}%` }}
           />
         </div>
-        <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-center text-xs text-on-surface-light-muted dark:text-on-surface-muted">
           {progress <= 0.5 ? "Inhale" : "Exhale"}
         </p>
       </div>
@@ -75,7 +75,7 @@ export default function BreathingCircle({
     <div className="flex items-center justify-center" role="img" aria-label="Breathing animation guide">
       <div
         aria-hidden="true"
-        className="rounded-full bg-sky-500/30 flex items-center justify-center"
+        className="rounded-full bg-brand/30 flex items-center justify-center"
         style={{
           width: 200,
           height: 200,
@@ -86,7 +86,7 @@ export default function BreathingCircle({
           opacity: isActive ? undefined : 0.4,
         }}
       >
-        <div className="w-16 h-16 rounded-full bg-sky-400" />
+        <div className="w-16 h-16 rounded-full bg-brand-light" />
       </div>
     </div>
   );

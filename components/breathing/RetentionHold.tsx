@@ -43,17 +43,17 @@ export default function RetentionHold({
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4 pt-12 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      <p className="text-sm font-medium uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.breathing.retention.label}
       </p>
 
       {mindsetPrompt && (
-        <p className="max-w-xs text-center text-base font-medium italic text-sky-600 dark:text-sky-400">
+        <p className="max-w-xs text-center text-base font-medium italic text-brand-dark dark:text-brand-light">
           &ldquo;{mindsetPrompt}&rdquo;
         </p>
       )}
 
-      <p className="text-center text-sm text-gray-500">
+      <p className="text-center text-sm text-on-surface-light-muted">
         {strings.breathing.retention.instruction}
       </p>
 
@@ -63,10 +63,10 @@ export default function RetentionHold({
         aria-live="off"
         className={`text-8xl font-bold tabular-nums transition-colors ${
           isPastPb
-            ? "text-amber-500 dark:text-amber-400"
+            ? "text-warning dark:text-warning-light"
             : isApproaching
-              ? "text-sky-500 dark:text-sky-400"
-              : "text-gray-900 dark:text-gray-50"
+              ? "text-brand dark:text-brand-light"
+              : "text-on-surface-light dark:text-on-surface"
         }`}
       >
         {formatTimeMs(elapsedMs)}
@@ -75,16 +75,16 @@ export default function RetentionHold({
       {showPbIndicator && (
         <div className="w-full max-w-xs">
           <div className="mb-1 flex items-center justify-between text-xs">
-            <span className="text-gray-500 dark:text-gray-400">
+            <span className="text-on-surface-light-muted dark:text-on-surface-muted">
               {strings.breathing.retention.pbTarget(formatTimeMs(personalBestMs))}
             </span>
             <span
               className={`font-semibold ${
                 isPastPb
-                  ? "text-amber-500"
+                  ? "text-warning"
                   : isApproaching
-                    ? "text-sky-500"
-                    : "text-gray-400"
+                    ? "text-brand"
+                    : "text-on-surface-muted"
               }`}
             >
               {isPastPb
@@ -100,15 +100,15 @@ export default function RetentionHold({
             aria-valuenow={Math.round(pbProgress * 100)}
             aria-valuemin={0}
             aria-valuemax={100}
-            className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
+            className="h-2 w-full overflow-hidden rounded-full bg-on-surface-light/10 dark:bg-on-surface-faint"
           >
             <div
               className={`h-full rounded-full transition-all duration-300 ${
                 isPastPb
-                  ? "bg-amber-500"
+                  ? "bg-warning"
                   : isApproaching
-                    ? "bg-sky-500"
-                    : "bg-gray-400 dark:bg-gray-500"
+                    ? "bg-brand"
+                    : "bg-on-surface-muted dark:bg-on-surface-muted"
               }`}
               style={{ width: `${Math.min(pbProgress * 100, 100)}%` }}
             />
@@ -120,7 +120,7 @@ export default function RetentionHold({
         type="button"
         onClick={handleTap}
         aria-label="End breath hold"
-        className="mt-4 rounded-full bg-sky-500 px-10 py-4 text-lg font-semibold text-white transition-colors active:bg-sky-600"
+        className="mt-4 rounded-full bg-brand px-10 py-4 text-lg font-semibold text-white transition-colors active:bg-brand-dark"
       >
         {strings.breathing.retention.tapButton}
       </button>
