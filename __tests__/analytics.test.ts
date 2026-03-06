@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { calculateStreak, formatSeconds, startOfWeek } from '@/lib/analytics';
+import {
+  calculateStreak,
+  formatSeconds,
+  startOfWeek,
+  safeAvgRetention,
+} from '@/lib/analytics';
+import type { BreathingSession } from '@/lib/storage';
 
 function makeSessions(dateStrings: string[]) {
   return dateStrings.map((d) => ({ date: d }));
@@ -82,6 +88,44 @@ describe('formatSeconds', () => {
   });
 });
 
+describe('safeAvgRetention', () => {
+  function makeSession(retentionTimes: number[]): BreathingSession {
+    return {
+      id: '1',
+      date: '2025-01-01T12:00:00Z',
+      rounds: retentionTimes.length,
+      retentionTimes,
+      totalDuration: 300,
+      breathsPerRound: 30,
+      pace: 'medium',
+    };
+  }
+
+  it('returns 0 for empty sessions', () => {
+    expect(safeAvgRetention([])).toBe(0);
+  });
+
+  it('returns the average of a single session with one round', () => {
+    expect(safeAvgRetention([makeSession([60])])).toBe(60);
+  });
+
+  it('averages retention times within a session then across sessions', () => {
+    const s1 = makeSession([60, 80]); // avg = 70
+    const s2 = makeSession([100, 120]); // avg = 110
+    expect(safeAvgRetention([s1, s2])).toBe(90); // (70 + 110) / 2
+  });
+
+  it('handles a session with empty retentionTimes', () => {
+    const s1 = makeSession([]); // avg = 0
+    const s2 = makeSession([100]); // avg = 100
+    expect(safeAvgRetention([s1, s2])).toBe(50); // (0 + 100) / 2
+  });
+
+  it('handles all sessions with empty retentionTimes', () => {
+    expect(safeAvgRetention([makeSession([]), makeSession([])])).toBe(0);
+  });
+});
+
 describe('startOfWeek', () => {
   it('returns Monday for a Wednesday', () => {
     // Use a Wednesday in local time
@@ -98,5 +142,30 @@ describe('startOfWeek', () => {
     const monday = startOfWeek(sun);
     expect(monday.getDay()).toBe(1);
     expect(monday.getDate()).toBe(6);
+  });
+
+  it('returns the same day for a Monday', () => {
+    const mon = new Date(2025, 0, 6, 15, 30, 0); // Jan 6 2025 = Monday
+    const result = startOfWeek(mon);
+    expect(result.getDay()).toBe(1);
+    expect(result.getDate()).toBe(6);
+    expect(result.getHours()).toBe(0);
+    expect(result.getMinutes()).toBe(0);
+  });
+
+  it('resets time to midnight', () => {
+    const wed = new Date(2025, 0, 8, 23, 59, 59);
+    const result = startOfWeek(wed);
+    expect(result.getHours()).toBe(0);
+    expect(result.getMinutes()).toBe(0);
+    expect(result.getSeconds()).toBe(0);
+    expect(result.getMilliseconds()).toBe(0);
+  });
+
+  it('does not mutate the original date', () => {
+    const original = new Date(2025, 0, 8, 12, 0, 0);
+    const originalTime = original.getTime();
+    startOfWeek(original);
+    expect(original.getTime()).toBe(originalTime);
   });
 });
