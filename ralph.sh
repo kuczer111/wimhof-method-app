@@ -1,14 +1,29 @@
 #!/bin/bash
+set -euo pipefail
 
-# ── CONFIG — change this to your ntfy topic ──
+MODE="${1:-spec}"
+
+# ── CONFIG ──
 NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
-# ─────────────────────────────────────────────
+
+case "$MODE" in
+  spec) COMMIT_PREFIX="feat" ;;
+  fix)  COMMIT_PREFIX="fix" ;;
+  *)
+    echo "Usage: ./ralph.sh [spec|fix]"
+    echo ""
+    echo "  spec  — Execute feature tasks from a spec (default)"
+    echo "  fix   — Execute bug fix tasks from QA findings"
+    exit 1
+    ;;
+esac
+# ─────────────
 
 notify() {
   if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
     return
   fi
-  osascript -e "display notification \"$1\" with title \"Ralph 🤖\""
+  osascript -e "display notification \"$1\" with title \"Ralph 🤖\"" 2>/dev/null || true
 }
 
 if [ ! -f TASKS.md ]; then
@@ -19,11 +34,11 @@ fi
 START_TIME=$(date +%s)
 TASK_COUNT=0
 
-echo "🚀 Ralph is starting..."
-notify "Ralph started 🚀"
+echo "🚀 Ralph is starting in ${MODE} mode..."
+notify "Ralph started (${MODE}) 🚀"
 
 while true; do
-  NEXT=$(grep -m 1 "^- \[ \]" TASKS.md)
+  NEXT=$(grep -m 1 "^- \[ \]" TASKS.md) || true
 
   if [ -z "$NEXT" ]; then
     ELAPSED=$(( ($(date +%s) - START_TIME) / 60 ))
@@ -39,12 +54,12 @@ while true; do
 
   echo ""
   echo "========================================="
-  echo "📌 Task $TASK_COUNT: $TASK"
+  echo "📌 Task $TASK_COUNT ($MODE): $TASK"
   echo "========================================="
 
-  ./ralph-task.sh "$TASK"
+  ./ralph-task.sh "$MODE" "$TASK" && rc=0 || rc=$?
 
-  if [ $? -eq 0 ]; then
+  if [ $rc -eq 0 ]; then
     TASK_ELAPSED=$(( ($(date +%s) - TASK_START) / 60 ))
 
     # Mark done — awk handles special chars in task names (/, [], etc.)
@@ -61,7 +76,7 @@ while true; do
       exit 1
     fi
 
-    git commit -m "refactor: $TASK"
+    git commit -m "${COMMIT_PREFIX}: $TASK"
     git push || { notify "⚠️ Push failed on task $TASK_COUNT"; exit 1; }
 
     echo "$(date): ✅ Task $TASK_COUNT (${TASK_ELAPSED}min): $TASK" >> ralph.log
@@ -71,7 +86,7 @@ while true; do
     echo "$(date): ❌ FAILED Task $TASK_COUNT: $TASK" >> ralph.log
     notify "🛑 Stuck on task $TASK_COUNT: $TASK — needs you"
     echo ""
-    echo "Fix manually then re-run ./ralph.sh"
+    echo "Fix manually then re-run ./ralph.sh $MODE"
     exit 1
   fi
 done

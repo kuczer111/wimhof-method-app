@@ -1,12 +1,46 @@
 #!/bin/bash
+set -euo pipefail
 
-TASK="$1"
+MODE="${1:-spec}"
+TASK="${2:-}"
+SPEC_FILE="${SPEC_FILE:-SPEC-v4-draft.md}"
 MAX_LOOPS=8
 loop=0
 BUILD_LOG=$(mktemp)
+trap 'rm -f "$BUILD_LOG"' EXIT INT TERM HUP
+
+if [ -z "$TASK" ]; then
+  echo "Usage: ./ralph-task.sh [spec|fix] \"task description\""
+  exit 1
+fi
+
+# ── Mode-specific context ──
+case "$MODE" in
+  spec)
+    CONTEXT="Full spec is in ${SPEC_FILE} — read it for context.
+
+Your ONLY job right now is this task:
+$TASK"
+    ;;
+  fix)
+    CONTEXT="QA-FINDINGS.md contains the bug reports — read it for context on the issue.
+
+Your ONLY job right now is to fix this bug:
+$TASK
+
+Rules specific to bug fixes:
+- Do NOT add features or refactor unrelated code
+- Fix only what the bug report describes
+- If the finding references a specific page/component, start there"
+    ;;
+  *)
+    echo "Unknown mode: $MODE"
+    exit 1
+    ;;
+esac
 
 echo ""
-echo "🤖 Starting task: $TASK"
+echo "🤖 Starting task ($MODE): $TASK"
 echo ""
 
 while [ $loop -lt $MAX_LOOPS ]; do
@@ -26,13 +60,10 @@ Fix these errors. Do NOT repeat the same mistakes."
   fi
 
   claude --dangerously-skip-permissions --print "
-You are building a Wim Hof Method PWA using Next.js (app router), TypeScript, and Tailwind CSS.
+You are working on a Wim Hof Method PWA using Next.js (app router), TypeScript, and Tailwind CSS.
 All data is stored locally in IndexedDB — there is no auth or backend. Target: installable PWA on iPhone home screen.
 
-Full spec is in SPEC-v4-draft.md — read it for context, especially the design token definitions in section 4.
-
-Your ONLY job right now is this task:
-$TASK
+${CONTEXT}
 
 Rules:
 - Read existing files before creating anything
@@ -45,12 +76,14 @@ $ERRORS_CONTEXT
 
   echo ""
   echo "🔨 Checking build..."
+  set +eo pipefail
   npm run build 2>&1 | tee "$BUILD_LOG"
+  BUILD_EXIT=${PIPESTATUS[0]}
+  set -eo pipefail
 
-  if [ ${PIPESTATUS[0]} -eq 0 ]; then
+  if [ $BUILD_EXIT -eq 0 ]; then
     echo ""
     echo "✅ Build passed!"
-    rm -f "$BUILD_LOG"
     exit 0
   else
     echo ""
@@ -62,5 +95,4 @@ done
 echo ""
 echo "⚠️  Max loops hit. Task needs manual attention: $TASK"
 git checkout .
-rm -f "$BUILD_LOG"
 exit 1
