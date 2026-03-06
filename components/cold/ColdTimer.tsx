@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import Button from "@/components/ui/Button";
 import { getPreferences } from "@/lib/storage";
 import { formatTime } from "@/lib/format";
@@ -15,14 +15,25 @@ function formatLabel(seconds: number): string {
 function CircularProgress({
   elapsed,
   target,
-  radius = 110,
-  stroke = 10,
 }: {
   elapsed: number;
   target: number;
-  radius?: number;
-  stroke?: number;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [radius, setRadius] = useState(110);
+
+  useLayoutEffect(() => {
+    function measure() {
+      if (containerRef.current) {
+        setRadius(containerRef.current.offsetWidth / 2);
+      }
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  const stroke = 10;
   const normalizedRadius = radius - stroke / 2;
   const circumference = 2 * Math.PI * normalizedRadius;
   const progress = Math.min(elapsed / target, 1);
@@ -30,35 +41,41 @@ function CircularProgress({
   const exceeded = elapsed > target;
 
   return (
-    <svg
-      width={radius * 2}
-      height={radius * 2}
-      className="mx-auto -rotate-90"
+    <div
+      ref={containerRef}
+      style={{ width: "min(220px, 44vw)", height: "min(220px, 44vw)" }}
     >
-      <circle
-        cx={radius}
-        cy={radius}
-        r={normalizedRadius}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={stroke}
-        className="text-on-surface-light/20 dark:text-surface-overlay"
-      />
-      <circle
-        cx={radius}
-        cy={radius}
-        r={normalizedRadius}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={stroke}
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        className={`transition-[stroke-dashoffset] duration-normal ${
-          exceeded ? "text-success-light" : "text-cold-light"
-        }`}
-      />
-    </svg>
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${radius * 2} ${radius * 2}`}
+        className="-rotate-90"
+      >
+        <circle
+          cx={radius}
+          cy={radius}
+          r={normalizedRadius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={stroke}
+          className="text-on-surface-light/20 dark:text-surface-overlay"
+        />
+        <circle
+          cx={radius}
+          cy={radius}
+          r={normalizedRadius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          className={`transition-[stroke-dashoffset] duration-normal ${
+            exceeded ? "text-success-light" : "text-cold-light"
+          }`}
+        />
+      </svg>
+    </div>
   );
 }
 
@@ -115,13 +132,13 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
         <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.cold.heading}</h1>
 
-        <div className="relative">
+        <div className="relative" style={{ width: "min(220px, 44vw)", height: "min(220px, 44vw)" }}>
           <CircularProgress elapsed={elapsed} target={target} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-4xl font-bold tabular-nums text-on-surface-light dark:text-on-surface">
+            <span className="font-bold tabular-nums text-on-surface-light dark:text-on-surface" style={{ fontSize: "min(2.25rem, 9vw)" }}>
               {formatTime(elapsed)}
             </span>
-            <span className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+            <span className="text-on-surface-light-muted dark:text-on-surface-muted" style={{ fontSize: "min(0.875rem, 3vw)", marginTop: "min(0.25rem, 0.5vw)" }}>
               {exceeded ? strings.cold.targetReached : strings.cold.targetLabel(formatLabel(target))}
             </span>
           </div>
