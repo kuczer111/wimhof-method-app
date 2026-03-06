@@ -6,6 +6,7 @@ This project uses an automated pipeline to plan, execute, and QA tasks via Claud
 
 | File               | Purpose                                                                         |
 | ------------------ | ------------------------------------------------------------------------------- |
+| `config.sh`        | Shared utilities: notify(), log(), fmt_elapsed(), heartbeat functions           |
 | `plan.sh`          | Generates tasks in TASKS.md from a spec or QA findings                          |
 | `ralph.sh`         | Loops through unchecked tasks, delegates to ralph-task.sh, commits & pushes     |
 | `ralph-task.sh`    | Executes a single task via Claude CLI with build verification (up to 8 retries) |
@@ -280,7 +281,7 @@ Tasks from different modes (spec and fix) share the same TASKS.md and numbering 
 
 ## Notifications
 
-All scripts send push notifications via [ntfy.sh](https://ntfy.sh). The topic is configured in each script (`NTFY_TOPIC` variable). Falls back to macOS native notifications if ntfy fails.
+All scripts send push notifications via [ntfy.sh](https://ntfy.sh). The topic is configured in `config.sh` (`NTFY_TOPIC` variable), which all scripts source. Falls back to macOS native notifications if ntfy fails.
 
 Events notified:
 

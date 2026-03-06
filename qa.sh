@@ -1,22 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_TITLE="QA"
+source ./config.sh
+
 # ── CONFIG ──
 APP_URL="${APP_URL:-https://wimhof-method-app.vercel.app}"
 QA_FILE="${QA_FILE:-QA-FINDINGS.md}"
 MODE="${1:-smart}"  # "smart" (default), "functional", or "visual"
 TIMEOUT="${QA_TIMEOUT:-600}"  # seconds per claude call (default 10 min)
 QA_MODEL="${QA_MODEL:-claude-sonnet-4-6}"
-NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
 # ─────────────
-
-# ── NOTIFICATIONS ──
-notify() {
-  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
-    return
-  fi
-  osascript -e "display notification \"$1\" with title \"QA Runner\"" 2>/dev/null || true
-}
 
 # ── macOS TIMEOUT PORTABILITY ──
 if ! command -v timeout &>/dev/null; then
@@ -183,39 +177,6 @@ EOF
 
 LAST_PASS_SECS=0
 
-# ── FORMAT ELAPSED TIME ──
-fmt_elapsed() {
-  local secs="$1"
-  if [ "$secs" -lt 60 ]; then echo "${secs}s"; else echo "$(( secs / 60 ))min"; fi
-}
-
-# ── HEARTBEAT (prints elapsed time every 60s while Claude runs) ──
-HEARTBEAT_PID=""
-
-start_heartbeat() {
-  local label="$1"
-  local start_ts
-  start_ts=$(date +%s)
-  (
-    trap 'exit 0' TERM
-    while true; do
-      sleep 60 &
-      wait $! 2>/dev/null || exit 0
-      local elapsed=$(( ($(date +%s) - start_ts) / 60 ))
-      echo "[$(date +%H:%M:%S)] ${label} still running... (${elapsed}min elapsed)"
-    done
-  ) &
-  HEARTBEAT_PID=$!
-}
-
-stop_heartbeat() {
-  if [ -n "$HEARTBEAT_PID" ]; then
-    kill "$HEARTBEAT_PID" 2>/dev/null || true
-    wait "$HEARTBEAT_PID" 2>/dev/null || true
-    HEARTBEAT_PID=""
-  fi
-}
-
 # ── RUNNER ──
 run_claude() {
   local prompt="$1"
@@ -226,7 +187,7 @@ run_claude() {
   PASS_START=$(date +%s)
 
   echo ""
-  echo "[$(date +%H:%M:%S)] Starting: ${label}..."
+  log "Starting: ${label}..."
   notify "Starting: ${label}"
 
   start_heartbeat "$label"
@@ -242,10 +203,10 @@ run_claude() {
 
   if [ "$rc" -ne 0 ]; then
     if [ "$rc" -eq 124 ]; then
-      echo "[$(date +%H:%M:%S)] FATAL: ${label} timed out after ${TIMEOUT}s."
+      log "FATAL: ${label} timed out after ${TIMEOUT}s."
       notify "FATAL: ${label} timed out after ${TIMEOUT}s"
     else
-      echo "[$(date +%H:%M:%S)] FATAL: ${label} failed (exit code ${rc})."
+      log "FATAL: ${label} failed (exit code ${rc})."
       notify "FATAL: ${label} failed (exit code ${rc})"
     fi
     exit 1
@@ -253,18 +214,18 @@ run_claude() {
 
   # Validate output is non-empty and looks like a report
   if [ ! -s "$output_file" ]; then
-    echo "FATAL: ${label} produced empty output."
+    log "FATAL: ${label} produced empty output."
     exit 1
   fi
 
   if ! grep -q "## Findings" "$output_file"; then
-    echo "WARNING: ${label} output doesn't contain expected report structure. Results may be unreliable."
+    log "WARNING: ${label} output doesn't contain expected report structure. Results may be unreliable."
   fi
 
   LAST_PASS_SECS=$(( $(date +%s) - PASS_START ))
   local pass_time
   pass_time=$(fmt_elapsed "$LAST_PASS_SECS")
-  echo "[$(date +%H:%M:%S)] Done: ${label} ($(wc -l < "$output_file" | tr -d ' ') lines, ${pass_time})"
+  log "Done: ${label} ($(wc -l < "$output_file" | tr -d ' ') lines, ${pass_time})"
   notify "Done: ${label} (${pass_time})"
 }
 
@@ -466,7 +427,6 @@ case "$MODE" in
     QA_TIME=$(fmt_elapsed $(( $(date +%s) - QA_START )))
     # Count confirmed issues: from visual pass if run, otherwise from functional
     if [ -s "$VISUAL_FILE" ]; then
-      local vis_all vis_dis
       vis_all=$(grep -c "^### \[F-" "$VISUAL_FILE" 2>/dev/null) || true
       vis_dis=$(grep -c "^### .*DISMISSED" "$VISUAL_FILE" 2>/dev/null) || true
       FINAL_COUNT=$((vis_all - vis_dis))

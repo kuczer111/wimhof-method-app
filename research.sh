@@ -1,7 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
+SCRIPT_TITLE="Research"
+source ./config.sh
+
 RESEARCH_NAME="${RESEARCH_NAME:-}"
 
 # ── File naming ──
@@ -23,12 +25,7 @@ fi
 # ── Allowed tools: web search, web fetch, read local files ──
 RESEARCH_TOOLS="WebSearch,WebFetch,Read,Grep,Glob"
 
-notify() {
-  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
-    return
-  fi
-  osascript -e "display notification \"$1\" with title \"Research\"" 2>/dev/null || true
-}
+trap 'stop_heartbeat' EXIT INT TERM HUP
 
 # ── Extract topic and context from plan file ──
 TOPIC=$(sed -n 's/^\*\*Topic:\*\* //p' "$PLAN_FILE" | head -1)
@@ -40,9 +37,9 @@ TOTAL=$((REMAINING + ALREADY_DONE))
 DONE=$ALREADY_DONE
 START_TIME=$(date +%s)
 
-echo "Starting research: ${TOPIC}"
-echo "Subtopics: ${REMAINING} remaining (${TOTAL} total)"
-echo "Output: ${OUTPUT_FILE}"
+log "Starting research: ${TOPIC}"
+log "Subtopics: ${REMAINING} remaining (${TOTAL} total)"
+log "Output: ${OUTPUT_FILE}"
 echo ""
 notify "Research started: ${TOPIC}"
 
@@ -72,7 +69,7 @@ while true; do
   DONE=$((DONE + 1))
 
   echo "========================================="
-  echo "Subtopic ${DONE}/${TOTAL}: ${SUBTOPIC}"
+  log "Subtopic ${DONE}/${TOTAL}: ${SUBTOPIC}"
   echo "========================================="
 
   # Read prior findings for context (truncate if very large)
@@ -88,6 +85,8 @@ $(tail -500 "$WIP_FILE")"
   fi
 
   # Research this subtopic
+  start_heartbeat "Subtopic ${DONE}/${TOTAL}"
+
   FINDINGS=$(claude --dangerously-skip-permissions --print \
     --allowedTools "$RESEARCH_TOOLS" \
     -- "
@@ -125,15 +124,17 @@ Output your findings in this exact markdown format, nothing else:
 - [List URLs or references you consulted]
 ") && true
 
+  stop_heartbeat
+
   # Validate output is non-empty
   if [ -z "$FINDINGS" ]; then
-    echo "WARNING: Empty findings for subtopic ${NUM}. Skipping."
+    log "WARNING: Empty findings for subtopic ${NUM}. Skipping."
     notify "WARNING: Empty findings for subtopic ${NUM}"
   else
     # Append to WIP file
     printf "\n%s\n\n---\n" "$FINDINGS" >> "$WIP_FILE"
     echo ""
-    echo "Findings appended to ${WIP_FILE}"
+    log "Findings appended to ${WIP_FILE}"
   fi
 
   # Check off subtopic
@@ -151,15 +152,16 @@ done
 
 # ── Final synthesis pass ──
 echo "========================================="
-echo "Synthesizing findings into ${OUTPUT_FILE}..."
+log "Synthesizing findings into ${OUTPUT_FILE}..."
 echo "========================================="
 echo ""
 
 notify "Synthesizing research findings..."
+start_heartbeat "Synthesis"
 
 WIP_LINES=$(wc -l < "$WIP_FILE" | tr -d ' ')
 if [ "$WIP_LINES" -gt 2000 ]; then
-  echo "WIP file is large (${WIP_LINES} lines). Truncating to last 2000 lines for synthesis."
+  log "WIP file is large (${WIP_LINES} lines). Truncating to last 2000 lines for synthesis."
   WIP_CONTENT="[Truncated — showing last 2000 lines of ${WIP_LINES} total]
 $(tail -2000 "$WIP_FILE")"
 else
@@ -202,12 +204,14 @@ Write the complete document directly to the file ${OUTPUT_FILE}. The document sh
 ...
 "
 
-ELAPSED=$(( ($(date +%s) - START_TIME) / 60 ))
+stop_heartbeat
 
-notify "Research complete (${ELAPSED}min): ${OUTPUT_FILE}"
+RESEARCH_TIME=$(fmt_elapsed $(( $(date +%s) - START_TIME )))
+
+notify "Research complete (${RESEARCH_TIME}): ${DONE} subtopics in ${OUTPUT_FILE}"
 
 echo ""
-echo "Research complete! ${DONE} subtopics in ${ELAPSED} minutes."
+log "Research complete! ${DONE} subtopics in ${RESEARCH_TIME}."
 echo ""
 echo "Files:"
 echo "  Plan:    ${PLAN_FILE}"

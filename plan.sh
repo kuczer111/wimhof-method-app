@@ -1,15 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-MODE="${1:-spec}"
-NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
+SCRIPT_TITLE="Plan"
+source ./config.sh
 
-notify() {
-  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
-    return
-  fi
-  osascript -e "display notification \"$1\" with title \"Plan\"" 2>/dev/null || true
-}
+MODE="${1:-spec}"
 
 # ── Auto-detect latest spec file (SPEC_FILE env var overrides) ──
 if [ -z "${SPEC_FILE:-}" ]; then
@@ -29,14 +24,16 @@ else
 fi
 
 PLAN_START=$(date +%s)
+notify "Planning started (${MODE})"
 
 case "$MODE" in
   spec)
     if [ ! -f "$SPEC_FILE" ]; then
-      echo "❌ Spec file not found: $SPEC_FILE"
+      log "Spec file not found: $SPEC_FILE"
+      notify "FATAL: Spec file not found: $SPEC_FILE"
       exit 1
     fi
-    echo "📋 Planning tasks from spec: $SPEC_FILE (starting at $NEXT_NUM)..."
+    log "Planning tasks from spec: $SPEC_FILE (starting at $NEXT_NUM)..."
 
     claude --dangerously-skip-permissions --print "
 Read the files ${SPEC_FILE} and TASKS.md carefully.
@@ -69,10 +66,11 @@ Write this output directly to the file TASKS.md
 
   fix)
     if [ ! -f QA-FINDINGS.md ]; then
-      echo "❌ QA-FINDINGS.md not found. Run ./qa.sh first."
+      log "QA-FINDINGS.md not found. Run ./qa.sh first."
+      notify "FATAL: QA-FINDINGS.md not found"
       exit 1
     fi
-    echo "📋 Planning fix tasks from QA-FINDINGS.md (starting at $NEXT_NUM)..."
+    log "Planning fix tasks from QA-FINDINGS.md (starting at $NEXT_NUM)..."
 
     claude --dangerously-skip-permissions --print "
 Read the files QA-FINDINGS.md and TASKS.md carefully.
@@ -116,11 +114,11 @@ Write this output directly to the file TASKS.md
 esac
 
 TASK_COUNT=$(grep -c "^- \[ \]" TASKS.md 2>/dev/null) || true
-PLAN_SECS=$(( $(date +%s) - PLAN_START ))
-if [ "$PLAN_SECS" -lt 60 ]; then PLAN_TIME="${PLAN_SECS}s"; else PLAN_TIME="$(( PLAN_SECS / 60 ))min"; fi
+PLAN_TIME=$(fmt_elapsed $(( $(date +%s) - PLAN_START )))
+log "Planning done (${MODE}, ${PLAN_TIME}): ${TASK_COUNT:-0} open tasks"
 notify "Planning done (${MODE}, ${PLAN_TIME}): ${TASK_COUNT:-0} open tasks in TASKS.md"
 
 echo ""
-echo "✅ TASKS.md updated. Review it:"
+log "TASKS.md updated. Review it:"
 echo ""
 cat TASKS.md

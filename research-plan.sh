@@ -1,9 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_TITLE="Research Plan"
+source ./config.sh
+
 TOPIC=""
 QUICK=false
-NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
 RESEARCH_NAME="${RESEARCH_NAME:-}"
 
 # ── Parse flags ──
@@ -47,18 +49,13 @@ else
   PLAN_FILE="RESEARCH-PLAN.md"
 fi
 
-notify() {
-  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
-    return
-  fi
-  osascript -e "display notification \"$1\" with title \"Research\"" 2>/dev/null || true
-}
+PLAN_START=$(date +%s)
 
 # ── Pass 1: Dynamic context questions ──
 CONTEXT_BLOCK=""
 
 if [ "$QUICK" = false ]; then
-  echo "Generating context questions for your topic..."
+  log "Generating context questions for your topic..."
   echo ""
 
   QUESTIONS=$(claude --dangerously-skip-permissions --print -- "
@@ -104,7 +101,7 @@ ${ANSWERS}"
 fi
 
 # ── Pass 2: Generate subtopics ──
-echo "Planning subtopics..."
+log "Planning subtopics..."
 
 CONTEXT_PROMPT=""
 if [ -n "$CONTEXT_BLOCK" ]; then
@@ -147,9 +144,10 @@ Write this output directly to the file ${PLAN_FILE}. Nothing else.
 "
 
 SUBTOPIC_COUNT=$(grep -c "^- \[ \]" "$PLAN_FILE" 2>/dev/null) || true
-notify "Research planned: ${SUBTOPIC_COUNT:-0} subtopics in ${PLAN_FILE}"
+PLAN_TIME=$(fmt_elapsed $(( $(date +%s) - PLAN_START )))
 
 echo ""
-echo "Done: ${PLAN_FILE} (${SUBTOPIC_COUNT:-0} subtopics)"
+log "Done: ${PLAN_FILE} (${SUBTOPIC_COUNT:-0} subtopics, ${PLAN_TIME})"
+notify "Research planned (${PLAN_TIME}): ${SUBTOPIC_COUNT:-0} subtopics in ${PLAN_FILE}"
 echo ""
 cat "$PLAN_FILE"

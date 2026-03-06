@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_TITLE="Ralph Task"
+source ./config.sh
+
 MODE="${1:-spec}"
 TASK="${2:-}"
 # ── Auto-detect latest spec file (SPEC_FILE env var overrides) ──
@@ -14,7 +17,8 @@ fi
 MAX_LOOPS=8
 loop=0
 BUILD_LOG=$(mktemp)
-trap 'rm -f "$BUILD_LOG"' EXIT INT TERM HUP
+TASK_START=$(date +%s)
+trap 'stop_heartbeat; rm -f "$BUILD_LOG"' EXIT INT TERM HUP
 
 if [ -z "$TASK" ]; then
   echo "Usage: ./ralph-task.sh [spec|fix] \"task description\""
@@ -47,12 +51,12 @@ Rules specific to bug fixes:
 esac
 
 echo ""
-echo "🤖 Starting task ($MODE): $TASK"
+log "Starting task ($MODE): $TASK"
 echo ""
 
 while [ $loop -lt $MAX_LOOPS ]; do
   loop=$((loop + 1))
-  echo "--- Loop $loop of $MAX_LOOPS ---"
+  log "Loop $loop of $MAX_LOOPS"
 
   if [ $loop -eq 1 ]; then
     ERRORS_CONTEXT=""
@@ -65,6 +69,8 @@ $(tail -80 "$BUILD_LOG")
 ---
 Fix these errors. Do NOT repeat the same mistakes."
   fi
+
+  start_heartbeat "Claude (loop $loop)"
 
   claude --dangerously-skip-permissions --print "
 You are working on a Wim Hof Method PWA using Next.js (app router), TypeScript, and Tailwind CSS.
@@ -81,25 +87,25 @@ Rules:
 $ERRORS_CONTEXT
 "
 
-  echo ""
-  echo "🔨 Checking build..."
+  stop_heartbeat
+
+  log "Checking build..."
   set +eo pipefail
   npm run build 2>&1 | tee "$BUILD_LOG"
   BUILD_EXIT=${PIPESTATUS[0]}
   set -eo pipefail
 
   if [ $BUILD_EXIT -eq 0 ]; then
-    echo ""
-    echo "✅ Build passed!"
+    TASK_TIME=$(fmt_elapsed $(( $(date +%s) - TASK_START )))
+    log "Build passed! (${TASK_TIME} total)"
     exit 0
   else
-    echo ""
-    echo "❌ Build failed — sending errors back to Claude..."
+    log "Build failed — sending errors back to Claude..."
   fi
 
 done
 
-echo ""
-echo "⚠️  Max loops hit. Task needs manual attention: $TASK"
+log "Max loops hit. Task needs manual attention: $TASK"
+notify "Max loops hit on: $TASK"
 git checkout .
 exit 1
