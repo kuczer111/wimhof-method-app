@@ -48,6 +48,14 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
   const [showPreBreathingGuide, setShowPreBreathingGuide] = useState(isFirstSession);
   const [showMidSessionPause, setShowMidSessionPause] = useState(false);
 
+  const phaseAnnouncement = `Round ${currentRound} of ${config.rounds}. ${PHASE_ANNOUNCEMENTS[phase]}`;
+  const [announced, setAnnounced] = useState("");
+  useEffect(() => {
+    setAnnounced("");
+    const timer = setTimeout(() => setAnnounced(phaseAnnouncement), 250);
+    return () => clearTimeout(timer);
+  }, [phaseAnnouncement]);
+
   useEffect(() => {
     unlockAudio();
     if (getPreferences().wakeLockEnabled) {
@@ -126,12 +134,12 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     );
   }
 
-  const phaseAnnouncement = `Round ${currentRound} of ${config.rounds}. ${PHASE_ANNOUNCEMENTS[phase]}`;
+  const phaseKey = `${phase}-${currentRound}`;
 
   if (phase === "power-breaths") {
     return (
-      <div>
-        <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
+      <div key={phaseKey} className="animate-phase-fade">
+        <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
         <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -158,8 +166,8 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
       if (maxSeconds > 0) personalBestMs = maxSeconds * 1000;
     }
     return (
-      <div>
-        <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
+      <div key={phaseKey} className="animate-phase-fade">
+        <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
         <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -175,8 +183,8 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
 
   if (phase === "recovery") {
     return (
-      <div>
-        <div className="sr-only" aria-live="assertive" role="status">{phaseAnnouncement}</div>
+      <div key={phaseKey} className="animate-phase-fade">
+        <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
         <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -187,8 +195,8 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
 
   // complete
   return (
-    <>
-      <div className="sr-only" aria-live="assertive" role="status">{PHASE_ANNOUNCEMENTS.complete}</div>
+    <div key={phaseKey} className="animate-phase-fade">
+      <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
       <SessionComplete
         config={config}
         retentionTimes={retentionTimes}
@@ -196,6 +204,6 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
         onDone={onFinish}
         isFirstSession={isFirstSession}
       />
-    </>
+    </div>
   );
 }

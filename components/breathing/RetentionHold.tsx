@@ -208,8 +208,7 @@ export default function RetentionHold({
         onPointerLeave={handlePointerLeave}
         onPointerCancel={handlePointerLeave}
         onClick={handleClick}
-        aria-label="End breath hold"
-        aria-description="Hold for half a second or double-tap to end"
+        aria-label="End breath hold. Hold for half a second or double-tap to end."
         className="relative mt-4 select-none touch-none rounded-full bg-brand px-10 py-4 text-lg font-semibold text-white transition-colors active:bg-brand-dark"
       >
         {strings.breathing.retention.tapButton}

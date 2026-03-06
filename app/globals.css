@@ -19,11 +19,27 @@
   }
 }
 
+@keyframes phase-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-phase-fade {
+  animation: phase-fade 250ms ease-in-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-page-enter {
     animation: none;
   }
   .animate-slide-up {
+    animation: none;
+  }
+  .animate-phase-fade {
     animation: none;
   }
 }
