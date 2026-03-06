@@ -159,6 +159,8 @@ export const strings = {
     } as Record<string, string>,
     screenWakeLock: "Screen Wake Lock",
     wakeLockDescription: "Keep screen on during sessions",
+    reducedMotion: "Reduced Motion",
+    reducedMotionDescription: "Replace breathing animation with a simple progress bar",
     practiceProfile: "Practice Profile",
     editProfile: "Edit Profile",
     customPresets: "Custom Presets",

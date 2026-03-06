@@ -158,10 +158,10 @@ export default function SettingsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Reduced Motion
+              {strings.settings.reducedMotion}
             </h2>
             <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-              Replace breathing animation with a simple progress bar
+              {strings.settings.reducedMotionDescription}
             </p>
           </div>
           <button
