@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { initStorage } from "@/lib/storage";
 import { initReminders } from "@/lib/notifications";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function StorageProvider({
   children,
@@ -18,7 +19,7 @@ export default function StorageProvider({
     });
   }, []);
 
-  if (!ready) return null;
+  if (!ready) return <LoadingScreen />;
 
   return <>{children}</>;
 }

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { initStorage, getPreferences } from "@/lib/storage";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function Home() {
   const router = useRouter();
@@ -18,5 +19,5 @@ export default function Home() {
     });
   }, [router]);
 
-  return null;
+  return <LoadingScreen />;
 }
