@@ -7,7 +7,16 @@ QA_FILE="${QA_FILE:-QA-FINDINGS.md}"
 MODE="${1:-smart}"  # "smart" (default), "functional", or "visual"
 TIMEOUT="${QA_TIMEOUT:-600}"  # seconds per claude call (default 10 min)
 QA_MODEL="${QA_MODEL:-claude-sonnet-4-6}"
+NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
 # ─────────────
+
+# ── NOTIFICATIONS ──
+notify() {
+  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
+    return
+  fi
+  osascript -e "display notification \"$1\" with title \"QA Runner\"" 2>/dev/null || true
+}
 
 # ── macOS TIMEOUT PORTABILITY ──
 if ! command -v timeout &>/dev/null; then
@@ -191,8 +200,10 @@ run_claude() {
   if [ "$rc" -ne 0 ]; then
     if [ "$rc" -eq 124 ]; then
       echo "FATAL: ${label} timed out after ${TIMEOUT}s."
+      notify "FATAL: ${label} timed out after ${TIMEOUT}s"
     else
       echo "FATAL: ${label} failed (exit code ${rc})."
+      notify "FATAL: ${label} failed (exit code ${rc})"
     fi
     exit 1
   fi
@@ -208,6 +219,7 @@ run_claude() {
   fi
 
   echo "Done: ${label} ($(wc -l < "$output_file") lines)"
+  notify "Done: ${label}"
 }
 
 # ── PASS FUNCTIONS ──
@@ -339,12 +351,14 @@ case "$MODE" in
     run_functional "$QA_FILE"
     echo ""
     echo "Functional QA complete. Results in ${QA_FILE}"
+    notify "QA complete (functional). Results in ${QA_FILE}"
     ;;
 
   visual)
     run_visual_full "$QA_FILE"
     echo ""
     echo "Visual QA complete. Results in ${QA_FILE}"
+    notify "QA complete (visual). Results in ${QA_FILE}"
     ;;
 
   smart)
@@ -371,6 +385,7 @@ case "$MODE" in
 
     echo ""
     echo "Smart QA complete. Results in ${QA_FILE}"
+    notify "QA complete (smart). Results in ${QA_FILE}"
     ;;
 
   *)
