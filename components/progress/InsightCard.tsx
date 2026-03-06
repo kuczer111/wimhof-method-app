@@ -1,5 +1,6 @@
 import type { BreathingSession } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
+import { safeAvgRetention } from "@/lib/analytics";
 
 interface InsightCardProps {
   sessions: BreathingSession[];
@@ -12,17 +13,6 @@ function getWeekStart(date: Date): Date {
   d.setDate(d.getDate() - diff);
   d.setHours(0, 0, 0, 0);
   return d;
-}
-
-function avgRetention(sessions: BreathingSession[]): number {
-  if (sessions.length === 0) return 0;
-  const avgs = sessions.map(
-    (s) =>
-      s.retentionTimes.length > 0
-        ? s.retentionTimes.reduce((a, b) => a + b, 0) / s.retentionTimes.length
-        : 0
-  );
-  return avgs.reduce((a, b) => a + b, 0) / avgs.length;
 }
 
 export default function InsightCard({ sessions }: InsightCardProps) {
@@ -59,8 +49,8 @@ export default function InsightCard({ sessions }: InsightCardProps) {
 
   if (recentSessions.length === 0 || priorSessions.length === 0) return null;
 
-  const recentAvg = avgRetention(recentSessions);
-  const priorAvg = avgRetention(priorSessions);
+  const recentAvg = safeAvgRetention(recentSessions);
+  const priorAvg = safeAvgRetention(priorSessions);
 
   const changePct = priorAvg > 0 ? Math.round(((recentAvg - priorAvg) / priorAvg) * 100) : 0;
 

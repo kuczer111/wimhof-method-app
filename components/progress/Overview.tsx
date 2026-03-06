@@ -2,6 +2,7 @@
 
 import { BreathingSession, ColdSession } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
+import { safeAvgRetention } from "@/lib/analytics";
 import InsightCard from "@/components/progress/InsightCard";
 
 interface OverviewProps {
@@ -87,15 +88,8 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
   const weekDiff = totalThisWeek - totalLastWeek;
 
   // Average retention trend
-  const avgRetention = (sessions: BreathingSession[]) => {
-    if (sessions.length === 0) return 0;
-    const avgs = sessions.map(
-      (s) => s.retentionTimes.reduce((a, b) => a + b, 0) / s.retentionTimes.length
-    );
-    return avgs.reduce((a, b) => a + b, 0) / avgs.length;
-  };
-  const retThis = avgRetention(breathingThisWeek);
-  const retLast = avgRetention(breathingLastWeek);
+  const retThis = safeAvgRetention(breathingThisWeek);
+  const retLast = safeAvgRetention(breathingLastWeek);
   const retTrend = retThis > retLast + 2 ? "up" : retThis < retLast - 2 ? "down" : "flat";
 
   // Cold total this week

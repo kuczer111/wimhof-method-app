@@ -4,10 +4,9 @@ import { useState, useEffect } from "react";
 import {
   getBreathingSessions,
   getColdSessions,
-  type BreathingSession,
-  type ColdSession,
 } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
+import { safeAvgRetention } from "@/lib/analytics";
 
 const DISMISSED_KEY = "whm_weekly_summary_dismissed";
 
@@ -143,17 +142,8 @@ export default function WeeklySummary() {
     // Need at least some activity last week to show summary
     if (sessionsLastWeek === 0) return;
 
-    const avgRetention = (sessions: BreathingSession[]) => {
-      if (sessions.length === 0) return 0;
-      const avgs = sessions.map(
-        (s) =>
-          s.retentionTimes.reduce((a, b) => a + b, 0) / s.retentionTimes.length
-      );
-      return avgs.reduce((a, b) => a + b, 0) / avgs.length;
-    };
-
-    const avgRetentionLast = avgRetention(breathingLastWeek);
-    const avgRetentionPrev = avgRetention(breathingPrevWeek);
+    const avgRetentionLast = safeAvgRetention(breathingLastWeek);
+    const avgRetentionPrev = safeAvgRetention(breathingPrevWeek);
     const coldTotalLast = coldLastWeek.reduce((sum, s) => sum + s.duration, 0);
     const breathingStreak = computeStreak(breathing);
     const coldStreak = computeStreak(cold);
