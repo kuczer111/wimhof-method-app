@@ -61,18 +61,26 @@ function shouldShow(): boolean {
   const thisMonday = getMondayOfWeek(now);
   // Only show if we're past Monday (i.e., the previous week is complete)
   // "First app open after Monday" means: current week's Monday has passed
-  const dismissed = localStorage.getItem(DISMISSED_KEY);
-  if (dismissed) {
-    const dismissedDate = new Date(dismissed);
-    // Already dismissed for this week
-    if (dismissedDate >= thisMonday) return false;
+  try {
+    const dismissed = localStorage.getItem(DISMISSED_KEY);
+    if (dismissed) {
+      const dismissedDate = new Date(dismissed);
+      // Already dismissed for this week
+      if (dismissedDate >= thisMonday) return false;
+    }
+  } catch {
+    // localStorage unavailable (e.g. iOS private browsing)
   }
   // Need at least one full previous week of potential data
   return true;
 }
 
 function dismiss() {
-  localStorage.setItem(DISMISSED_KEY, new Date().toISOString());
+  try {
+    localStorage.setItem(DISMISSED_KEY, new Date().toISOString());
+  } catch {
+    // localStorage unavailable (e.g. iOS private browsing)
+  }
 }
 
 function getSuggestion(
