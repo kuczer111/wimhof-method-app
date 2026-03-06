@@ -121,7 +121,7 @@ function OnboardingFlow() {
       onTouchEnd={handleTouchEnd}
     >
       {/* Progress dots */}
-      <div className="flex justify-center gap-2 pt-safe-top px-4 pt-12">
+      <div className="flex justify-center gap-2 px-4 pt-[max(3rem,env(safe-area-inset-top))]">
         {Array.from({ length: totalScreens }).map((_, i) => (
           <div
             key={i}
@@ -147,7 +147,7 @@ function OnboardingFlow() {
       </div>
 
       {/* Bottom controls */}
-      <div className="flex items-center justify-between px-6 pb-safe-bottom pb-8">
+      <div className="flex items-center justify-between px-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
         {canSkip ? (
           <button
             onClick={handleSkip}
