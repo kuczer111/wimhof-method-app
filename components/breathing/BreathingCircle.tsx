@@ -38,7 +38,7 @@ function BreathingProgressBar({ pace, isActive }: { pace: Pace; isActive: boolea
 
   return (
     <div className="flex items-center justify-center" role="img" aria-label="Breathing pace indicator">
-      <div className="w-48">
+      <div className="w-[min(12rem,45vw)]">
         <div
           role="progressbar"
           aria-label="Breathing cycle progress"
@@ -77,8 +77,8 @@ export default function BreathingCircle({
         aria-hidden="true"
         className="rounded-full bg-brand/30 flex items-center justify-center"
         style={{
-          width: 200,
-          height: 200,
+          width: "min(200px, 45vw)",
+          height: "min(200px, 45vw)",
           animation: isActive
             ? `breathe ${duration}s ease-in-out infinite`
             : "none",
@@ -86,7 +86,7 @@ export default function BreathingCircle({
           opacity: isActive ? undefined : 0.4,
         }}
       >
-        <div className="w-16 h-16 rounded-full bg-brand-light" />
+        <div className="w-[min(4rem,18vw)] h-[min(4rem,18vw)] rounded-full bg-brand-light" />
       </div>
     </div>
   );
