@@ -1,39 +1,28 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import type {
+  BreathingSession,
+  ColdSession,
+  UserPreferences,
+  SessionConfig,
+} from "./storage";
+import type { MilestoneType } from "./milestones";
 
 // --- IndexedDB Schema ---
 
 export interface WhmDB extends DBSchema {
   breathing_sessions: {
     key: string;
-    value: {
-      id: string;
-      date: string;
-      rounds: number;
-      retentionTimes: number[];
-      totalDuration: number;
-      breathsPerRound: number;
-      pace: "slow" | "medium" | "fast";
-      feelingRating?: number;
-      note?: string;
-    };
+    value: BreathingSession;
     indexes: { "by-date": string };
   };
   cold_sessions: {
     key: string;
-    value: {
-      id: string;
-      date: string;
-      duration: number;
-      targetDuration: number;
-      type: "shower" | "bath" | "outdoor" | "other";
-      temperature?: number;
-      rating?: number;
-    };
+    value: ColdSession;
     indexes: { "by-date": string };
   };
   preferences: {
     key: string;
-    value: unknown;
+    value: UserPreferences;
   };
   program_progress: {
     key: string;
@@ -50,18 +39,16 @@ export interface WhmDB extends DBSchema {
     value: {
       id: string;
       name: string;
-      rounds: number;
-      breathsPerRound: number;
-      pace: "slow" | "medium" | "fast";
+      config: SessionConfig;
     };
   };
   milestones: {
     key: string;
     value: {
       id: string;
-      type: string;
+      type: MilestoneType;
       achievedAt: string;
-      data?: unknown;
+      data?: Record<string, unknown>;
     };
     indexes: { "by-type": string };
   };

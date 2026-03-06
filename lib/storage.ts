@@ -271,7 +271,7 @@ async function loadCache(): Promise<void> {
   cache.breathingSessions = breathingSessions;
   cache.coldSessions = coldSessions;
   cache.preferences = prefs
-    ? { ...DEFAULT_PREFERENCES, ...(prefs as UserPreferences) }
+    ? { ...DEFAULT_PREFERENCES, ...prefs }
     : { ...DEFAULT_PREFERENCES };
 
   initialized = true;
