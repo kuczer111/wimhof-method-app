@@ -1,4 +1,5 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import { trackError } from "@/components/ErrorTracker";
 import type {
   BreathingSession,
   ColdSession,
@@ -66,6 +67,9 @@ export function getDB(): Promise<IDBPDatabase<WhmDB>> {
 
   if (!dbPromise) {
     dbPromise = openDB<WhmDB>(DB_NAME, DB_VERSION, {
+      blocked() {
+        trackError("indexeddb", new Error("Database blocked by older version"));
+      },
       upgrade(db) {
         // breathing_sessions
         const breathingStore = db.createObjectStore("breathing_sessions", {
@@ -94,6 +98,9 @@ export function getDB(): Promise<IDBPDatabase<WhmDB>> {
         });
         milestoneStore.createIndex("by-type", "type");
       },
+    }).catch((error) => {
+      trackError("indexeddb", error, "Failed to open database");
+      throw error;
     });
   }
 

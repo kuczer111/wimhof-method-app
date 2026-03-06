@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { strings } from "@/lib/i18n";
+import ErrorTracker from "@/components/ErrorTracker";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,7 +33,10 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <ErrorTracker />
+        {children}
+      </body>
     </html>
   );
 }
