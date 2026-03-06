@@ -50,7 +50,7 @@ export default function RetentionChart({
     [sessions],
   );
 
-  if (sessions.length < 2) return null;
+  if (sessions.length === 0) return null;
 
   return (
     <Card>
