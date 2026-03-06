@@ -96,12 +96,16 @@ export async function isMilestoneUnlocked(type: MilestoneType): Promise<boolean>
   return milestones.some((m) => m.type === type);
 }
 
+const REPEATABLE_MILESTONES = new Set<MilestoneType>(["new_pb"]);
+
 async function unlockMilestone(
   type: MilestoneType,
   data?: Record<string, unknown>
 ): Promise<Milestone | null> {
-  const already = await isMilestoneUnlocked(type);
-  if (already) return null;
+  if (!REPEATABLE_MILESTONES.has(type)) {
+    const already = await isMilestoneUnlocked(type);
+    if (already) return null;
+  }
 
   const milestone: Milestone = {
     id: `${type}-${Date.now()}`,
