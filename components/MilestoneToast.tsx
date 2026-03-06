@@ -34,7 +34,7 @@ function MilestoneDisplay({
   }, [onDismiss]);
 
   return (
-    <div className="animate-slide-up fixed bottom-24 left-4 right-4 z-50 mx-auto max-w-sm">
+    <div className="animate-slide-up fixed bottom-24 left-4 right-4 z-50 mx-auto max-h-[calc(100dvh-2rem)] max-w-sm overflow-y-auto">
       <button
         type="button"
         onClick={onDismiss}

@@ -13,7 +13,7 @@ export default function GuidedOverlay({ type, onContinue }: GuidedOverlayProps) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-base/80 px-6">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center dark:bg-surface-raised">
+      <div className="w-full max-h-[calc(100dvh-2rem)] max-w-sm overflow-y-auto rounded-2xl bg-white p-6 text-center dark:bg-surface-raised">
         <h2 className="mb-3 text-xl font-bold text-on-surface-light dark:text-on-surface">
           {content.title}
         </h2>
