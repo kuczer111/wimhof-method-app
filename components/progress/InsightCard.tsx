@@ -72,18 +72,18 @@ export default function InsightCard({ sessions }: InsightCardProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950/50">
-      <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+    <div className="rounded-2xl border border-brand/20 bg-brand/[0.06] p-4 dark:border-brand-dark/30 dark:bg-brand-dark/10">
+      <h3 className="text-sm font-semibold text-brand-dark dark:text-brand-light">
         {s.title}
       </h3>
-      <p className="mt-1 text-sm text-blue-900 dark:text-blue-100">
+      <p className="mt-1 text-sm text-on-surface-faint dark:text-on-surface-muted">
         {patternText}
       </p>
-      <div className="mt-3 rounded-lg bg-blue-100/50 px-3 py-2 dark:bg-blue-900/30">
-        <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
+      <div className="mt-3 rounded-lg bg-brand/10 px-3 py-2 dark:bg-brand-dark/20">
+        <p className="text-xs font-medium text-brand dark:text-brand-light">
           {s.suggestion}
         </p>
-        <p className="mt-0.5 text-xs text-blue-800 dark:text-blue-200">
+        <p className="mt-0.5 text-xs text-brand-dark dark:text-brand-light">
           {suggestion}
         </p>
       </div>

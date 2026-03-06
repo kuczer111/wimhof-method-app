@@ -6,9 +6,9 @@ import { strings } from "@/lib/i18n";
 
 const RetentionChart = dynamic(() => import("./RetentionChart"), {
   loading: () => (
-    <div className="rounded-2xl bg-white p-4 dark:bg-gray-800">
-      <div className="mb-2 h-4 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-      <div className="h-[200px] animate-pulse rounded bg-gray-100 dark:bg-gray-700/50" />
+    <div className="rounded-2xl bg-white p-4 dark:bg-surface-overlay">
+      <div className="mb-2 h-4 w-32 animate-pulse rounded bg-on-surface-light/10 dark:bg-on-surface-faint" />
+      <div className="h-[200px] animate-pulse rounded bg-on-surface-light/[0.06] dark:bg-on-surface-faint/50" />
     </div>
   ),
   ssr: false,
@@ -28,7 +28,7 @@ function formatDate(iso: string): string {
 function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
   if (sessions.length === 0) {
     return (
-      <p className="mt-8 text-center text-gray-500">
+      <p className="mt-8 text-center text-on-surface-light-muted">
         {strings.progress.breathingEmpty}
       </p>
     );
@@ -40,7 +40,7 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
         <Card key={s.id}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(s.date)}</p>
+              <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{formatDate(s.date)}</p>
               <p className="mt-1 font-semibold">
                 {strings.progress.roundLabel(s.rounds)}
               </p>
@@ -55,13 +55,13 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
             {s.retentionTimes.map((t, i) => (
               <span
                 key={i}
-                className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-600 dark:bg-blue-900/50 dark:text-blue-300"
+                className="rounded-full bg-brand/10 px-2 py-0.5 text-xs text-brand-dark dark:bg-brand-dark/20 dark:text-brand-light"
               >
                 R{i + 1}: {formatDuration(t)}
               </span>
             ))}
           </div>
-          <p className="mt-2 text-xs text-gray-500">
+          <p className="mt-2 text-xs text-on-surface-light-muted">
             {strings.progress.totalLabel(formatDuration(s.totalDuration))}
           </p>
         </Card>

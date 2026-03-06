@@ -48,17 +48,17 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
 
   return (
     <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-      <p className="text-sm font-medium uppercase tracking-wider text-cyan-400">
+      <p className="text-sm font-medium uppercase tracking-wider text-cold-light">
         {strings.cold.sessionComplete}
       </p>
-      <p className="text-4xl font-bold text-gray-900 dark:text-gray-50">{formatTime(elapsed)}</p>
-      <p className="text-sm text-gray-500 dark:text-gray-400">
+      <p className="text-4xl font-bold text-on-surface-light dark:text-on-surface">{formatTime(elapsed)}</p>
+      <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.cold.targetLabel(formatLabel(target))}
       </p>
 
       {/* Type selector */}
       <div className="w-full max-w-xs">
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.cold.type}
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -69,8 +69,8 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
               onClick={() => setColdType(t)}
               className={`rounded-xl px-4 py-2 text-sm font-medium capitalize transition-colors ${
                 coldType === t
-                  ? "bg-cyan-500 text-white"
-                  : "bg-gray-200 text-gray-600 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:active:bg-gray-700"
+                  ? "bg-cold text-white"
+                  : "bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint"
               }`}
             >
               {t}
@@ -81,7 +81,7 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
 
       {/* Temperature (optional) */}
       <div className="w-full max-w-xs">
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.cold.waterTemperature}
         </h3>
         <div className="flex items-center gap-2">
@@ -91,15 +91,15 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
             value={temperature}
             onChange={(e) => setTemperature(e.target.value)}
             placeholder={strings.cold.temperaturePlaceholder}
-            className="w-full rounded-xl border border-gray-300 bg-gray-100/60 px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-100 dark:placeholder:text-gray-500"
+            className="w-full rounded-xl border border-on-surface-light/20 bg-on-surface-light/[0.06] px-3 py-2.5 text-sm text-on-surface-light placeholder:text-on-surface-muted focus:border-cold focus:outline-none focus:ring-1 focus:ring-cold dark:border-on-surface-faint dark:bg-surface-overlay/60 dark:text-on-surface dark:placeholder:text-on-surface-faint"
           />
-          <span className="text-sm text-gray-500 dark:text-gray-400">{getTemperatureUnitLabel(getPreferences().temperatureUnit)}</span>
+          <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{getTemperatureUnitLabel(getPreferences().temperatureUnit)}</span>
         </div>
       </div>
 
       {/* Rating */}
       <div className="w-full max-w-xs">
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.cold.howDidItFeel}
         </h3>
         <div className="flex justify-center gap-2">
@@ -115,8 +115,8 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
                 aria-label={`${value} - ${label}`}
                 className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
                   isSelected
-                    ? "bg-cyan-500 text-white"
-                    : "bg-gray-200 text-gray-500 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:active:bg-gray-700"
+                    ? "bg-cold text-white"
+                    : "bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint"
                 }`}
               >
                 <span className="text-lg font-bold">{value}</span>
@@ -130,7 +130,7 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
       {/* Actions */}
       <div className="flex w-full max-w-xs flex-col gap-3 pt-2">
         {!saved && (
-          <Button size="lg" className="w-full bg-cyan-500 active:bg-cyan-600" onClick={handleSave}>
+          <Button size="lg" className="w-full bg-cold active:bg-cold-dark" onClick={handleSave}>
             {strings.common.saveSession}
           </Button>
         )}

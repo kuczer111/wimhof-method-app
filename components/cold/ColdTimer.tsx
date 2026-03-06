@@ -42,7 +42,7 @@ function CircularProgress({
         fill="none"
         stroke="currentColor"
         strokeWidth={stroke}
-        className="text-gray-200 dark:text-gray-800"
+        className="text-on-surface-light/20 dark:text-surface-overlay"
       />
       <circle
         cx={radius}
@@ -55,7 +55,7 @@ function CircularProgress({
         strokeDasharray={circumference}
         strokeDashoffset={offset}
         className={`transition-[stroke-dashoffset] duration-300 ${
-          exceeded ? "text-emerald-400" : "text-cyan-400"
+          exceeded ? "text-success-light" : "text-cold-light"
         }`}
       />
     </svg>
@@ -113,15 +113,15 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
     const exceeded = elapsed > target;
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">{strings.cold.heading}</h1>
+        <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">{strings.cold.heading}</h1>
 
         <div className="relative">
           <CircularProgress elapsed={elapsed} target={target} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-4xl font-bold tabular-nums text-gray-900 dark:text-gray-50">
+            <span className="text-4xl font-bold tabular-nums text-on-surface-light dark:text-on-surface">
               {formatTime(elapsed)}
             </span>
-            <span className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <span className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
               {exceeded ? strings.cold.targetReached : strings.cold.targetLabel(formatLabel(target))}
             </span>
           </div>

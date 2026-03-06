@@ -49,20 +49,20 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
 
   return (
     <Card>
-      <h3 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">
+      <h3 className="mb-3 text-sm font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.progress.coldStats.title}
       </h3>
       <div className="mb-4 flex gap-4">
-        <div className="flex-1 rounded-lg bg-gray-100 p-3 text-center dark:bg-gray-900">
-          <p className="text-2xl font-bold text-cyan-400">{totalMinutes}</p>
-          <p className="text-xs text-gray-500">{strings.progress.coldStats.totalMinutes}</p>
+        <div className="flex-1 rounded-lg bg-on-surface-light/[0.06] p-3 text-center dark:bg-surface-raised">
+          <p className="text-2xl font-bold text-cold-light">{totalMinutes}</p>
+          <p className="text-xs text-on-surface-light-muted">{strings.progress.coldStats.totalMinutes}</p>
         </div>
-        <div className="flex-1 rounded-lg bg-gray-100 p-3 text-center dark:bg-gray-900">
-          <p className="text-2xl font-bold text-cyan-400">{streak}</p>
-          <p className="text-xs text-gray-500">{strings.progress.coldStats.dayStreak}</p>
+        <div className="flex-1 rounded-lg bg-on-surface-light/[0.06] p-3 text-center dark:bg-surface-raised">
+          <p className="text-2xl font-bold text-cold-light">{streak}</p>
+          <p className="text-xs text-on-surface-light-muted">{strings.progress.coldStats.dayStreak}</p>
         </div>
       </div>
-      <p className="mb-2 text-xs text-gray-500">{strings.progress.coldStats.last12Weeks}</p>
+      <p className="mb-2 text-xs text-on-surface-light-muted">{strings.progress.coldStats.last12Weeks}</p>
       <div className="flex gap-[3px]">
         {weeks.map((week, wi) => (
           <div key={wi} className="flex flex-col gap-[3px]">
@@ -72,8 +72,8 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
                 title={day.date}
                 className={`h-3 w-3 rounded-sm ${
                   day.hasSession
-                    ? "bg-cyan-500"
-                    : "bg-gray-200 dark:bg-gray-800"
+                    ? "bg-cold"
+                    : "bg-on-surface-light/10 dark:bg-surface-overlay"
                 }`}
               />
             ))}
@@ -87,7 +87,7 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
 function ColdList({ sessions }: { sessions: ColdSession[] }) {
   if (sessions.length === 0) {
     return (
-      <p className="mt-8 text-center text-gray-500">
+      <p className="mt-8 text-center text-on-surface-light-muted">
         {strings.progress.coldEmpty}
       </p>
     );
@@ -99,14 +99,14 @@ function ColdList({ sessions }: { sessions: ColdSession[] }) {
         <Card key={s.id}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(s.date)}</p>
+              <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{formatDate(s.date)}</p>
               <p className="mt-1 font-semibold">{formatDuration(s.duration)}</p>
             </div>
-            <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-xs capitalize text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-300">
+            <span className="rounded-full bg-cold/10 px-2 py-0.5 text-xs capitalize text-cold-dark dark:bg-cold-dark/20 dark:text-cold-light">
               {s.type}
             </span>
           </div>
-          <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+          <div className="mt-2 flex items-center gap-3 text-xs text-on-surface-light-muted">
             <span>{strings.progress.coldTarget(formatDuration(s.targetDuration))}</span>
             {s.temperature != null && <span>{displayTemperature(s.temperature, getPreferences().temperatureUnit)}{getTemperatureUnitLabel(getPreferences().temperatureUnit)}</span>}
             {s.rating && <span>{strings.progress.coldRating(s.rating)}</span>}

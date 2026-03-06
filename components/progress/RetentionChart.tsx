@@ -23,18 +23,18 @@ export default function RetentionChart({ sessions }: { sessions: BreathingSessio
   return (
     <Card>
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">{strings.progress.chart.title}</h3>
+        <h3 className="text-sm font-semibold text-on-surface-light-muted dark:text-on-surface-muted">{strings.progress.chart.title}</h3>
         <div className="flex items-center gap-2">
-          <button onClick={() => setMode("avg")} aria-pressed={mode === "avg"} aria-label="Show average retention" className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${mode === "avg" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}>
+          <button onClick={() => setMode("avg")} aria-pressed={mode === "avg"} aria-label="Show average retention" className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${mode === "avg" ? "bg-brand/10 text-brand-dark dark:bg-brand-dark/20 dark:text-brand-light" : "text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"}`}>
             {strings.progress.chart.showAvg}
           </button>
-          <button onClick={() => setMode("rounds")} aria-pressed={mode === "rounds"} aria-label="Show per-round breakdown" className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${mode === "rounds" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}>
+          <button onClick={() => setMode("rounds")} aria-pressed={mode === "rounds"} aria-label="Show per-round breakdown" className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${mode === "rounds" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300" : "text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"}`}>
             {strings.progress.chart.showRounds}
           </button>
         </div>
       </div>
 
-      <div className="mb-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+      <div className="mb-1 flex flex-wrap items-center gap-3 text-xs text-on-surface-light-muted">
         {mode === "avg" ? (
           <>
             <span className="flex items-center gap-1"><span className="inline-block h-0.5 w-3 bg-blue-400" /> {strings.progress.chart.avgLegend}</span>
@@ -82,7 +82,7 @@ export default function RetentionChart({ sessions }: { sessions: BreathingSessio
           )}
         </LineChart>
       </ResponsiveContainer>
-      <div className="mt-1 flex justify-between text-xs text-gray-500">
+      <div className="mt-1 flex justify-between text-xs text-on-surface-light-muted">
         <span>{strings.progress.chart.overallAvg(avg)}</span>
         <span>{strings.progress.chart.pr(prValue)}</span>
       </div>
