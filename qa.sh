@@ -1,4 +1,43 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================================
+# qa.sh — Automated QA testing against the deployed app.
+# ============================================================================
+#
+# Usage:
+#   ./qa.sh              Smart mode (default): functional scan → visual verify
+#   ./qa.sh functional   DOM/accessibility scan only (cheapest)
+#   ./qa.sh visual       Full screenshot scan (most thorough)
+#
+# Flow (smart mode):
+#   1. Preflight: verify claude CLI + MCP configs (Playwright + Puppeteer)
+#   2. Pass 1 — Functional: Playwright accessibility snapshots, check all flows
+#   3. If issues found → Pass 2 — Visual: Puppeteer screenshots of flagged pages
+#      - Confirms or dismisses each finding based on visual evidence
+#      - Spots additional visual issues (layout, contrast, spacing)
+#   4. Merge both reports into QA-FINDINGS.md with results table
+#   5. If no issues found → skip visual, copy functional report directly
+#
+# Key functions:
+#   preflight()           Check claude CLI + MCP configs exist
+#   run_claude()          Generic runner with timeout, heartbeat, output validation
+#   run_functional()      Playwright-based DOM/a11y scan of all test flows
+#   run_visual_full()     Puppeteer-based screenshot scan of all test flows
+#   run_visual_targeted() Puppeteer scan of only pages with reported issues
+#   has_issues()          Check if functional report found any bugs
+#   merge_reports()       Combine functional + visual into final report (bash only)
+#
+# Output:
+#   QA-FINDINGS.md (overwritten each run — git tracks history)
+#
+# Next step:  ./plan.sh fix  (to generate fix tasks from findings)
+#
+# Environment:
+#   APP_URL            Target URL (default: https://wimhof-method-app.vercel.app)
+#   QA_FILE            Output file (default: QA-FINDINGS.md)
+#   QA_TIMEOUT         Timeout per pass in seconds (default: 600)
+#   QA_MODEL           Claude model (default: claude-sonnet-4-6)
+#   QA_SKIP_PREFLIGHT  Set to 1 to skip MCP availability check
+# ============================================================================
 set -euo pipefail
 
 SCRIPT_TITLE="QA"
@@ -12,16 +51,7 @@ TIMEOUT="${QA_TIMEOUT:-600}"  # seconds per claude call (default 10 min)
 QA_MODEL="${QA_MODEL:-claude-sonnet-4-6}"
 # ─────────────
 
-# ── macOS TIMEOUT PORTABILITY ──
-if ! command -v timeout &>/dev/null; then
-  if command -v gtimeout &>/dev/null; then
-    timeout() { gtimeout "$@"; }
-  else
-    echo "WARNING: No timeout command found (install coreutils: brew install coreutils)."
-    echo "         Claude calls will run without timeout protection."
-    timeout() { shift; "$@"; }
-  fi
-fi
+ensure_timeout
 
 # ── TEMP FILES & CLEANUP ──
 FUNCTIONAL_FILE=$(mktemp /tmp/qa-functional-XXXXXX)
@@ -39,11 +69,16 @@ preflight() {
     exit 1
   fi
 
-  # Check all known MCP config locations
+  # Check all known MCP config locations (nullglob avoids literal globs when no match)
+  local old_nullglob
+  old_nullglob=$(shopt -p nullglob 2>/dev/null) || true
+  shopt -s nullglob
   local config_files=(.mcp.json ~/.claude.json ~/.claude/.mcp.json ~/.claude/projects/*/settings.local.json)
+  eval "$old_nullglob" 2>/dev/null || true
 
   check_mcp() {
     local name="$1"
+    [ ${#config_files[@]} -eq 0 ] && return 1
     grep -ql "\"${name}\"" "${config_files[@]}" 2>/dev/null
   }
 
@@ -193,11 +228,14 @@ run_claude() {
   start_heartbeat "$label"
 
   local rc=0
+  set +eo pipefail
   timeout "${TIMEOUT}" \
     claude --model "$QA_MODEL" --dangerously-skip-permissions --print \
     --allowedTools "$allowed_tools" \
     -- "$prompt" \
-    2>&1 | tee "$output_file" || rc=$?
+    2>&1 | tee "$output_file"
+  rc=${PIPESTATUS[0]}
+  set -eo pipefail
 
   stop_heartbeat
 
