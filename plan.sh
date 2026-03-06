@@ -28,6 +28,8 @@ else
   NEXT_NUM="001"
 fi
 
+PLAN_START=$(date +%s)
+
 case "$MODE" in
   spec)
     if [ ! -f "$SPEC_FILE" ]; then
@@ -114,7 +116,9 @@ Write this output directly to the file TASKS.md
 esac
 
 TASK_COUNT=$(grep -c "^- \[ \]" TASKS.md 2>/dev/null) || true
-notify "Planning done (${MODE}): ${TASK_COUNT:-0} new tasks in TASKS.md"
+PLAN_SECS=$(( $(date +%s) - PLAN_START ))
+if [ "$PLAN_SECS" -lt 60 ]; then PLAN_TIME="${PLAN_SECS}s"; else PLAN_TIME="$(( PLAN_SECS / 60 ))min"; fi
+notify "Planning done (${MODE}, ${PLAN_TIME}): ${TASK_COUNT:-0} open tasks in TASKS.md"
 
 echo ""
 echo "✅ TASKS.md updated. Review it:"

@@ -181,6 +181,12 @@ Include EVERY issue no matter how small.
 EOF
 }
 
+# ── FORMAT ELAPSED TIME ──
+fmt_elapsed() {
+  local secs="$1"
+  if [ "$secs" -lt 60 ]; then echo "${secs}s"; else echo "$(( secs / 60 ))min"; fi
+}
+
 # ── HEARTBEAT (prints elapsed time every 60s while Claude runs) ──
 HEARTBEAT_PID=""
 
@@ -214,6 +220,8 @@ run_claude() {
   local output_file="$2"
   local label="$3"
   local allowed_tools="$4"
+
+  PASS_START=$(date +%s)
 
   echo ""
   echo "[$(date +%H:%M:%S)] Starting: ${label}..."
@@ -251,8 +259,11 @@ run_claude() {
     echo "WARNING: ${label} output doesn't contain expected report structure. Results may be unreliable."
   fi
 
-  echo "[$(date +%H:%M:%S)] Done: ${label} ($(wc -l < "$output_file") lines)"
-  notify "Done: ${label}"
+  local pass_secs=$(( $(date +%s) - PASS_START ))
+  local pass_time
+  pass_time=$(fmt_elapsed "$pass_secs")
+  echo "[$(date +%H:%M:%S)] Done: ${label} ($(wc -l < "$output_file" | tr -d ' ') lines, ${pass_time})"
+  notify "Done: ${label} (${pass_time})"
 }
 
 # ── PASS FUNCTIONS ──
@@ -373,6 +384,7 @@ echo "Model: ${QA_MODEL}"
 echo "Started: $(date +%H:%M:%S)"
 echo "======================================"
 echo ""
+QA_START=$(date +%s)
 notify "QA started (${MODE}) targeting ${APP_URL}"
 
 # Preflight (skip with QA_SKIP_PREFLIGHT=1 for speed)
@@ -384,16 +396,18 @@ echo ""
 case "$MODE" in
   functional)
     run_functional "$QA_FILE"
+    QA_TIME=$(fmt_elapsed $(( $(date +%s) - QA_START )))
     echo ""
-    echo "Functional QA complete. Results in ${QA_FILE}"
-    notify "QA complete (functional). Results in ${QA_FILE}"
+    echo "Functional QA complete in ${QA_TIME}. Results in ${QA_FILE}"
+    notify "QA complete (functional, ${QA_TIME}). Results in ${QA_FILE}"
     ;;
 
   visual)
     run_visual_full "$QA_FILE"
+    QA_TIME=$(fmt_elapsed $(( $(date +%s) - QA_START )))
     echo ""
-    echo "Visual QA complete. Results in ${QA_FILE}"
-    notify "QA complete (visual). Results in ${QA_FILE}"
+    echo "Visual QA complete in ${QA_TIME}. Results in ${QA_FILE}"
+    notify "QA complete (visual, ${QA_TIME}). Results in ${QA_FILE}"
     ;;
 
   smart)
@@ -418,9 +432,11 @@ case "$MODE" in
       cp "$FUNCTIONAL_FILE" "$QA_FILE"
     fi
 
+    QA_TIME=$(fmt_elapsed $(( $(date +%s) - QA_START )))
+    FINAL_COUNT=$(issue_count "$VISUAL_FILE")
     echo ""
-    echo "Smart QA complete. Results in ${QA_FILE}"
-    notify "QA complete (smart). Results in ${QA_FILE}"
+    echo "Smart QA complete in ${QA_TIME}. ${FINAL_COUNT} issue(s). Results in ${QA_FILE}"
+    notify "QA complete (smart, ${QA_TIME}): ${FINAL_COUNT} issue(s) in ${QA_FILE}"
     ;;
 
   *)
