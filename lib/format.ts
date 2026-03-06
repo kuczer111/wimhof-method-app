@@ -34,14 +34,6 @@ export function toStorageCelsius(value: number, unit: "celsius" | "fahrenheit"):
   return value;
 }
 
-/** Convert stored Celsius to display value */
-export function fromStorageCelsius(celsius: number, unit: "celsius" | "fahrenheit"): number {
-  if (unit === "fahrenheit") {
-    return Math.round(celsius * 9 / 5 + 32);
-  }
-  return celsius;
-}
-
 /** Format seconds as human-readable duration, e.g. "2m 30s" or "45s" */
 export function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);

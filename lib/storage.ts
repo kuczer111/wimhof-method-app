@@ -303,11 +303,6 @@ export function saveBreathingSession(session: BreathingSession): void {
   getDB().then((db) => db.put("breathing_sessions", session));
 }
 
-export function deleteBreathingSession(id: string): void {
-  cache.breathingSessions = cache.breathingSessions.filter((s) => s.id !== id);
-  getDB().then((db) => db.delete("breathing_sessions", id));
-}
-
 // --- Cold sessions ---
 
 export function getColdSessions(): ColdSession[] {
@@ -317,11 +312,6 @@ export function getColdSessions(): ColdSession[] {
 export function saveColdSession(session: ColdSession): void {
   cache.coldSessions.push(session);
   getDB().then((db) => db.put("cold_sessions", session));
-}
-
-export function deleteColdSession(id: string): void {
-  cache.coldSessions = cache.coldSessions.filter((s) => s.id !== id);
-  getDB().then((db) => db.delete("cold_sessions", id));
 }
 
 // --- User preferences ---

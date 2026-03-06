@@ -140,13 +140,3 @@ export const BEGINNER_PROGRAM: Program = {
   days: buildBeginnerDays(),
 };
 
-/** Look up a program by ID. Currently only the beginner program exists. */
-export function getProgramById(id: string): Program | undefined {
-  if (id === BEGINNER_PROGRAM.id) return BEGINNER_PROGRAM;
-  return undefined;
-}
-
-/** Get all available programs. */
-export function getAllPrograms(): Program[] {
-  return [BEGINNER_PROGRAM];
-}
