@@ -125,7 +125,7 @@ async function unlockMilestone(
 // --- Detection: called after saving a session ---
 
 // Pending milestones queue for the toast to consume
-let pendingMilestones: Milestone[] = [];
+const pendingMilestones: Milestone[] = [];
 let listeners: Array<() => void> = [];
 
 export function subscribeMilestones(listener: () => void): () => void {

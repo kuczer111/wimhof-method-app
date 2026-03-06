@@ -183,7 +183,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 
 // --- In-memory cache ---
 
-let cache: {
+const cache: {
   breathingSessions: BreathingSession[];
   coldSessions: ColdSession[];
   preferences: UserPreferences;

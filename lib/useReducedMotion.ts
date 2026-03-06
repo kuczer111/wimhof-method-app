@@ -32,7 +32,7 @@ export function useReducedMotion(): boolean {
       } else {
         localStorage.removeItem("whm_reduced_motion");
       }
-    } catch (_) {
+    } catch {
       // ignore storage errors
     }
   });

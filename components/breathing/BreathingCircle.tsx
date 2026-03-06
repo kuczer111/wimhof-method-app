@@ -26,7 +26,7 @@ function BreathingProgressBar({ pace, isActive }: { pace: Pace; isActive: boolea
       return;
     }
     let animFrame: number;
-    let start = performance.now();
+    const start = performance.now();
     const tick = (now: number) => {
       const elapsed = (now - start) % duration;
       setProgress(elapsed / duration);
