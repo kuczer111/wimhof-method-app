@@ -170,7 +170,7 @@ export default function ProgramPage() {
   if (!progress) {
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-[calc(5rem+env(safe-area-inset-bottom))]">
-        <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">
+        <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">
           {strings.program.heading}
         </h1>
         <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
@@ -191,7 +191,7 @@ export default function ProgramPage() {
   if (isProgramComplete) {
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-[calc(5rem+env(safe-area-inset-bottom))]">
-        <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">
+        <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">
           {strings.program.programComplete}
         </h1>
         <p className="text-center text-on-surface-light-muted dark:text-on-surface-muted">
@@ -221,7 +221,7 @@ export default function ProgramPage() {
     <div className="flex flex-col gap-5 px-4 pt-6 pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">
+          <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">
             {strings.program.heading}
           </h1>
           <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">

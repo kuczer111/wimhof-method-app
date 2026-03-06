@@ -98,7 +98,7 @@ export default function SessionComplete({
       <p className="text-sm font-medium uppercase tracking-wider text-success dark:text-success-light">
         {strings.breathing.sessionComplete.status}
       </p>
-      <p className="text-4xl font-bold text-on-surface-light dark:text-on-surface">{strings.breathing.sessionComplete.message}</p>
+      <p className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.breathing.sessionComplete.message}</p>
 
       {/* Summary stats */}
       <div className="flex gap-6 text-center">

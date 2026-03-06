@@ -113,7 +113,7 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
     const exceeded = elapsed > target;
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-        <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">{strings.cold.heading}</h1>
+        <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.cold.heading}</h1>
 
         <div className="relative">
           <CircularProgress elapsed={elapsed} target={target} />

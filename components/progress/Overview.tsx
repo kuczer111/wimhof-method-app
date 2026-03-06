@@ -86,14 +86,14 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
       {/* Weekly summary */}
       <div className="rounded-2xl bg-on-surface-light/[0.06] p-4 dark:bg-surface-raised">
         <div className="flex items-baseline justify-between">
-          <h3 className="text-sm font-medium text-on-surface-light-muted dark:text-on-surface-muted">
+          <h3 className="text-sm font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
             {s.thisWeek}
           </h3>
           <span className="text-xs text-on-surface-muted dark:text-on-surface-faint">
             {s.vsLastWeek(weekDiff)}
           </span>
         </div>
-        <p className="mt-1 text-3xl font-bold">
+        <p className="mt-1 text-3xl font-bold tabular-nums">
           {totalThisWeek}{" "}
           <span className="text-base font-normal text-on-surface-light-muted dark:text-on-surface-muted">
             {s.sessions}
@@ -105,11 +105,11 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
       <div className="grid grid-cols-2 gap-3">
         {/* Avg retention */}
         <div className="rounded-2xl bg-on-surface-light/[0.06] p-4 dark:bg-surface-raised">
-          <h3 className="text-xs font-medium text-on-surface-light-muted dark:text-on-surface-muted">
+          <h3 className="text-xs font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
             {s.avgRetention}
           </h3>
           <div className="mt-1 flex items-baseline gap-1">
-            <span className="text-2xl font-bold">
+            <span className="text-2xl font-bold tabular-nums">
               {retThis > 0 ? formatSeconds(retThis) : "--"}
             </span>
             {retThis > 0 && (
@@ -120,20 +120,20 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
 
         {/* Cold total */}
         <div className="rounded-2xl bg-on-surface-light/[0.06] p-4 dark:bg-surface-raised">
-          <h3 className="text-xs font-medium text-on-surface-light-muted dark:text-on-surface-muted">
+          <h3 className="text-xs font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
             {s.coldTotal}
           </h3>
-          <p className="mt-1 text-2xl font-bold">
+          <p className="mt-1 text-2xl font-bold tabular-nums">
             {coldTotalSec > 0 ? formatSeconds(coldTotalSec) : "--"}
           </p>
         </div>
 
         {/* Breathing streak */}
         <div className="rounded-2xl bg-on-surface-light/[0.06] p-4 dark:bg-surface-raised">
-          <h3 className="text-xs font-medium text-on-surface-light-muted dark:text-on-surface-muted">
+          <h3 className="text-xs font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
             {s.breathingStreak}
           </h3>
-          <p className="mt-1 text-2xl font-bold">
+          <p className="mt-1 text-2xl font-bold tabular-nums">
             {breathingStreak}{" "}
             <span className="text-sm font-normal text-on-surface-light-muted dark:text-on-surface-muted">
               {s.days}
@@ -143,10 +143,10 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
 
         {/* Cold streak */}
         <div className="rounded-2xl bg-on-surface-light/[0.06] p-4 dark:bg-surface-raised">
-          <h3 className="text-xs font-medium text-on-surface-light-muted dark:text-on-surface-muted">
+          <h3 className="text-xs font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
             {s.coldStreak}
           </h3>
-          <p className="mt-1 text-2xl font-bold">
+          <p className="mt-1 text-2xl font-bold tabular-nums">
             {coldStreak}{" "}
             <span className="text-sm font-normal text-on-surface-light-muted dark:text-on-surface-muted">
               {s.days}
@@ -161,10 +161,10 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
       {/* Consistency */}
       <div className="rounded-2xl bg-on-surface-light/[0.06] p-4 dark:bg-surface-raised">
         <div className="flex items-baseline justify-between">
-          <h3 className="text-sm font-medium text-on-surface-light-muted dark:text-on-surface-muted">
+          <h3 className="text-sm font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
             {s.consistency}
           </h3>
-          <span className="text-2xl font-bold">{consistency}%</span>
+          <span className="text-2xl font-bold tabular-nums">{consistency}%</span>
         </div>
         <div
           role="progressbar"

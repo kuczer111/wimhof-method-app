@@ -165,7 +165,7 @@ export default function WeeklySummary() {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl dark:bg-surface-raised">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold">{s.title}</h2>
+          <h2 className="text-lg font-semibold">{s.title}</h2>
           <button
             onClick={handleDismiss}
             className="text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"
@@ -189,7 +189,7 @@ export default function WeeklySummary() {
                 : "same as prev week"}
             </span>
           </div>
-          <p className="mt-1 text-2xl font-bold">{data.sessionsLastWeek}</p>
+          <p className="mt-1 text-2xl font-bold tabular-nums">{data.sessionsLastWeek}</p>
         </div>
 
         {/* Two-column stats */}
@@ -198,7 +198,7 @@ export default function WeeklySummary() {
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
             <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.avgRetention}</span>
             <div className="mt-1 flex items-baseline gap-1">
-              <span className="text-xl font-bold">
+              <span className="text-xl font-bold tabular-nums">
                 {data.avgRetentionLast > 0 ? formatSeconds(data.avgRetentionLast) : "--"}
               </span>
               {data.avgRetentionLast > 0 && (
@@ -210,7 +210,7 @@ export default function WeeklySummary() {
           {/* Cold total */}
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
             <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.coldTotal}</span>
-            <p className="mt-1 text-xl font-bold">
+            <p className="mt-1 text-xl font-bold tabular-nums">
               {data.coldTotalLast > 0 ? formatSeconds(data.coldTotalLast) : "--"}
             </p>
           </div>
@@ -220,13 +220,13 @@ export default function WeeklySummary() {
         <div className="mb-3 grid grid-cols-2 gap-2">
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
             <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.breathingStreak}</span>
-            <p className="mt-1 text-xl font-bold">
+            <p className="mt-1 text-xl font-bold tabular-nums">
               {data.breathingStreak} <span className="text-xs font-normal text-on-surface-light-muted">{s.days}</span>
             </p>
           </div>
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
             <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.coldStreak}</span>
-            <p className="mt-1 text-xl font-bold">
+            <p className="mt-1 text-xl font-bold tabular-nums">
               {data.coldStreak} <span className="text-xs font-normal text-on-surface-light-muted">{s.days}</span>
             </p>
           </div>
