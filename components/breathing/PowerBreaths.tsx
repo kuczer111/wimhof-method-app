@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import BreathingCircle from "./BreathingCircle";
-import { playInhaleTone, playExhaleTone } from "@/lib/audio";
-import { strings } from "@/lib/i18n";
+import { useEffect, useRef, useState } from 'react';
+import BreathingCircle from './BreathingCircle';
+import { playInhaleTone, playExhaleTone } from '@/lib/audio';
+import { strings } from '@/lib/i18n';
 
-type Pace = "slow" | "medium" | "fast";
+type Pace = 'slow' | 'medium' | 'fast';
 
 const paceDurations: Record<Pace, number> = {
   slow: 2.5,
@@ -74,8 +74,15 @@ export default function PowerBreaths({
 
       <BreathingCircle pace={pace} isActive />
 
-      <div className="flex flex-col items-center gap-1" role="status" aria-label={`Breath ${currentBreath} of ${breathCount}`}>
-        <span className="text-7xl font-bold tabular-nums text-on-surface-light dark:text-on-surface" aria-hidden="true">
+      <div
+        className="flex flex-col items-center gap-1"
+        role="status"
+        aria-label={`Breath ${currentBreath} of ${breathCount}`}
+      >
+        <span
+          className="text-7xl font-bold tabular-nums text-on-surface-light dark:text-on-surface"
+          aria-hidden="true"
+        >
           {currentBreath}
         </span>
         <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">

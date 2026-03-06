@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { getPreferences } from "@/lib/storage";
-import { useReducedMotion } from "@/lib/useReducedMotion";
-import BottomNav from "./BottomNav";
-import SafetyOnboarding from "./SafetyOnboarding";
-import StorageProvider from "./StorageProvider";
-import MilestoneToast from "./MilestoneToast";
-import WeeklySummary from "./WeeklySummary";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getPreferences } from '@/lib/storage';
+import { useReducedMotion } from '@/lib/useReducedMotion';
+import BottomNav from './BottomNav';
+import SafetyOnboarding from './SafetyOnboarding';
+import StorageProvider from './StorageProvider';
+import MilestoneToast from './MilestoneToast';
+import WeeklySummary from './WeeklySummary';
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -17,7 +17,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const prefs = getPreferences();
     if (!prefs.onboardingComplete) {
-      router.replace("/onboarding");
+      router.replace('/onboarding');
     }
   }, [router]);
 

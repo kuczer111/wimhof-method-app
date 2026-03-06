@@ -1,14 +1,14 @@
-import Card from "@/components/ui/Card";
-import OptionButton from "@/components/ui/OptionButton";
-import type { UserPreferences } from "@/lib/storage";
-import { strings } from "@/lib/i18n";
+import Card from '@/components/ui/Card';
+import OptionButton from '@/components/ui/OptionButton';
+import type { UserPreferences } from '@/lib/storage';
+import { strings } from '@/lib/i18n';
 
-type AudioMode = UserPreferences["audioMode"];
+type AudioMode = UserPreferences['audioMode'];
 
 const AUDIO_OPTIONS: { value: AudioMode; label: string }[] = [
-  { value: "tone", label: strings.settings.audioOptions.tones },
-  { value: "haptic", label: strings.settings.audioOptions.haptic },
-  { value: "silent", label: strings.settings.audioOptions.silent },
+  { value: 'tone', label: strings.settings.audioOptions.tones },
+  { value: 'haptic', label: strings.settings.audioOptions.haptic },
+  { value: 'silent', label: strings.settings.audioOptions.silent },
 ];
 
 interface AudioSettingsProps {
@@ -16,7 +16,10 @@ interface AudioSettingsProps {
   onUpdate: (patch: Partial<UserPreferences>) => void;
 }
 
-export default function AudioSettings({ audioMode, onUpdate }: AudioSettingsProps) {
+export default function AudioSettings({
+  audioMode,
+  onUpdate,
+}: AudioSettingsProps) {
   return (
     <Card>
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">

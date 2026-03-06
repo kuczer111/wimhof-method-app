@@ -6,11 +6,11 @@ let sentinel: WakeLockSentinel | null = null;
 /** Request a screen wake lock. No-op if unsupported or already held. */
 export async function requestWakeLock(): Promise<void> {
   if (sentinel) return;
-  if (typeof navigator === "undefined" || !("wakeLock" in navigator)) return;
+  if (typeof navigator === 'undefined' || !('wakeLock' in navigator)) return;
 
   try {
-    sentinel = await navigator.wakeLock.request("screen");
-    sentinel.addEventListener("release", () => {
+    sentinel = await navigator.wakeLock.request('screen');
+    sentinel.addEventListener('release', () => {
       sentinel = null;
     });
   } catch {

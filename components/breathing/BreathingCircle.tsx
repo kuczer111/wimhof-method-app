@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useReducedMotion } from "@/lib/useReducedMotion";
+import { useEffect, useState } from 'react';
+import { useReducedMotion } from '@/lib/useReducedMotion';
 
-type Pace = "slow" | "medium" | "fast";
+type Pace = 'slow' | 'medium' | 'fast';
 
 interface BreathingCircleProps {
   pace: Pace;
@@ -16,7 +16,13 @@ const paceDurations: Record<Pace, number> = {
   fast: 1.5,
 };
 
-function BreathingProgressBar({ pace, isActive }: { pace: Pace; isActive: boolean }) {
+function BreathingProgressBar({
+  pace,
+  isActive,
+}: {
+  pace: Pace;
+  isActive: boolean;
+}) {
   const duration = paceDurations[pace] * 1000;
   const [progress, setProgress] = useState(0);
 
@@ -37,7 +43,11 @@ function BreathingProgressBar({ pace, isActive }: { pace: Pace; isActive: boolea
   }, [isActive, duration]);
 
   return (
-    <div className="flex items-center justify-center" role="img" aria-label="Breathing pace indicator">
+    <div
+      className="flex items-center justify-center"
+      role="img"
+      aria-label="Breathing pace indicator"
+    >
       <div className="w-[min(12rem,45vw)]">
         <div
           role="progressbar"
@@ -49,11 +59,13 @@ function BreathingProgressBar({ pace, isActive }: { pace: Pace; isActive: boolea
         >
           <div
             className="h-full rounded-full bg-brand transition-none"
-            style={{ width: `${(progress <= 0.5 ? progress * 2 : 2 - progress * 2) * 100}%` }}
+            style={{
+              width: `${(progress <= 0.5 ? progress * 2 : 2 - progress * 2) * 100}%`,
+            }}
           />
         </div>
         <p className="mt-2 text-center text-xs text-on-surface-light-muted dark:text-on-surface-muted">
-          {progress <= 0.5 ? "Inhale" : "Exhale"}
+          {progress <= 0.5 ? 'Inhale' : 'Exhale'}
         </p>
       </div>
     </div>
@@ -72,17 +84,21 @@ export default function BreathingCircle({
   }
 
   return (
-    <div className="flex items-center justify-center" role="img" aria-label="Breathing animation guide">
+    <div
+      className="flex items-center justify-center"
+      role="img"
+      aria-label="Breathing animation guide"
+    >
       <div
         aria-hidden="true"
         className="rounded-full bg-brand/30 flex items-center justify-center"
         style={{
-          width: "min(200px, 45vw)",
-          height: "min(200px, 45vw)",
+          width: 'min(200px, 45vw)',
+          height: 'min(200px, 45vw)',
           animation: isActive
             ? `breathe ${duration}s ease-in-out infinite`
-            : "none",
-          transform: isActive ? undefined : "scale(1)",
+            : 'none',
+          transform: isActive ? undefined : 'scale(1)',
           opacity: isActive ? undefined : 0.4,
         }}
       >

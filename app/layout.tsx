@@ -1,25 +1,25 @@
-import type { Metadata, Viewport } from "next";
-import { strings } from "@/lib/i18n";
-import ErrorTracker from "@/components/ErrorTracker";
-import "./globals.css";
+import type { Metadata, Viewport } from 'next';
+import { strings } from '@/lib/i18n';
+import ErrorTracker from '@/components/ErrorTracker';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: strings.app.title,
   description: strings.app.description,
-  manifest: "/manifest.json",
+  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: 'black-translucent',
     title: strings.app.shortTitle,
   },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0ea5e9" },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0ea5e9' },
   ],
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
 };
 

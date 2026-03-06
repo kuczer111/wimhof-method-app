@@ -71,6 +71,7 @@ Independently implemented in: `lib/milestones.ts:122-151`, `lib/shareCard.ts:23-
 | `i18n.ts` | 397 | Split into domain-specific string files |
 
 **A-03: Business logic in UI components**
+
 - Streak calculations in `Overview.tsx`, `ColdHistory.tsx`, `WeeklySummary.tsx`
 - Week-over-week comparison logic in `WeeklySummary.tsx`
 - Average retention calculations in `Overview.tsx`, `InsightCard.tsx`
@@ -79,6 +80,7 @@ Independently implemented in: `lib/milestones.ts:122-151`, `lib/shareCard.ts:23-
 These should be extracted to `lib/analytics.ts` or similar.
 
 **A-04: Duplicated utility functions**
+
 - `formatSeconds()` — duplicated in `WeeklySummary.tsx` and `Overview.tsx` (identical to `formatDuration` in `lib/format.ts`)
 - `getMondayOfWeek()`/`startOfWeek()`/`getWeekStart()` — 3 different names for the same function in 3 files
 - `avgRetention()` calculation — duplicated in 3 components
@@ -96,18 +98,21 @@ The app has no error boundary. Any unhandled render error crashes the entire app
 ### 🟡 IMPORTANT
 
 **C-01: TypeScript weaknesses**
+
 - `lib/db.ts:37` — `preferences` store typed as `value: unknown` instead of `UserPreferences`
 - `lib/db.ts:65` — milestones `data` typed as `unknown`
 - `lib/storage.ts:84` — `normalizeSessionConfig` accepts `Record<string, unknown>` and uses unsafe cast at line 104
 - DB schema for `breathing_sessions.breathsPerRound` is `number` but `SessionConfig.breathsPerRound` is `number[]` — schema drift
 
 **C-02: Dead/unused exports**
+
 - `lib/constants.ts` — Entire file is dead code. `colors`, `spacing`, `radii`, `animation` are never imported
 - `lib/format.ts:38` — `fromStorageCelsius` never imported
 - `lib/storage.ts:306,322` — `deleteBreathingSession`, `deleteColdSession` never called
 - `lib/program.ts:144,150` — `getProgramById`, `getAllPrograms` never called
 
 **C-03: Inconsistent callback naming**
+
 - `onDone` (ColdTimer, SessionComplete)
 - `onFinish` (SessionRunner)
 - `onComplete` (PowerBreaths, RetentionHold, RecoveryBreath)
@@ -179,6 +184,7 @@ Only two PNG icons exist (192px, 512px). No photos or large images.
 ### 🟡 IMPORTANT
 
 **M-01: manifest.json missing fields**
+
 - No `id` field (recommended for stable PWA identity)
 - No `maskable` icon variant (Android adaptive icons will crop incorrectly)
 - Only 2 icon sizes (192, 512) — should include 48, 72, 96, 128, 144, 256 for better cross-platform support
@@ -268,13 +274,14 @@ Zero unit, integration, or e2e tests. CI only runs `tsc --noEmit` and `next buil
 
 ## Summary
 
-| Severity | Count |
-|----------|-------|
-| 🔴 CRITICAL | 4 |
-| 🟡 IMPORTANT | 20 |
-| 🟢 NICE TO HAVE | 14 |
+| Severity        | Count |
+| --------------- | ----- |
+| 🔴 CRITICAL     | 4     |
+| 🟡 IMPORTANT    | 20    |
+| 🟢 NICE TO HAVE | 14    |
 
 **Top 5 priorities for v3:**
+
 1. Fix SafetyOnboarding bypassing onboarding flow (B-01)
 2. Consolidate streak calculation into a single shared utility (A-01)
 3. Fix division-by-zero in retention averaging (B-03)

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import Button from "@/components/ui/Button";
+import { useRef, useState } from 'react';
+import Button from '@/components/ui/Button';
 
-type AspectRatio = "9:16" | "1:1";
+type AspectRatio = '9:16' | '1:1';
 
 interface ShareButtonProps {
   label?: string;
@@ -13,12 +13,12 @@ interface ShareButtonProps {
 }
 
 export default function ShareButton({
-  label = "Share",
+  label = 'Share',
   render,
   share,
   className,
 }: ShareButtonProps) {
-  const [ratio, setRatio] = useState<AspectRatio>("9:16");
+  const [ratio, setRatio] = useState<AspectRatio>('9:16');
   const [showPreview, setShowPreview] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -48,7 +48,12 @@ export default function ShareButton({
 
   if (!showPreview) {
     return (
-      <Button variant="secondary" size="sm" onClick={openPreview} className={className}>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={openPreview}
+        className={className}
+      >
         {label}
       </Button>
     );
@@ -59,14 +64,14 @@ export default function ShareButton({
       <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl bg-surface-raised p-5">
         {/* Ratio toggle */}
         <div className="flex gap-2">
-          {(["9:16", "1:1"] as const).map((r) => (
+          {(['9:16', '1:1'] as const).map((r) => (
             <button
               key={r}
               onClick={() => changeRatio(r)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                 ratio === r
-                  ? "bg-brand text-white"
-                  : "bg-surface-overlay text-on-surface-muted"
+                  ? 'bg-brand text-white'
+                  : 'bg-surface-overlay text-on-surface-muted'
               }`}
             >
               {r}

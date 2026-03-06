@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { playHoldStartChime, playHoldEndChime } from "@/lib/audio";
-import { formatTimeMs } from "@/lib/format";
-import { strings } from "@/lib/i18n";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { playHoldStartChime, playHoldEndChime } from '@/lib/audio';
+import { formatTimeMs } from '@/lib/format';
+import { strings } from '@/lib/i18n';
 
 const LONG_PRESS_MS = 500;
 const DOUBLE_TAP_MS = 400;
@@ -13,14 +13,14 @@ const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 interface RetentionHoldProps {
   onComplete: (durationMs: number) => void;
   mindsetPrompt?: string;
-  retentionMode?: "free" | "target";
+  retentionMode?: 'free' | 'target';
   personalBestMs?: number;
 }
 
 export default function RetentionHold({
   onComplete,
   mindsetPrompt,
-  retentionMode = "free",
+  retentionMode = 'free',
   personalBestMs,
 }: RetentionHoldProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -121,8 +121,10 @@ export default function RetentionHold({
   }, []);
 
   // PB approach indicator for target mode
-  const showPbIndicator = retentionMode === "target" && personalBestMs != null;
-  const pbProgress = showPbIndicator ? Math.min(elapsedMs / personalBestMs, 1) : 0;
+  const showPbIndicator = retentionMode === 'target' && personalBestMs != null;
+  const pbProgress = showPbIndicator
+    ? Math.min(elapsedMs / personalBestMs, 1)
+    : 0;
   const isPastPb = showPbIndicator && elapsedMs >= personalBestMs;
   const isApproaching = showPbIndicator && pbProgress >= 0.8 && !isPastPb;
 
@@ -148,10 +150,10 @@ export default function RetentionHold({
         aria-live="off"
         className={`text-8xl font-bold tabular-nums transition-colors ${
           isPastPb
-            ? "text-warning dark:text-warning-light"
+            ? 'text-warning dark:text-warning-light'
             : isApproaching
-              ? "text-brand dark:text-brand-light"
-              : "text-on-surface-light dark:text-on-surface"
+              ? 'text-brand dark:text-brand-light'
+              : 'text-on-surface-light dark:text-on-surface'
         }`}
       >
         {formatTimeMs(elapsedMs)}
@@ -161,22 +163,24 @@ export default function RetentionHold({
         <div className="w-full max-w-xs">
           <div className="mb-1 flex items-center justify-between text-xs">
             <span className="text-on-surface-light-muted dark:text-on-surface-muted">
-              {strings.breathing.retention.pbTarget(formatTimeMs(personalBestMs))}
+              {strings.breathing.retention.pbTarget(
+                formatTimeMs(personalBestMs),
+              )}
             </span>
             <span
               className={`font-semibold ${
                 isPastPb
-                  ? "text-warning"
+                  ? 'text-warning'
                   : isApproaching
-                    ? "text-brand"
-                    : "text-on-surface-muted"
+                    ? 'text-brand'
+                    : 'text-on-surface-muted'
               }`}
             >
               {isPastPb
                 ? strings.breathing.retention.newPb
                 : isApproaching
                   ? strings.breathing.retention.approachingPb
-                  : ""}
+                  : ''}
             </span>
           </div>
           <div
@@ -190,10 +194,10 @@ export default function RetentionHold({
             <div
               className={`h-full rounded-full transition-all duration-normal ${
                 isPastPb
-                  ? "bg-warning"
+                  ? 'bg-warning'
                   : isApproaching
-                    ? "bg-brand"
-                    : "bg-on-surface-muted dark:bg-on-surface-muted"
+                    ? 'bg-brand'
+                    : 'bg-on-surface-muted dark:bg-on-surface-muted'
               }`}
               style={{ width: `${Math.min(pbProgress * 100, 100)}%` }}
             />

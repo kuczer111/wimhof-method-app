@@ -1,12 +1,16 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getPreferences, savePreferences, profileToDefaults } from "@/lib/storage";
-import StorageProvider from "@/components/StorageProvider";
-import ProfileSetup from "@/components/ProfileSetup";
-import Button from "@/components/ui/Button";
-import { strings } from "@/lib/i18n";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  getPreferences,
+  savePreferences,
+  profileToDefaults,
+} from '@/lib/storage';
+import StorageProvider from '@/components/StorageProvider';
+import ProfileSetup from '@/components/ProfileSetup';
+import Button from '@/components/ui/Button';
+import { strings } from '@/lib/i18n';
 
 const t = strings.onboarding;
 const safetyRules = strings.safety.onboarding.rules;
@@ -19,14 +23,14 @@ function OnboardingFlow() {
   const touchEndX = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [experience, setExperience] = useState<"new" | "experienced">("new");
+  const [experience, setExperience] = useState<'new' | 'experienced'>('new');
   const totalScreens = 6;
   const safetyScreenIndex = 3;
 
   useEffect(() => {
     const prefs = getPreferences();
     if (prefs.onboardingComplete) {
-      router.replace("/breathe");
+      router.replace('/breathe');
     }
   }, [router]);
 
@@ -43,7 +47,7 @@ function OnboardingFlow() {
     if (current > 0) setCurrent((c) => c - 1);
   }, [current]);
 
-  function handleStartingPointSelect(exp: "new" | "experienced") {
+  function handleStartingPointSelect(exp: 'new' | 'experienced') {
     setExperience(exp);
     setCurrent(5);
   }
@@ -53,23 +57,25 @@ function OnboardingFlow() {
     savePreferences({
       onboardingComplete: true,
       safetyAcknowledged: true,
-      ...(experience === "new"
-        ? { defaultPace: "slow" as const }
-        : {}),
+      ...(experience === 'new' ? { defaultPace: 'slow' as const } : {}),
       ...defaults,
     });
-    router.replace("/breathe");
+    router.replace('/breathe');
   }
 
   function handleProfileSkip() {
     savePreferences({
       onboardingComplete: true,
       safetyAcknowledged: true,
-      ...(experience === "new"
-        ? { defaultRounds: 3, defaultBreathCount: 30, defaultPace: "slow" as const }
+      ...(experience === 'new'
+        ? {
+            defaultRounds: 3,
+            defaultBreathCount: 30,
+            defaultPace: 'slow' as const,
+          }
         : {}),
     });
-    router.replace("/breathe");
+    router.replace('/breathe');
   }
 
   function handleSkip() {
@@ -107,9 +113,17 @@ function OnboardingFlow() {
     <HeroScreen key="hero" />,
     <PillarsScreen key="pillars" />,
     <ExpectationsScreen key="expectations" />,
-    <SafetyScreen key="safety" acknowledged={safetyAcked} onAcknowledge={handleSafetyAcknowledge} />,
+    <SafetyScreen
+      key="safety"
+      acknowledged={safetyAcked}
+      onAcknowledge={handleSafetyAcknowledge}
+    />,
     <StartingPointScreen key="starting" onSelect={handleStartingPointSelect} />,
-    <ProfileSetup key="profile" onSave={handleProfileSave} onSkip={handleProfileSkip} />,
+    <ProfileSetup
+      key="profile"
+      onSave={handleProfileSave}
+      onSkip={handleProfileSkip}
+    />,
   ];
 
   return (
@@ -126,7 +140,9 @@ function OnboardingFlow() {
           <div
             key={i}
             className={`h-2 w-2 rounded-full transition-colors ${
-              i === current ? "bg-brand" : "bg-on-surface-light/30 dark:bg-surface-overlay"
+              i === current
+                ? 'bg-brand'
+                : 'bg-on-surface-light/30 dark:bg-surface-overlay'
             }`}
           />
         ))}
@@ -139,7 +155,10 @@ function OnboardingFlow() {
           style={{ transform: `translateX(-${current * 100}%)` }}
         >
           {screens.map((screen, i) => (
-            <div key={i} className="flex h-full w-full shrink-0 flex-col items-center justify-center px-6">
+            <div
+              key={i}
+              className="flex h-full w-full shrink-0 flex-col items-center justify-center px-6"
+            >
               {screen}
             </div>
           ))}
@@ -187,9 +206,17 @@ function HeroScreen() {
 
 function PillarsScreen() {
   const pillars = [
-    { icon: "\uD83C\uDF2C\uFE0F", title: t.pillars.breathing, desc: t.pillars.breathingDesc },
-    { icon: "\u2744\uFE0F", title: t.pillars.cold, desc: t.pillars.coldDesc },
-    { icon: "\uD83E\uDDD8", title: t.pillars.mindset, desc: t.pillars.mindsetDesc },
+    {
+      icon: '\uD83C\uDF2C\uFE0F',
+      title: t.pillars.breathing,
+      desc: t.pillars.breathingDesc,
+    },
+    { icon: '\u2744\uFE0F', title: t.pillars.cold, desc: t.pillars.coldDesc },
+    {
+      icon: '\uD83E\uDDD8',
+      title: t.pillars.mindset,
+      desc: t.pillars.mindsetDesc,
+    },
   ];
 
   return (
@@ -205,8 +232,12 @@ function PillarsScreen() {
           >
             <span className="text-2xl">{p.icon}</span>
             <div>
-              <h3 className="font-semibold text-on-surface-light dark:text-on-surface">{p.title}</h3>
-              <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">{p.desc}</p>
+              <h3 className="font-semibold text-on-surface-light dark:text-on-surface">
+                {p.title}
+              </h3>
+              <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+                {p.desc}
+              </p>
             </div>
           </div>
         ))}
@@ -262,7 +293,10 @@ function SafetyScreen({
       </div>
       <ul className="mb-6 space-y-3">
         {safetyRules.map((rule) => (
-          <li key={rule} className="flex gap-3 text-sm text-on-surface-light dark:text-on-surface">
+          <li
+            key={rule}
+            className="flex gap-3 text-sm text-on-surface-light dark:text-on-surface"
+          >
             <span className="mt-0.5 shrink-0 text-warning">&#x2022;</span>
             {rule}
           </li>
@@ -283,7 +317,11 @@ function SafetyScreen({
   );
 }
 
-function StartingPointScreen({ onSelect }: { onSelect: (exp: "new" | "experienced") => void }) {
+function StartingPointScreen({
+  onSelect,
+}: {
+  onSelect: (exp: 'new' | 'experienced') => void;
+}) {
   return (
     <div className="w-full max-w-sm">
       <h2 className="mb-2 text-center text-2xl font-bold text-on-surface-light dark:text-on-surface">
@@ -294,18 +332,26 @@ function StartingPointScreen({ onSelect }: { onSelect: (exp: "new" | "experience
       </p>
       <div className="space-y-3">
         <button
-          onClick={() => onSelect("new")}
+          onClick={() => onSelect('new')}
           className="w-full rounded-xl border-2 border-brand bg-brand/10 p-4 text-left transition-colors active:bg-brand/15 dark:bg-brand-dark/20 dark:active:bg-brand-dark/30"
         >
-          <h3 className="font-semibold text-on-surface-light dark:text-on-surface">{t.startingPoint.newbie}</h3>
-          <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">{t.startingPoint.newbieDesc}</p>
+          <h3 className="font-semibold text-on-surface-light dark:text-on-surface">
+            {t.startingPoint.newbie}
+          </h3>
+          <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+            {t.startingPoint.newbieDesc}
+          </p>
         </button>
         <button
-          onClick={() => onSelect("experienced")}
+          onClick={() => onSelect('experienced')}
           className="w-full rounded-xl border-2 border-on-surface-light/[0.12] bg-on-surface-light/[0.03] p-4 text-left transition-colors active:bg-on-surface-light/[0.06] dark:border-surface-overlay dark:bg-surface-raised dark:active:bg-surface-overlay"
         >
-          <h3 className="font-semibold text-on-surface-light dark:text-on-surface">{t.startingPoint.experienced}</h3>
-          <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">{t.startingPoint.experiencedDesc}</p>
+          <h3 className="font-semibold text-on-surface-light dark:text-on-surface">
+            {t.startingPoint.experienced}
+          </h3>
+          <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+            {t.startingPoint.experiencedDesc}
+          </p>
         </button>
       </div>
     </div>

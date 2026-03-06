@@ -1,18 +1,22 @@
-import { useMemo } from "react";
-import Card from "@/components/ui/Card";
-import { getPreferences, type ColdSession } from "@/lib/storage";
-import { formatDuration, displayTemperature, getTemperatureUnitLabel } from "@/lib/format";
-import { strings } from "@/lib/i18n";
-import { calculateStreak } from "@/lib/analytics";
+import { useMemo } from 'react';
+import Card from '@/components/ui/Card';
+import { getPreferences, type ColdSession } from '@/lib/storage';
+import {
+  formatDuration,
+  displayTemperature,
+  getTemperatureUnitLabel,
+} from '@/lib/format';
+import { strings } from '@/lib/i18n';
+import { calculateStreak } from '@/lib/analytics';
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -22,7 +26,7 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
     const totalMin = Math.round(totalSec / 60);
 
     const sessionDates = new Set(
-      sessions.map((s) => new Date(s.date).toISOString().slice(0, 10))
+      sessions.map((s) => new Date(s.date).toISOString().slice(0, 10)),
     );
 
     const streakCount = calculateStreak(sessions);
@@ -42,7 +46,7 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
 
   if (sessions.length === 0) return null;
 
-  const weeks: typeof calendarDays[] = [];
+  const weeks: (typeof calendarDays)[] = [];
   for (let i = 0; i < calendarDays.length; i += 7) {
     weeks.push(calendarDays.slice(i, i + 7));
   }
@@ -55,14 +59,20 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
       <div className="mb-4 flex gap-4">
         <div className="flex-1 rounded-lg bg-on-surface-light/[0.06] p-3 text-center dark:bg-surface-raised">
           <p className="text-2xl font-bold text-cold-light">{totalMinutes}</p>
-          <p className="text-xs text-on-surface-light-muted">{strings.progress.coldStats.totalMinutes}</p>
+          <p className="text-xs text-on-surface-light-muted">
+            {strings.progress.coldStats.totalMinutes}
+          </p>
         </div>
         <div className="flex-1 rounded-lg bg-on-surface-light/[0.06] p-3 text-center dark:bg-surface-raised">
           <p className="text-2xl font-bold text-cold-light">{streak}</p>
-          <p className="text-xs text-on-surface-light-muted">{strings.progress.coldStats.dayStreak}</p>
+          <p className="text-xs text-on-surface-light-muted">
+            {strings.progress.coldStats.dayStreak}
+          </p>
         </div>
       </div>
-      <p className="mb-2 text-xs text-on-surface-light-muted">{strings.progress.coldStats.last12Weeks}</p>
+      <p className="mb-2 text-xs text-on-surface-light-muted">
+        {strings.progress.coldStats.last12Weeks}
+      </p>
       <div className="flex gap-[3px]">
         {weeks.map((week, wi) => (
           <div key={wi} className="flex flex-col gap-[3px]">
@@ -72,8 +82,8 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
                 title={day.date}
                 className={`h-3 w-3 rounded-sm ${
                   day.hasSession
-                    ? "bg-cold"
-                    : "bg-on-surface-light/10 dark:bg-surface-overlay"
+                    ? 'bg-cold'
+                    : 'bg-on-surface-light/10 dark:bg-surface-overlay'
                 }`}
               />
             ))}
@@ -99,7 +109,9 @@ function ColdList({ sessions }: { sessions: ColdSession[] }) {
         <Card key={s.id}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{formatDate(s.date)}</p>
+              <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+                {formatDate(s.date)}
+              </p>
               <p className="mt-1 font-semibold">{formatDuration(s.duration)}</p>
             </div>
             <span className="rounded-full bg-cold/10 px-2 py-0.5 text-xs capitalize text-cold-dark dark:bg-cold-dark/20 dark:text-cold-light">
@@ -107,8 +119,18 @@ function ColdList({ sessions }: { sessions: ColdSession[] }) {
             </span>
           </div>
           <div className="mt-2 flex items-center gap-3 text-xs text-on-surface-light-muted">
-            <span>{strings.progress.coldTarget(formatDuration(s.targetDuration))}</span>
-            {s.temperature != null && <span>{displayTemperature(s.temperature, getPreferences().temperatureUnit)}{getTemperatureUnitLabel(getPreferences().temperatureUnit)}</span>}
+            <span>
+              {strings.progress.coldTarget(formatDuration(s.targetDuration))}
+            </span>
+            {s.temperature != null && (
+              <span>
+                {displayTemperature(
+                  s.temperature,
+                  getPreferences().temperatureUnit,
+                )}
+                {getTemperatureUnitLabel(getPreferences().temperatureUnit)}
+              </span>
+            )}
             {s.rating && <span>{strings.progress.coldRating(s.rating)}</span>}
           </div>
         </Card>

@@ -1,16 +1,24 @@
-"use client";
+'use client';
 
-import { BreathingSession, ColdSession } from "@/lib/storage";
-import { strings } from "@/lib/i18n";
-import { safeAvgRetention, calculateStreak, startOfWeek, formatSeconds } from "@/lib/analytics";
-import InsightCard from "@/components/progress/InsightCard";
+import { BreathingSession, ColdSession } from '@/lib/storage';
+import { strings } from '@/lib/i18n';
+import {
+  safeAvgRetention,
+  calculateStreak,
+  startOfWeek,
+  formatSeconds,
+} from '@/lib/analytics';
+import InsightCard from '@/components/progress/InsightCard';
 
 interface OverviewProps {
   breathingSessions: BreathingSession[];
   coldSessions: ColdSession[];
 }
 
-export default function Overview({ breathingSessions, coldSessions }: OverviewProps) {
+export default function Overview({
+  breathingSessions,
+  coldSessions,
+}: OverviewProps) {
   const s = strings.progress.overview;
   const now = new Date();
   const thisWeekStart = startOfWeek(now);
@@ -24,13 +32,13 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
 
   // Weekly session counts
   const breathingThisWeek = breathingSessions.filter((s) =>
-    inRange(s.date, thisWeekStart, now)
+    inRange(s.date, thisWeekStart, now),
   );
   const breathingLastWeek = breathingSessions.filter((s) =>
-    inRange(s.date, lastWeekStart, thisWeekStart)
+    inRange(s.date, lastWeekStart, thisWeekStart),
   );
   const coldThisWeek = coldSessions.filter((s) =>
-    inRange(s.date, thisWeekStart, now)
+    inRange(s.date, thisWeekStart, now),
   );
 
   const totalThisWeek = breathingThisWeek.length + coldThisWeek.length;
@@ -43,7 +51,8 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
   // Average retention trend
   const retThis = safeAvgRetention(breathingThisWeek);
   const retLast = safeAvgRetention(breathingLastWeek);
-  const retTrend = retThis > retLast + 2 ? "up" : retThis < retLast - 2 ? "down" : "flat";
+  const retTrend =
+    retThis > retLast + 2 ? 'up' : retThis < retLast - 2 ? 'down' : 'flat';
 
   // Cold total this week
   const coldTotalSec = coldThisWeek.reduce((sum, s) => sum + s.duration, 0);
@@ -55,10 +64,10 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
   // Consistency: unique days with any session this week / 7
   const daysWithSession = new Set<string>();
   breathingThisWeek.forEach((s) =>
-    daysWithSession.add(new Date(s.date).toISOString().slice(0, 10))
+    daysWithSession.add(new Date(s.date).toISOString().slice(0, 10)),
   );
   coldThisWeek.forEach((s) =>
-    daysWithSession.add(new Date(s.date).toISOString().slice(0, 10))
+    daysWithSession.add(new Date(s.date).toISOString().slice(0, 10)),
   );
   // Days elapsed in current week (at least 1)
   const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
@@ -73,13 +82,13 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
   }
 
   const trendArrow =
-    retTrend === "up" ? "\u2191" : retTrend === "down" ? "\u2193" : "\u2192";
+    retTrend === 'up' ? '\u2191' : retTrend === 'down' ? '\u2193' : '\u2192';
   const trendColor =
-    retTrend === "up"
-      ? "text-success"
-      : retTrend === "down"
-      ? "text-danger-light"
-      : "text-on-surface-muted";
+    retTrend === 'up'
+      ? 'text-success'
+      : retTrend === 'down'
+        ? 'text-danger-light'
+        : 'text-on-surface-muted';
 
   return (
     <div className="space-y-4">
@@ -94,7 +103,7 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
           </span>
         </div>
         <p className="mt-1 text-3xl font-bold tabular-nums">
-          {totalThisWeek}{" "}
+          {totalThisWeek}{' '}
           <span className="text-base font-normal text-on-surface-light-muted dark:text-on-surface-muted">
             {s.sessions}
           </span>
@@ -110,7 +119,7 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
           </h3>
           <div className="mt-1 flex items-baseline gap-1">
             <span className="text-2xl font-bold tabular-nums">
-              {retThis > 0 ? formatSeconds(retThis) : "--"}
+              {retThis > 0 ? formatSeconds(retThis) : '--'}
             </span>
             {retThis > 0 && (
               <span className={`text-lg ${trendColor}`}>{trendArrow}</span>
@@ -124,7 +133,7 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
             {s.coldTotal}
           </h3>
           <p className="mt-1 text-2xl font-bold tabular-nums">
-            {coldTotalSec > 0 ? formatSeconds(coldTotalSec) : "--"}
+            {coldTotalSec > 0 ? formatSeconds(coldTotalSec) : '--'}
           </p>
         </div>
 
@@ -134,7 +143,7 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
             {s.breathingStreak}
           </h3>
           <p className="mt-1 text-2xl font-bold tabular-nums">
-            {breathingStreak}{" "}
+            {breathingStreak}{' '}
             <span className="text-sm font-normal text-on-surface-light-muted dark:text-on-surface-muted">
               {s.days}
             </span>
@@ -147,7 +156,7 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
             {s.coldStreak}
           </h3>
           <p className="mt-1 text-2xl font-bold tabular-nums">
-            {coldStreak}{" "}
+            {coldStreak}{' '}
             <span className="text-sm font-normal text-on-surface-light-muted dark:text-on-surface-muted">
               {s.days}
             </span>
@@ -164,7 +173,9 @@ export default function Overview({ breathingSessions, coldSessions }: OverviewPr
           <h3 className="text-sm font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
             {s.consistency}
           </h3>
-          <span className="text-2xl font-bold tabular-nums">{consistency}%</span>
+          <span className="text-2xl font-bold tabular-nums">
+            {consistency}%
+          </span>
         </div>
         <div
           role="progressbar"

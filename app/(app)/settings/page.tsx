@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   getPreferences,
   savePreferences,
@@ -8,26 +8,26 @@ import {
   applyTheme,
   type UserPreferences,
   type CustomPreset,
-} from "@/lib/storage";
-import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
-import Modal from "@/components/ui/Modal";
-import OptionButton from "@/components/ui/OptionButton";
-import ProfileSetup from "@/components/ProfileSetup";
-import AudioSettings from "@/components/settings/AudioSettings";
-import BreathingDefaults from "@/components/settings/BreathingDefaults";
-import DataManagement from "@/components/settings/DataManagement";
-import DailyReminder from "@/components/settings/DailyReminder";
-import ToggleCard from "@/components/settings/ToggleCard";
-import Link from "next/link";
-import { strings } from "@/lib/i18n";
+} from '@/lib/storage';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import Modal from '@/components/ui/Modal';
+import OptionButton from '@/components/ui/OptionButton';
+import ProfileSetup from '@/components/ProfileSetup';
+import AudioSettings from '@/components/settings/AudioSettings';
+import BreathingDefaults from '@/components/settings/BreathingDefaults';
+import DataManagement from '@/components/settings/DataManagement';
+import DailyReminder from '@/components/settings/DailyReminder';
+import ToggleCard from '@/components/settings/ToggleCard';
+import Link from 'next/link';
+import { strings } from '@/lib/i18n';
 
 const COLD_TARGET_OPTIONS = [
-  { value: 30, label: strings.settings.coldTargetOptions["30"] },
-  { value: 60, label: strings.settings.coldTargetOptions["60"] },
-  { value: 90, label: strings.settings.coldTargetOptions["90"] },
-  { value: 120, label: strings.settings.coldTargetOptions["120"] },
-  { value: 180, label: strings.settings.coldTargetOptions["180"] },
+  { value: 30, label: strings.settings.coldTargetOptions['30'] },
+  { value: 60, label: strings.settings.coldTargetOptions['60'] },
+  { value: 90, label: strings.settings.coldTargetOptions['90'] },
+  { value: 120, label: strings.settings.coldTargetOptions['120'] },
+  { value: 180, label: strings.settings.coldTargetOptions['180'] },
 ];
 
 export default function SettingsPage() {
@@ -77,7 +77,7 @@ export default function SettingsPage() {
           {strings.settings.appearance}
         </h2>
         <div className="flex gap-2">
-          {(["system", "light", "dark"] as const).map((mode) => (
+          {(['system', 'light', 'dark'] as const).map((mode) => (
             <OptionButton
               key={mode}
               selected={prefs.themeMode === mode}
@@ -86,9 +86,9 @@ export default function SettingsPage() {
                 applyTheme(mode);
               }}
             >
-              {mode === "system"
+              {mode === 'system'
                 ? strings.settings.themeSystem
-                : mode === "light"
+                : mode === 'light'
                   ? strings.settings.themeLight
                   : strings.settings.themeDark}
             </OptionButton>
@@ -102,7 +102,11 @@ export default function SettingsPage() {
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.settings.practiceProfile}
         </h2>
-        <Button variant="secondary" size="sm" onClick={() => setShowProfile(true)}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => setShowProfile(true)}
+        >
           {strings.settings.editProfile}
         </Button>
       </Card>
@@ -112,22 +116,36 @@ export default function SettingsPage() {
           {strings.settings.customPresets}
         </h2>
         {customPresets.length === 0 ? (
-          <p className="text-xs text-on-surface-light-muted dark:text-on-surface-faint">{strings.settings.noCustomPresets}</p>
+          <p className="text-xs text-on-surface-light-muted dark:text-on-surface-faint">
+            {strings.settings.noCustomPresets}
+          </p>
         ) : (
           <ul className="flex flex-col gap-2">
             {customPresets.map((preset) => (
-              <li key={preset.id} className="flex items-center justify-between rounded-xl bg-on-surface-light/[0.06] px-3 py-2 dark:bg-surface-overlay/60">
+              <li
+                key={preset.id}
+                className="flex items-center justify-between rounded-xl bg-on-surface-light/[0.06] px-3 py-2 dark:bg-surface-overlay/60"
+              >
                 <div>
-                  <span className="block text-sm font-semibold text-on-surface-light dark:text-on-surface">{preset.name}</span>
+                  <span className="block text-sm font-semibold text-on-surface-light dark:text-on-surface">
+                    {preset.name}
+                  </span>
                   <span className="block text-xs text-on-surface-light-muted dark:text-on-surface-muted">
-                    {strings.settings.presetRounds(preset.config.rounds)} · {preset.config.breathsPerRound[0]}b · {preset.config.pace}
+                    {strings.settings.presetRounds(preset.config.rounds)} ·{' '}
+                    {preset.config.breathsPerRound[0]}b · {preset.config.pace}
                   </span>
                 </div>
-                <Button variant="danger" size="sm" onClick={() => {
-                  const updated = customPresets.filter((p) => p.id !== preset.id);
-                  setCustomPresets(updated);
-                  savePreferences({ customPresets: updated });
-                }}>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => {
+                    const updated = customPresets.filter(
+                      (p) => p.id !== preset.id,
+                    );
+                    setCustomPresets(updated);
+                    savePreferences({ customPresets: updated });
+                  }}
+                >
                   {strings.settings.deletePreset}
                 </Button>
               </li>
@@ -136,40 +154,78 @@ export default function SettingsPage() {
         )}
       </Card>
 
-      <BreathingDefaults defaultRounds={prefs.defaultRounds} defaultBreathCount={prefs.defaultBreathCount} defaultPace={prefs.defaultPace} onUpdate={update} />
+      <BreathingDefaults
+        defaultRounds={prefs.defaultRounds}
+        defaultBreathCount={prefs.defaultBreathCount}
+        defaultPace={prefs.defaultPace}
+        onUpdate={update}
+      />
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">{strings.settings.temperatureUnit}</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
+          {strings.settings.temperatureUnit}
+        </h2>
         <div className="flex gap-2">
-          <OptionButton selected={prefs.temperatureUnit === "celsius"} onClick={() => update({ temperatureUnit: "celsius" })}>°C</OptionButton>
-          <OptionButton selected={prefs.temperatureUnit === "fahrenheit"} onClick={() => update({ temperatureUnit: "fahrenheit" })}>°F</OptionButton>
+          <OptionButton
+            selected={prefs.temperatureUnit === 'celsius'}
+            onClick={() => update({ temperatureUnit: 'celsius' })}
+          >
+            °C
+          </OptionButton>
+          <OptionButton
+            selected={prefs.temperatureUnit === 'fahrenheit'}
+            onClick={() => update({ temperatureUnit: 'fahrenheit' })}
+          >
+            °F
+          </OptionButton>
         </div>
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">{strings.settings.defaultColdTarget}</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
+          {strings.settings.defaultColdTarget}
+        </h2>
         <div className="flex flex-wrap gap-2">
           {COLD_TARGET_OPTIONS.map((opt) => (
-            <OptionButton key={opt.value} selected={prefs.defaultColdTarget === opt.value} onClick={() => update({ defaultColdTarget: opt.value })}>{opt.label}</OptionButton>
+            <OptionButton
+              key={opt.value}
+              selected={prefs.defaultColdTarget === opt.value}
+              onClick={() => update({ defaultColdTarget: opt.value })}
+            >
+              {opt.label}
+            </OptionButton>
           ))}
         </div>
       </Card>
 
       <DataManagement onDataCleared={() => setPrefs(getPreferences())} />
 
-      <Link href="/privacy" className="block text-center text-xs text-brand underline dark:text-brand-light">
+      <Link
+        href="/privacy"
+        className="block text-center text-xs text-brand underline dark:text-brand-light"
+      >
         Privacy Policy
       </Link>
 
-      <p className="text-center text-xs text-on-surface-light-muted">{strings.app.version}</p>
+      <p className="text-center text-xs text-on-surface-light-muted">
+        {strings.app.version}
+      </p>
 
-      <Modal open={showProfile} onClose={() => setShowProfile(false)} title={strings.settings.practiceProfile}>
+      <Modal
+        open={showProfile}
+        onClose={() => setShowProfile(false)}
+        title={strings.settings.practiceProfile}
+      >
         <ProfileSetup
           initialGoal={prefs.primaryGoal}
           initialTime={prefs.availableTime}
           initialLevel={prefs.experienceLevel}
           initialSessionTime={prefs.preferredSessionTime}
-          onSave={(profile) => { const defaults = profileToDefaults(profile); update(defaults); setShowProfile(false); }}
+          onSave={(profile) => {
+            const defaults = profileToDefaults(profile);
+            update(defaults);
+            setShowProfile(false);
+          }}
         />
       </Modal>
     </div>

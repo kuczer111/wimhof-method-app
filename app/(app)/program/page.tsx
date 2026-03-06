@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
-import Button from "@/components/ui/Button";
-import SessionRunner from "@/components/breathing/SessionRunner";
-import ColdTimer from "@/components/cold/ColdTimer";
-import TodayCard from "@/components/program/TodayCard";
-import CalendarView from "@/components/program/CalendarView";
-import { strings } from "@/lib/i18n";
+import { useCallback, useEffect, useState } from 'react';
+import Button from '@/components/ui/Button';
+import SessionRunner from '@/components/breathing/SessionRunner';
+import ColdTimer from '@/components/cold/ColdTimer';
+import TodayCard from '@/components/program/TodayCard';
+import CalendarView from '@/components/program/CalendarView';
+import { strings } from '@/lib/i18n';
 import {
   getProgramProgress,
   saveProgramProgress,
   deleteProgramProgress,
-} from "@/lib/programStorage";
-import type { ProgramProgress } from "@/lib/program";
-import { BEGINNER_PROGRAM } from "@/lib/program";
-import { checkProgramMilestone } from "@/lib/milestones";
+} from '@/lib/programStorage';
+import type { ProgramProgress } from '@/lib/program';
+import { BEGINNER_PROGRAM } from '@/lib/program';
+import { checkProgramMilestone } from '@/lib/milestones';
 
-type PageView = "overview" | "breathing" | "cold";
+type PageView = 'overview' | 'breathing' | 'cold';
 
 export default function ProgramPage() {
   const [progress, setProgress] = useState<ProgramProgress | null>(null);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<PageView>("overview");
+  const [view, setView] = useState<PageView>('overview');
   const [confirmReset, setConfirmReset] = useState(false);
 
   const program = BEGINNER_PROGRAM;
@@ -38,20 +38,20 @@ export default function ProgramPage() {
 
   // --- Derived state ---
 
-  const todayDayNumber = progress
-    ? getTodayDayNumber(progress)
-    : null;
+  const todayDayNumber = progress ? getTodayDayNumber(progress) : null;
 
   const todayProgramDay = todayDayNumber
     ? program.days.find((d) => d.dayNumber === todayDayNumber)
     : null;
 
-  const isTodayCompleted = progress && todayDayNumber
-    ? progress.completedDays.includes(todayDayNumber)
-    : false;
+  const isTodayCompleted =
+    progress && todayDayNumber
+      ? progress.completedDays.includes(todayDayNumber)
+      : false;
 
   const isProgramComplete = progress
-    ? progress.completedDays.length >= program.days.filter((d) => !d.isRestDay).length
+    ? progress.completedDays.length >=
+      program.days.filter((d) => !d.isRestDay).length
     : false;
 
   // --- Handlers ---
@@ -59,7 +59,7 @@ export default function ProgramPage() {
   async function handleStartProgram() {
     const newProgress: ProgramProgress = {
       programId: program.id,
-      startDate: new Date().toISOString().split("T")[0],
+      startDate: new Date().toISOString().split('T')[0],
       completedDays: [],
       paused: false,
     };
@@ -72,7 +72,7 @@ export default function ProgramPage() {
     const updated: ProgramProgress = {
       ...progress,
       paused: true,
-      pausedDate: new Date().toISOString().split("T")[0],
+      pausedDate: new Date().toISOString().split('T')[0],
     };
     await saveProgramProgress(updated);
     setProgress(updated);
@@ -86,13 +86,13 @@ export default function ProgramPage() {
       : new Date();
     const today = new Date();
     const pausedDays = Math.floor(
-      (today.getTime() - pausedDate.getTime()) / (1000 * 60 * 60 * 24)
+      (today.getTime() - pausedDate.getTime()) / (1000 * 60 * 60 * 24),
     );
     const oldStart = new Date(progress.startDate);
     oldStart.setDate(oldStart.getDate() + pausedDays);
     const updated: ProgramProgress = {
       ...progress,
-      startDate: oldStart.toISOString().split("T")[0],
+      startDate: oldStart.toISOString().split('T')[0],
       paused: false,
       pausedDate: undefined,
     };
@@ -125,17 +125,17 @@ export default function ProgramPage() {
 
   function handleSessionFinish() {
     handleCompleteDay();
-    setView("overview");
+    setView('overview');
   }
 
   function handleAutoCold() {
     handleCompleteDay();
-    setView("cold");
+    setView('cold');
   }
 
   // --- Session views ---
 
-  if (view === "breathing" && todayProgramDay?.breathingConfig) {
+  if (view === 'breathing' && todayProgramDay?.breathingConfig) {
     return (
       <SessionRunner
         config={todayProgramDay.breathingConfig}
@@ -145,14 +145,9 @@ export default function ProgramPage() {
     );
   }
 
-  if (view === "cold") {
+  if (view === 'cold') {
     const target = todayProgramDay?.coldTarget ?? 60;
-    return (
-      <ColdTimer
-        target={target}
-        onDone={() => setView("overview")}
-      />
-    );
+    return <ColdTimer target={target} onDone={() => setView('overview')} />;
   }
 
   // --- Loading ---
@@ -179,7 +174,11 @@ export default function ProgramPage() {
         <p className="text-center text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.program.notStarted}
         </p>
-        <Button size="lg" className="w-full max-w-xs" onClick={handleStartProgram}>
+        <Button
+          size="lg"
+          className="w-full max-w-xs"
+          onClick={handleStartProgram}
+        >
           {strings.program.startProgram}
         </Button>
       </div>
@@ -197,8 +196,16 @@ export default function ProgramPage() {
         <p className="text-center text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.program.programCompleteMessage}
         </p>
-        <CalendarView program={program} progress={progress} todayDayNumber={todayDayNumber} />
-        <Button size="md" variant="secondary" onClick={() => setConfirmReset(true)}>
+        <CalendarView
+          program={program}
+          progress={progress}
+          todayDayNumber={todayDayNumber}
+        />
+        <Button
+          size="md"
+          variant="secondary"
+          onClick={() => setConfirmReset(true)}
+        >
           {strings.program.resetProgram}
         </Button>
         {confirmReset && (
@@ -206,7 +213,11 @@ export default function ProgramPage() {
             <Button size="sm" variant="danger" onClick={handleReset}>
               {strings.program.resetConfirm}
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => setConfirmReset(false)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setConfirmReset(false)}
+            >
               Cancel
             </Button>
           </div>
@@ -242,9 +253,9 @@ export default function ProgramPage() {
           isCompleted={isTodayCompleted}
           onStart={() => {
             if (todayProgramDay.breathingConfig) {
-              setView("breathing");
+              setView('breathing');
             } else if (todayProgramDay.coldTarget) {
-              setView("cold");
+              setView('cold');
             } else {
               // Rest day — mark complete
               handleCompleteDay();
@@ -254,7 +265,11 @@ export default function ProgramPage() {
       )}
 
       {/* Calendar */}
-      <CalendarView program={program} progress={progress} todayDayNumber={todayDayNumber} />
+      <CalendarView
+        program={program}
+        progress={progress}
+        todayDayNumber={todayDayNumber}
+      />
 
       {/* Pause/Resume controls */}
       <div className="flex flex-col items-center gap-3 pt-2">
@@ -263,7 +278,12 @@ export default function ProgramPage() {
             {strings.program.resume}
           </Button>
         ) : (
-          <Button size="md" variant="secondary" className="w-full max-w-xs" onClick={handlePause}>
+          <Button
+            size="md"
+            variant="secondary"
+            className="w-full max-w-xs"
+            onClick={handlePause}
+          >
             {strings.program.pause}
           </Button>
         )}
@@ -279,7 +299,11 @@ export default function ProgramPage() {
             <Button size="sm" variant="danger" onClick={handleReset}>
               {strings.program.resetConfirm}
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => setConfirmReset(false)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setConfirmReset(false)}
+            >
               Cancel
             </Button>
           </div>
@@ -297,7 +321,7 @@ function getTodayDayNumber(progress: ProgramProgress): number {
   start.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
   const diffDays = Math.floor(
-    (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
   );
   // Day 1 is the start date
   return Math.max(1, Math.min(diffDays + 1, 30));

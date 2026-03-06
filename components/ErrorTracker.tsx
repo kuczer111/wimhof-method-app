@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-const ERROR_ENDPOINT = "/api/error";
+const ERROR_ENDPOINT = '/api/error';
 
 function sendError(error: { type: string; message: string; stack?: string }) {
   const payload = JSON.stringify({
@@ -18,13 +18,8 @@ function sendError(error: { type: string; message: string; stack?: string }) {
   }
 }
 
-export function trackError(
-  type: string,
-  error: unknown,
-  context?: string
-) {
-  const message =
-    error instanceof Error ? error.message : String(error);
+export function trackError(type: string, error: unknown, context?: string) {
+  const message = error instanceof Error ? error.message : String(error);
   const stack = error instanceof Error ? error.stack : undefined;
   sendError({
     type,
@@ -37,7 +32,7 @@ export default function ErrorTracker() {
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
       sendError({
-        type: "unhandled_error",
+        type: 'unhandled_error',
         message: event.message,
         stack: event.error?.stack,
       });
@@ -46,18 +41,18 @@ export default function ErrorTracker() {
     const onUnhandledRejection = (event: PromiseRejectionEvent) => {
       const error = event.reason;
       sendError({
-        type: "unhandled_rejection",
+        type: 'unhandled_rejection',
         message: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
       });
     };
 
-    window.addEventListener("error", onError);
-    window.addEventListener("unhandledrejection", onUnhandledRejection);
+    window.addEventListener('error', onError);
+    window.addEventListener('unhandledrejection', onUnhandledRejection);
 
     return () => {
-      window.removeEventListener("error", onError);
-      window.removeEventListener("unhandledrejection", onUnhandledRejection);
+      window.removeEventListener('error', onError);
+      window.removeEventListener('unhandledrejection', onUnhandledRejection);
     };
   }, []);
 

@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
-import { strings } from "@/lib/i18n";
+import { strings } from '@/lib/i18n';
 
 export default function OfflinePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
-      <h1 className="text-3xl font-bold tracking-tight">{strings.offline.heading}</h1>
+      <h1 className="text-3xl font-bold tracking-tight">
+        {strings.offline.heading}
+      </h1>
       <p className="mt-4 text-lg text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.offline.description}
       </p>

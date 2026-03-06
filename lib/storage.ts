@@ -2,7 +2,7 @@
 // Backed by IndexedDB with an in-memory cache for synchronous reads.
 // On first load, migrates any existing localStorage data to IndexedDB.
 
-import { getDB } from "./db";
+import { getDB } from './db';
 
 // --- Types ---
 
@@ -13,7 +13,7 @@ export interface BreathingSession {
   retentionTimes: number[]; // seconds per round
   totalDuration: number; // seconds
   breathsPerRound: number;
-  pace: "slow" | "medium" | "fast";
+  pace: 'slow' | 'medium' | 'fast';
   feelingRating?: number; // 1-5
   note?: string;
 }
@@ -23,15 +23,20 @@ export interface ColdSession {
   date: string; // ISO 8601
   duration: number; // seconds
   targetDuration: number; // seconds
-  type: "shower" | "bath" | "outdoor" | "other";
+  type: 'shower' | 'bath' | 'outdoor' | 'other';
   temperature?: number; // celsius, optional
   rating?: number; // 1-5
 }
 
-export type PrimaryGoal = "stress" | "athletic" | "immune" | "curiosity" | "cold";
-export type AvailableTime = "10" | "20" | "30+";
-export type ExperienceLevel = "beginner" | "some" | "regular";
-export type PreferredTime = "morning" | "midday" | "evening";
+export type PrimaryGoal =
+  | 'stress'
+  | 'athletic'
+  | 'immune'
+  | 'curiosity'
+  | 'cold';
+export type AvailableTime = '10' | '20' | '30+';
+export type ExperienceLevel = 'beginner' | 'some' | 'regular';
+export type PreferredTime = 'morning' | 'midday' | 'evening';
 
 export interface CustomPreset {
   id: string;
@@ -42,11 +47,11 @@ export interface CustomPreset {
 export interface UserPreferences {
   defaultRounds: number; // 1-5, default 3
   defaultBreathCount: 20 | 30 | 40;
-  defaultPace: "slow" | "medium" | "fast";
+  defaultPace: 'slow' | 'medium' | 'fast';
   defaultColdTarget: number; // seconds
-  audioMode: "voice" | "tone" | "silent" | "haptic";
+  audioMode: 'voice' | 'tone' | 'silent' | 'haptic';
   muted: boolean;
-  temperatureUnit: "celsius" | "fahrenheit";
+  temperatureUnit: 'celsius' | 'fahrenheit';
   safetyAcknowledged: boolean;
   onboardingComplete: boolean;
   wakeLockEnabled: boolean;
@@ -58,23 +63,23 @@ export interface UserPreferences {
   experienceLevel?: ExperienceLevel;
   preferredSessionTime?: PreferredTime;
   customPresets?: CustomPreset[];
-  themeMode: "system" | "light" | "dark";
+  themeMode: 'system' | 'light' | 'dark';
 }
 
 export interface SessionConfig {
   rounds: number;
   breathsPerRound: number[]; // breaths per round, e.g. [30, 40, 40]
-  pace: "slow" | "medium" | "fast";
+  pace: 'slow' | 'medium' | 'fast';
   mindsetPrompts?: string[]; // optional prompt per round during retention
-  retentionMode: "free" | "target"; // free = open-ended, target = aim for a time
+  retentionMode: 'free' | 'target'; // free = open-ended, target = aim for a time
   autoCold: boolean; // auto-transition to cold exposure after session
 }
 
 export const DEFAULT_SESSION_CONFIG: SessionConfig = {
   rounds: 3,
   breathsPerRound: [30, 30, 30],
-  pace: "medium",
-  retentionMode: "free",
+  pace: 'medium',
+  retentionMode: 'free',
   autoCold: false,
 };
 
@@ -82,23 +87,28 @@ export const DEFAULT_SESSION_CONFIG: SessionConfig = {
  * Normalize a saved SessionConfig for backward compatibility.
  * Handles the case where breathsPerRound was previously a single number.
  */
-export function normalizeSessionConfig(raw: Record<string, unknown>): SessionConfig {
+export function normalizeSessionConfig(
+  raw: Record<string, unknown>,
+): SessionConfig {
   const config = { ...DEFAULT_SESSION_CONFIG, ...raw };
 
   // Backward compat: breathsPerRound was previously a single number
-  if (typeof config.breathsPerRound === "number") {
+  if (typeof config.breathsPerRound === 'number') {
     const count = config.breathsPerRound as number;
-    const rounds = typeof config.rounds === "number" ? config.rounds : DEFAULT_SESSION_CONFIG.rounds;
+    const rounds =
+      typeof config.rounds === 'number'
+        ? config.rounds
+        : DEFAULT_SESSION_CONFIG.rounds;
     config.breathsPerRound = Array.from({ length: rounds }, () => count);
   }
 
   // Ensure retentionMode has a valid value
-  if (config.retentionMode !== "free" && config.retentionMode !== "target") {
+  if (config.retentionMode !== 'free' && config.retentionMode !== 'target') {
     config.retentionMode = DEFAULT_SESSION_CONFIG.retentionMode;
   }
 
   // Ensure autoCold is boolean
-  if (typeof config.autoCold !== "boolean") {
+  if (typeof config.autoCold !== 'boolean') {
     config.autoCold = DEFAULT_SESSION_CONFIG.autoCold;
   }
 
@@ -118,36 +128,36 @@ export function profileToDefaults(profile: {
 
   let defaultRounds = 3;
   let defaultBreathCount: 20 | 30 | 40 = 30;
-  let defaultPace: "slow" | "medium" | "fast" = "medium";
+  let defaultPace: 'slow' | 'medium' | 'fast' = 'medium';
   let defaultColdTarget = 60;
 
   // Experience level adjustments
-  if (experienceLevel === "beginner") {
+  if (experienceLevel === 'beginner') {
     defaultRounds = 3;
     defaultBreathCount = 30;
-    defaultPace = "slow";
+    defaultPace = 'slow';
     defaultColdTarget = 30;
-  } else if (experienceLevel === "regular") {
+  } else if (experienceLevel === 'regular') {
     defaultRounds = 4;
     defaultBreathCount = 40;
-    defaultPace = "medium";
+    defaultPace = 'medium';
     defaultColdTarget = 120;
   }
 
   // Goal-specific tweaks
-  if (primaryGoal === "athletic") {
+  if (primaryGoal === 'athletic') {
     defaultRounds = Math.min(defaultRounds + 1, 5);
     defaultBreathCount = 40;
-  } else if (primaryGoal === "cold") {
+  } else if (primaryGoal === 'cold') {
     defaultColdTarget = Math.min(defaultColdTarget + 60, 180);
-  } else if (primaryGoal === "stress") {
-    defaultPace = "slow";
+  } else if (primaryGoal === 'stress') {
+    defaultPace = 'slow';
   }
 
   // Time budget adjustments
-  if (availableTime === "10") {
+  if (availableTime === '10') {
     defaultRounds = Math.min(defaultRounds, 3);
-  } else if (availableTime === "30+") {
+  } else if (availableTime === '30+') {
     defaultRounds = Math.min(defaultRounds + 1, 5);
   }
 
@@ -169,16 +179,16 @@ export function profileToDefaults(profile: {
 const DEFAULT_PREFERENCES: UserPreferences = {
   defaultRounds: 3,
   defaultBreathCount: 30,
-  defaultPace: "medium",
+  defaultPace: 'medium',
   defaultColdTarget: 60,
-  audioMode: "tone",
+  audioMode: 'tone',
   muted: false,
-  temperatureUnit: "celsius",
+  temperatureUnit: 'celsius',
   safetyAcknowledged: false,
   onboardingComplete: false,
   wakeLockEnabled: true,
   reducedMotion: false,
-  themeMode: "system",
+  themeMode: 'system',
 };
 
 // --- In-memory cache ---
@@ -199,16 +209,16 @@ let initPromise: Promise<void> | null = null;
 // --- localStorage migration keys ---
 
 const LS_KEYS = {
-  breathingSessions: "whm_breathing_sessions",
-  coldSessions: "whm_cold_sessions",
-  preferences: "whm_preferences",
-  migrated: "whm_idb_migrated",
+  breathingSessions: 'whm_breathing_sessions',
+  coldSessions: 'whm_cold_sessions',
+  preferences: 'whm_preferences',
+  migrated: 'whm_idb_migrated',
 } as const;
 
 // --- Migration: localStorage -> IndexedDB (one-time) ---
 
 async function migrateFromLocalStorage(): Promise<void> {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   try {
     if (localStorage.getItem(LS_KEYS.migrated)) return;
@@ -223,7 +233,7 @@ async function migrateFromLocalStorage(): Promise<void> {
     const rawBreathing = localStorage.getItem(LS_KEYS.breathingSessions);
     if (rawBreathing) {
       const sessions: BreathingSession[] = JSON.parse(rawBreathing);
-      const tx = db.transaction("breathing_sessions", "readwrite");
+      const tx = db.transaction('breathing_sessions', 'readwrite');
       for (const s of sessions) {
         await tx.store.put(s);
       }
@@ -234,7 +244,7 @@ async function migrateFromLocalStorage(): Promise<void> {
     const rawCold = localStorage.getItem(LS_KEYS.coldSessions);
     if (rawCold) {
       const sessions: ColdSession[] = JSON.parse(rawCold);
-      const tx = db.transaction("cold_sessions", "readwrite");
+      const tx = db.transaction('cold_sessions', 'readwrite');
       for (const s of sessions) {
         await tx.store.put(s);
       }
@@ -245,11 +255,11 @@ async function migrateFromLocalStorage(): Promise<void> {
     const rawPrefs = localStorage.getItem(LS_KEYS.preferences);
     if (rawPrefs) {
       const prefs: UserPreferences = JSON.parse(rawPrefs);
-      await db.put("preferences", prefs, "user");
+      await db.put('preferences', prefs, 'user');
     }
 
     // Mark migration complete
-    localStorage.setItem(LS_KEYS.migrated, "1");
+    localStorage.setItem(LS_KEYS.migrated, '1');
   } catch {
     // Migration failed — data remains in localStorage for next attempt
   }
@@ -257,32 +267,32 @@ async function migrateFromLocalStorage(): Promise<void> {
 
 // --- Validation helpers ---
 
-const VALID_PACES = new Set(["slow", "medium", "fast"]);
-const VALID_COLD_TYPES = new Set(["shower", "bath", "outdoor", "other"]);
+const VALID_PACES = new Set(['slow', 'medium', 'fast']);
+const VALID_COLD_TYPES = new Set(['shower', 'bath', 'outdoor', 'other']);
 
 function isValidBreathingSession(s: unknown): s is BreathingSession {
-  if (s == null || typeof s !== "object") return false;
+  if (s == null || typeof s !== 'object') return false;
   const r = s as Record<string, unknown>;
   return (
-    typeof r.id === "string" &&
-    typeof r.date === "string" &&
-    typeof r.rounds === "number" &&
+    typeof r.id === 'string' &&
+    typeof r.date === 'string' &&
+    typeof r.rounds === 'number' &&
     Array.isArray(r.retentionTimes) &&
-    r.retentionTimes.every((t: unknown) => typeof t === "number") &&
-    typeof r.totalDuration === "number" &&
-    typeof r.breathsPerRound === "number" &&
+    r.retentionTimes.every((t: unknown) => typeof t === 'number') &&
+    typeof r.totalDuration === 'number' &&
+    typeof r.breathsPerRound === 'number' &&
     VALID_PACES.has(r.pace as string)
   );
 }
 
 function isValidColdSession(s: unknown): s is ColdSession {
-  if (s == null || typeof s !== "object") return false;
+  if (s == null || typeof s !== 'object') return false;
   const r = s as Record<string, unknown>;
   return (
-    typeof r.id === "string" &&
-    typeof r.date === "string" &&
-    typeof r.duration === "number" &&
-    typeof r.targetDuration === "number" &&
+    typeof r.id === 'string' &&
+    typeof r.date === 'string' &&
+    typeof r.duration === 'number' &&
+    typeof r.targetDuration === 'number' &&
     VALID_COLD_TYPES.has(r.type as string)
   );
 }
@@ -290,16 +300,16 @@ function isValidColdSession(s: unknown): s is ColdSession {
 // --- Initialization: load IndexedDB data into cache ---
 
 async function loadCache(): Promise<void> {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   await migrateFromLocalStorage();
 
   const db = await getDB();
 
   const [rawBreathing, rawCold, prefs] = await Promise.all([
-    db.getAll("breathing_sessions"),
-    db.getAll("cold_sessions"),
-    db.get("preferences", "user"),
+    db.getAll('breathing_sessions'),
+    db.getAll('cold_sessions'),
+    db.get('preferences', 'user'),
   ]);
 
   cache.breathingSessions = rawBreathing.filter(isValidBreathingSession);
@@ -334,7 +344,7 @@ export function getBreathingSessions(): BreathingSession[] {
 export function saveBreathingSession(session: BreathingSession): void {
   cache.breathingSessions.push(session);
   // Persist async — fire and forget
-  getDB().then((db) => db.put("breathing_sessions", session));
+  getDB().then((db) => db.put('breathing_sessions', session));
 }
 
 // --- Cold sessions ---
@@ -345,7 +355,7 @@ export function getColdSessions(): ColdSession[] {
 
 export function saveColdSession(session: ColdSession): void {
   cache.coldSessions.push(session);
-  getDB().then((db) => db.put("cold_sessions", session));
+  getDB().then((db) => db.put('cold_sessions', session));
 }
 
 // --- User preferences ---
@@ -356,7 +366,7 @@ export function getPreferences(): UserPreferences {
 
 export function savePreferences(prefs: Partial<UserPreferences>): void {
   cache.preferences = { ...cache.preferences, ...prefs };
-  getDB().then((db) => db.put("preferences", cache.preferences, "user"));
+  getDB().then((db) => db.put('preferences', cache.preferences, 'user'));
 }
 
 // --- Program progress (re-exported from lib/programStorage.ts) ---
@@ -367,19 +377,19 @@ export {
   getAllProgramProgress,
   saveProgramProgress,
   deleteProgramProgress,
-} from "./programStorage";
+} from './programStorage';
 
 // --- Clear all data ---
 
 export async function clearAllData(): Promise<void> {
   const db = await getDB();
   await Promise.all([
-    db.clear("breathing_sessions"),
-    db.clear("cold_sessions"),
-    db.clear("preferences"),
-    db.clear("program_progress"),
-    db.clear("custom_presets"),
-    db.clear("milestones"),
+    db.clear('breathing_sessions'),
+    db.clear('cold_sessions'),
+    db.clear('preferences'),
+    db.clear('program_progress'),
+    db.clear('custom_presets'),
+    db.clear('milestones'),
   ]);
   cache.breathingSessions = [];
   cache.coldSessions = [];
@@ -389,14 +399,15 @@ export async function clearAllData(): Promise<void> {
 // --- Theme ---
 
 /** Apply the dark class to <html> based on themeMode and persist for FOUC script. */
-export function applyTheme(mode: "system" | "light" | "dark"): void {
-  if (typeof window === "undefined") return;
+export function applyTheme(mode: 'system' | 'light' | 'dark'): void {
+  if (typeof window === 'undefined') return;
   const prefersDark =
-    mode === "dark" ||
-    (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  document.documentElement.classList.toggle("dark", prefersDark);
+    mode === 'dark' ||
+    (mode === 'system' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList.toggle('dark', prefersDark);
   try {
-    localStorage.setItem("whm_theme", mode);
+    localStorage.setItem('whm_theme', mode);
   } catch {
     // localStorage unavailable — inline script won't benefit but app still works
   }

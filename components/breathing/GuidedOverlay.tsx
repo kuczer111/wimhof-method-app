@@ -1,14 +1,17 @@
-"use client";
+'use client';
 
-import Button from "@/components/ui/Button";
-import { strings } from "@/lib/i18n";
+import Button from '@/components/ui/Button';
+import { strings } from '@/lib/i18n';
 
 interface GuidedOverlayProps {
-  type: "preBreathing" | "midSessionPause";
+  type: 'preBreathing' | 'midSessionPause';
   onContinue: () => void;
 }
 
-export default function GuidedOverlay({ type, onContinue }: GuidedOverlayProps) {
+export default function GuidedOverlay({
+  type,
+  onContinue,
+}: GuidedOverlayProps) {
   const content = strings.guidedMode[type];
 
   return (
@@ -21,7 +24,7 @@ export default function GuidedOverlay({ type, onContinue }: GuidedOverlayProps) 
           {content.body}
         </p>
         <Button size="lg" className="w-full" onClick={onContinue}>
-          {type === "preBreathing"
+          {type === 'preBreathing'
             ? strings.guidedMode.preBreathing.start
             : strings.guidedMode.midSessionPause.continue}
         </Button>

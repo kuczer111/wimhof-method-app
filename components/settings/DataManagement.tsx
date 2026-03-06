@@ -1,9 +1,14 @@
-import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
-import Modal from "@/components/ui/Modal";
-import { getBreathingSessions, getColdSessions, getPreferences, clearAllData } from "@/lib/storage";
-import { strings } from "@/lib/i18n";
-import { useState } from "react";
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import Modal from '@/components/ui/Modal';
+import {
+  getBreathingSessions,
+  getColdSessions,
+  getPreferences,
+  clearAllData,
+} from '@/lib/storage';
+import { strings } from '@/lib/i18n';
+import { useState } from 'react';
 
 interface DataManagementProps {
   onDataCleared: () => void;
@@ -20,9 +25,11 @@ export default function DataManagement({ onDataCleared }: DataManagementProps) {
       preferences: getPreferences(),
       exportedAt: new Date().toISOString(),
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json',
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = `whm-data-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
@@ -52,7 +59,9 @@ export default function DataManagement({ onDataCleared }: DataManagementProps) {
             </Button>
           </div>
           {cleared ? (
-            <p className="text-sm text-success dark:text-success-light">{strings.settings.allDataCleared}</p>
+            <p className="text-sm text-success dark:text-success-light">
+              {strings.settings.allDataCleared}
+            </p>
           ) : (
             <Button
               variant="danger"

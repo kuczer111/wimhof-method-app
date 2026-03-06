@@ -1,6 +1,6 @@
-import OptionButton from "@/components/ui/OptionButton";
-import type { SessionConfig } from "@/lib/storage";
-import { strings } from "@/lib/i18n";
+import OptionButton from '@/components/ui/OptionButton';
+import type { SessionConfig } from '@/lib/storage';
+import { strings } from '@/lib/i18n';
 
 const BREATH_OPTIONS = [20, 30, 40];
 
@@ -9,7 +9,10 @@ interface PerRoundConfigProps {
   onConfigChange: (config: SessionConfig) => void;
 }
 
-export default function PerRoundConfig({ config, onConfigChange }: PerRoundConfigProps) {
+export default function PerRoundConfig({
+  config,
+  onConfigChange,
+}: PerRoundConfigProps) {
   if (config.rounds <= 1) return null;
 
   return (

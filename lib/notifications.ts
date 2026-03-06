@@ -2,9 +2,9 @@
 // Uses the Notification API + setTimeout-based scheduling (no persistent scheduler in PWAs).
 // Reminders are re-scheduled on each page load from saved preferences.
 
-import { getBreathingSessions, getColdSessions } from "./storage";
+import { getBreathingSessions, getColdSessions } from './storage';
 
-const REMINDER_STORAGE_KEY = "whm_reminder_settings";
+const REMINDER_STORAGE_KEY = 'whm_reminder_settings';
 
 export interface ReminderSettings {
   enabled: boolean;
@@ -21,17 +21,26 @@ const DEFAULT_REMINDER: ReminderSettings = {
 let scheduledTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function getReminderSettings(): ReminderSettings {
-  if (typeof window === "undefined") return DEFAULT_REMINDER;
+  if (typeof window === 'undefined') return DEFAULT_REMINDER;
   try {
     const raw = localStorage.getItem(REMINDER_STORAGE_KEY);
     if (raw) {
       const parsed: unknown = JSON.parse(raw);
-      if (parsed != null && typeof parsed === "object") {
+      if (parsed != null && typeof parsed === 'object') {
         const p = parsed as Record<string, unknown>;
         return {
-          enabled: typeof p.enabled === "boolean" ? p.enabled : DEFAULT_REMINDER.enabled,
-          hour: typeof p.hour === "number" && p.hour >= 0 && p.hour <= 23 ? p.hour : DEFAULT_REMINDER.hour,
-          minute: typeof p.minute === "number" && p.minute >= 0 && p.minute <= 59 ? p.minute : DEFAULT_REMINDER.minute,
+          enabled:
+            typeof p.enabled === 'boolean'
+              ? p.enabled
+              : DEFAULT_REMINDER.enabled,
+          hour:
+            typeof p.hour === 'number' && p.hour >= 0 && p.hour <= 23
+              ? p.hour
+              : DEFAULT_REMINDER.hour,
+          minute:
+            typeof p.minute === 'number' && p.minute >= 0 && p.minute <= 59
+              ? p.minute
+              : DEFAULT_REMINDER.minute,
         };
       }
     }
@@ -42,7 +51,7 @@ export function getReminderSettings(): ReminderSettings {
 }
 
 export function saveReminderSettings(settings: ReminderSettings): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   localStorage.setItem(REMINDER_STORAGE_KEY, JSON.stringify(settings));
   if (settings.enabled) {
     scheduleReminder(settings);
@@ -52,17 +61,19 @@ export function saveReminderSettings(settings: ReminderSettings): void {
 }
 
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
-  if (typeof window === "undefined" || !("Notification" in window)) {
-    return "denied";
+  if (typeof window === 'undefined' || !('Notification' in window)) {
+    return 'denied';
   }
-  if (Notification.permission === "granted") return "granted";
-  if (Notification.permission === "denied") return "denied";
+  if (Notification.permission === 'granted') return 'granted';
+  if (Notification.permission === 'denied') return 'denied';
   return Notification.requestPermission();
 }
 
-export function getNotificationPermission(): NotificationPermission | "unsupported" {
-  if (typeof window === "undefined" || !("Notification" in window)) {
-    return "unsupported";
+export function getNotificationPermission():
+  | NotificationPermission
+  | 'unsupported' {
+  if (typeof window === 'undefined' || !('Notification' in window)) {
+    return 'unsupported';
   }
   return Notification.permission;
 }
@@ -74,15 +85,17 @@ function practicedWithinHours(hours: number): boolean {
   const breathing = getBreathingSessions();
   const cold = getColdSessions();
 
-  const recentBreathing = breathing.some((s) => new Date(s.date).getTime() > cutoff);
+  const recentBreathing = breathing.some(
+    (s) => new Date(s.date).getTime() > cutoff,
+  );
   const recentCold = cold.some((s) => new Date(s.date).getTime() > cutoff);
 
   return recentBreathing || recentCold;
 }
 
 function showReminder(): void {
-  if (typeof window === "undefined" || !("Notification" in window)) return;
-  if (Notification.permission !== "granted") return;
+  if (typeof window === 'undefined' || !('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
 
   // Skip if user practiced within 2 hours
   if (practicedWithinHours(2)) {
@@ -92,10 +105,10 @@ function showReminder(): void {
     return;
   }
 
-  new Notification("Wim Hof Method", {
-    body: "Time for your daily practice session",
-    icon: "/icons/icon-192.png",
-    tag: "whm-daily-reminder",
+  new Notification('Wim Hof Method', {
+    body: 'Time for your daily practice session',
+    icon: '/icons/icon-192.png',
+    tag: 'whm-daily-reminder',
   });
 
   // Re-schedule for tomorrow
@@ -134,7 +147,7 @@ export function cancelReminder(): void {
 /** Call on app startup to restore scheduled reminder from saved settings */
 export function initReminders(): void {
   const settings = getReminderSettings();
-  if (settings.enabled && getNotificationPermission() === "granted") {
+  if (settings.enabled && getNotificationPermission() === 'granted') {
     scheduleReminder(settings);
   }
 }

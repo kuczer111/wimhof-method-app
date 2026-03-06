@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { strings } from "@/lib/i18n";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { strings } from '@/lib/i18n';
 import {
   ClockIcon,
   CalendarIcon,
@@ -10,15 +10,15 @@ import {
   ChartIcon,
   BookIcon,
   GearIcon,
-} from "@/components/ui/Icon";
+} from '@/components/ui/Icon';
 
 const tabs = [
-  { href: "/breathe", label: strings.nav.breathe, Icon: ClockIcon },
-  { href: "/program", label: strings.nav.program, Icon: CalendarIcon },
-  { href: "/cold", label: strings.nav.cold, Icon: SnowflakeIcon },
-  { href: "/progress", label: strings.nav.progress, Icon: ChartIcon },
-  { href: "/learn", label: strings.nav.learn, Icon: BookIcon },
-  { href: "/settings", label: strings.nav.settings, Icon: GearIcon },
+  { href: '/breathe', label: strings.nav.breathe, Icon: ClockIcon },
+  { href: '/program', label: strings.nav.program, Icon: CalendarIcon },
+  { href: '/cold', label: strings.nav.cold, Icon: SnowflakeIcon },
+  { href: '/progress', label: strings.nav.progress, Icon: ChartIcon },
+  { href: '/learn', label: strings.nav.learn, Icon: BookIcon },
+  { href: '/settings', label: strings.nav.settings, Icon: GearIcon },
 ] as const;
 
 export default function BottomNav() {
@@ -34,7 +34,9 @@ export default function BottomNav() {
               <Link
                 href={tab.href}
                 className={`flex flex-col items-center px-3 py-2 text-xs transition-colors ${
-                  active ? "text-brand dark:text-brand-light" : "text-on-surface-muted dark:text-on-surface-faint"
+                  active
+                    ? 'text-brand dark:text-brand-light'
+                    : 'text-on-surface-muted dark:text-on-surface-faint'
                 }`}
               >
                 <tab.Icon />

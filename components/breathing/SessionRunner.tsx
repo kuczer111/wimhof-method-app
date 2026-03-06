@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { unlockAudio, disposeAudio } from "@/lib/audio";
-import { strings } from "@/lib/i18n";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { unlockAudio, disposeAudio } from '@/lib/audio';
+import { strings } from '@/lib/i18n';
 import {
   getPreferences,
   getBreathingSessions,
@@ -10,24 +10,24 @@ import {
   savePreferences,
   generateId,
   type BreathingSession,
-} from "@/lib/storage";
-import type { SessionConfig } from "@/lib/storage";
-import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
-import GuidedOverlay from "./GuidedOverlay";
-import PowerBreaths from "./PowerBreaths";
-import RetentionHold from "./RetentionHold";
-import RecoveryBreath from "./RecoveryBreath";
-import SessionComplete from "./SessionComplete";
+} from '@/lib/storage';
+import type { SessionConfig } from '@/lib/storage';
+import { requestWakeLock, releaseWakeLock } from '@/lib/wakeLock';
+import GuidedOverlay from './GuidedOverlay';
+import PowerBreaths from './PowerBreaths';
+import RetentionHold from './RetentionHold';
+import RecoveryBreath from './RecoveryBreath';
+import SessionComplete from './SessionComplete';
 
-export type { SessionConfig } from "@/lib/storage";
+export type { SessionConfig } from '@/lib/storage';
 
-type Phase = "power-breaths" | "retention" | "recovery" | "complete";
+type Phase = 'power-breaths' | 'retention' | 'recovery' | 'complete';
 
 const PHASE_ANNOUNCEMENTS: Record<Phase, string> = {
-  "power-breaths": "Power breaths phase. Breathe in and out.",
-  retention: "Retention phase. Hold your breath.",
-  recovery: "Recovery breath. Breathe in and hold.",
-  complete: "Session complete.",
+  'power-breaths': 'Power breaths phase. Breathe in and out.',
+  retention: 'Retention phase. Hold your breath.',
+  recovery: 'Recovery breath. Breathe in and hold.',
+  complete: 'Session complete.',
 };
 
 interface SessionRunnerProps {
@@ -36,8 +36,12 @@ interface SessionRunnerProps {
   onAutoCold?: () => void;
 }
 
-export default function SessionRunner({ config, onFinish, onAutoCold }: SessionRunnerProps) {
-  const [phase, setPhase] = useState<Phase>("power-breaths");
+export default function SessionRunner({
+  config,
+  onFinish,
+  onAutoCold,
+}: SessionRunnerProps) {
+  const [phase, setPhase] = useState<Phase>('power-breaths');
   const [currentRound, setCurrentRound] = useState(1);
   const [retentionTimes, setRetentionTimes] = useState<number[]>([]);
   const sessionStartRef = useRef(Date.now());
@@ -45,13 +49,14 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
 
   // Guided mode state
   const isFirstSession = !getPreferences().firstSessionComplete;
-  const [showPreBreathingGuide, setShowPreBreathingGuide] = useState(isFirstSession);
+  const [showPreBreathingGuide, setShowPreBreathingGuide] =
+    useState(isFirstSession);
   const [showMidSessionPause, setShowMidSessionPause] = useState(false);
 
   const phaseAnnouncement = `Round ${currentRound} of ${config.rounds}. ${PHASE_ANNOUNCEMENTS[phase]}`;
-  const [announced, setAnnounced] = useState("");
+  const [announced, setAnnounced] = useState('');
   useEffect(() => {
-    setAnnounced("");
+    setAnnounced('');
     const timer = setTimeout(() => setAnnounced(phaseAnnouncement), 250);
     return () => clearTimeout(timer);
   }, [phaseAnnouncement]);
@@ -68,12 +73,12 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
   }, []);
 
   const handlePowerBreathsComplete = useCallback(() => {
-    setPhase("retention");
+    setPhase('retention');
   }, []);
 
   const handleRetentionComplete = useCallback((durationMs: number) => {
     setRetentionTimes((prev) => [...prev, durationMs]);
-    setPhase("recovery");
+    setPhase('recovery');
   }, []);
 
   const handleRecoveryComplete = useCallback(() => {
@@ -82,7 +87,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
         setShowMidSessionPause(true);
       } else {
         setCurrentRound((r) => r + 1);
-        setPhase("power-breaths");
+        setPhase('power-breaths');
       }
     } else {
       const elapsed = Date.now() - sessionStartRef.current;
@@ -90,7 +95,9 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
 
       // Auto-cold: save session immediately and transition to cold timer
       if (config.autoCold && onAutoCold) {
-        const retentionTimesSeconds = retentionTimes.map((ms) => Math.round(ms / 1000));
+        const retentionTimesSeconds = retentionTimes.map((ms) =>
+          Math.round(ms / 1000),
+        );
         if (isFirstSession) {
           savePreferences({ firstSessionComplete: true });
         }
@@ -108,7 +115,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
         return;
       }
 
-      setPhase("complete");
+      setPhase('complete');
     }
   }, [currentRound, config, isFirstSession, onAutoCold, retentionTimes]);
 
@@ -128,7 +135,7 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
         onContinue={() => {
           setShowMidSessionPause(false);
           setCurrentRound((r) => r + 1);
-          setPhase("power-breaths");
+          setPhase('power-breaths');
         }}
       />
     );
@@ -136,15 +143,20 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
 
   const phaseKey = `${phase}-${currentRound}`;
 
-  if (phase === "power-breaths") {
+  if (phase === 'power-breaths') {
     return (
       <div key={phaseKey} className="animate-phase-fade">
-        <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
+        <div className="sr-only" aria-live="assertive" role="status">
+          {announced}
+        </div>
         <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
         <PowerBreaths
-          breathCount={config.breathsPerRound[currentRound - 1] ?? config.breathsPerRound[0]}
+          breathCount={
+            config.breathsPerRound[currentRound - 1] ??
+            config.breathsPerRound[0]
+          }
           pace={config.pace}
           onComplete={handlePowerBreathsComplete}
         />
@@ -152,10 +164,11 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     );
   }
 
-  if (phase === "retention") {
-    const mindsetPrompt = config.mindsetPrompts?.[currentRound - 1] || undefined;
+  if (phase === 'retention') {
+    const mindsetPrompt =
+      config.mindsetPrompts?.[currentRound - 1] || undefined;
     let personalBestMs: number | undefined;
-    if (config.retentionMode === "target") {
+    if (config.retentionMode === 'target') {
       const sessions = getBreathingSessions();
       let maxSeconds = 0;
       for (const s of sessions) {
@@ -167,7 +180,9 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     }
     return (
       <div key={phaseKey} className="animate-phase-fade">
-        <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
+        <div className="sr-only" aria-live="assertive" role="status">
+          {announced}
+        </div>
         <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -181,10 +196,12 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
     );
   }
 
-  if (phase === "recovery") {
+  if (phase === 'recovery') {
     return (
       <div key={phaseKey} className="animate-phase-fade">
-        <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
+        <div className="sr-only" aria-live="assertive" role="status">
+          {announced}
+        </div>
         <p className="pt-4 text-center text-xs font-medium text-on-surface-light-muted">
           {strings.breathing.roundProgress(currentRound, config.rounds)}
         </p>
@@ -196,7 +213,9 @@ export default function SessionRunner({ config, onFinish, onAutoCold }: SessionR
   // complete
   return (
     <div key={phaseKey} className="animate-phase-fade">
-      <div className="sr-only" aria-live="assertive" role="status">{announced}</div>
+      <div className="sr-only" aria-live="assertive" role="status">
+        {announced}
+      </div>
       <SessionComplete
         config={config}
         retentionTimes={retentionTimes}

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { playCountdownBeep, playCountdownFinalBeep } from "@/lib/audio";
-import { strings } from "@/lib/i18n";
+import { useEffect, useRef, useState } from 'react';
+import { playCountdownBeep, playCountdownFinalBeep } from '@/lib/audio';
+import { strings } from '@/lib/i18n';
 
 const RECOVERY_DURATION_S = 15;
 
@@ -50,7 +50,11 @@ export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
         {strings.breathing.recovery.instruction}
       </p>
 
-      <span role="timer" aria-label={`Recovery countdown: ${remaining} seconds`} className="text-8xl font-bold tabular-nums text-success dark:text-success-light">
+      <span
+        role="timer"
+        aria-label={`Recovery countdown: ${remaining} seconds`}
+        className="text-8xl font-bold tabular-nums text-success dark:text-success-light"
+      >
         {remaining}
       </span>
 

@@ -1,8 +1,8 @@
-import { formatTime } from "@/lib/format";
-import { getBreathingSessions, getColdSessions } from "@/lib/storage";
-import { calculateStreak } from "@/lib/analytics";
+import { formatTime } from '@/lib/format';
+import { getBreathingSessions, getColdSessions } from '@/lib/storage';
+import { calculateStreak } from '@/lib/analytics';
 
-type AspectRatio = "9:16" | "1:1";
+type AspectRatio = '9:16' | '1:1';
 
 interface SessionCardData {
   retentionTimesSeconds: number[];
@@ -22,26 +22,30 @@ interface ProgressCardData {
 }
 
 const COLORS = {
-  bg: "#0f172a",
-  cardBg: "#1e293b",
-  accent: "#0ea5e9",
-  accentLight: "#38bdf8",
-  text: "#f1f5f9",
-  textMuted: "#94a3b8",
-  barFill: "#0ea5e9",
-  barBg: "#334155",
-  streakBadge: "#f59e0b",
-  streakBadgeBg: "#78350f",
+  bg: '#0f172a',
+  cardBg: '#1e293b',
+  accent: '#0ea5e9',
+  accentLight: '#38bdf8',
+  text: '#f1f5f9',
+  textMuted: '#94a3b8',
+  barFill: '#0ea5e9',
+  barBg: '#334155',
+  streakBadge: '#f59e0b',
+  streakBadgeBg: '#78350f',
 };
 
 function getDimensions(ratio: AspectRatio): { w: number; h: number } {
-  if (ratio === "9:16") return { w: 1080, h: 1920 };
+  if (ratio === '9:16') return { w: 1080, h: 1920 };
   return { w: 1080, h: 1080 };
 }
 
 function drawRoundedRect(
   ctx: CanvasRenderingContext2D,
-  x: number, y: number, w: number, h: number, r: number
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
 ) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -58,18 +62,20 @@ function drawRoundedRect(
 
 function drawBranding(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.fillStyle = COLORS.textMuted;
-  ctx.font = "500 28px -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("Wim Hof Method App", w / 2, h - 40);
+  ctx.font = '500 28px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Wim Hof Method App', w / 2, h - 40);
 }
 
 function drawStreakBadge(
   ctx: CanvasRenderingContext2D,
-  x: number, y: number, streak: number
+  x: number,
+  y: number,
+  streak: number,
 ) {
   if (streak <= 0) return;
   const text = `${streak} day streak`;
-  ctx.font = "bold 32px -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, sans-serif';
   const metrics = ctx.measureText(text);
   const padX = 24;
   const padY = 12;
@@ -81,15 +87,18 @@ function drawStreakBadge(
   ctx.fill();
 
   ctx.fillStyle = COLORS.streakBadge;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
   ctx.fillText(text, x, y + bh / 2);
 }
 
 function drawRetentionBars(
   ctx: CanvasRenderingContext2D,
   retentionSeconds: number[],
-  x: number, y: number, width: number, height: number
+  x: number,
+  y: number,
+  width: number,
+  height: number,
 ) {
   const count = retentionSeconds.length;
   if (count === 0) return;
@@ -117,15 +126,19 @@ function drawRetentionBars(
 
     // Time label above bar
     ctx.fillStyle = COLORS.text;
-    ctx.font = "bold 30px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "bottom";
-    ctx.fillText(formatTime(retentionSeconds[i]), bx + barWidth / 2, y + height - barH - 12);
+    ctx.font = 'bold 30px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(
+      formatTime(retentionSeconds[i]),
+      bx + barWidth / 2,
+      y + height - barH - 12,
+    );
 
     // Round label below
     ctx.fillStyle = COLORS.textMuted;
-    ctx.font = "500 26px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.textBaseline = "top";
+    ctx.font = '500 26px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textBaseline = 'top';
     ctx.fillText(`R${i + 1}`, bx + barWidth / 2, y + height + 12);
   }
 }
@@ -133,54 +146,54 @@ function drawRetentionBars(
 export function renderSessionCard(
   canvas: HTMLCanvasElement,
   data: SessionCardData,
-  ratio: AspectRatio
+  ratio: AspectRatio,
 ): void {
   const { w, h } = getDimensions(ratio);
   canvas.width = w;
   canvas.height = h;
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
 
   // Background
   ctx.fillStyle = COLORS.bg;
   ctx.fillRect(0, 0, w, h);
 
   const centerX = w / 2;
-  const isStory = ratio === "9:16";
+  const isStory = ratio === '9:16';
   let cy = isStory ? 240 : 100;
 
   // Title
   ctx.fillStyle = COLORS.accentLight;
-  ctx.font = "600 36px -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText("SESSION COMPLETE", centerX, cy);
+  ctx.font = '600 36px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText('SESSION COMPLETE', centerX, cy);
   cy += 70;
 
   // Date
-  const dateStr = new Date(data.date).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "short",
-    day: "numeric",
+  const dateStr = new Date(data.date).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
   });
   ctx.fillStyle = COLORS.textMuted;
-  ctx.font = "500 30px -apple-system, BlinkMacSystemFont, sans-serif";
+  ctx.font = '500 30px -apple-system, BlinkMacSystemFont, sans-serif';
   ctx.fillText(dateStr, centerX, cy);
   cy += isStory ? 80 : 60;
 
   // Stats row
   const stats = [
-    { label: "Duration", value: formatTime(data.totalDurationSeconds) },
-    { label: "Rounds", value: String(data.rounds) },
+    { label: 'Duration', value: formatTime(data.totalDurationSeconds) },
+    { label: 'Rounds', value: String(data.rounds) },
   ];
   const statSpacing = 240;
   const statsStartX = centerX - (statSpacing * (stats.length - 1)) / 2;
   for (let i = 0; i < stats.length; i++) {
     const sx = statsStartX + i * statSpacing;
     ctx.fillStyle = COLORS.text;
-    ctx.font = "bold 56px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.font = 'bold 56px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.fillText(stats[i].value, sx, cy);
     ctx.fillStyle = COLORS.textMuted;
-    ctx.font = "500 26px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.font = '500 26px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.fillText(stats[i].label, sx, cy + 64);
   }
   cy += isStory ? 160 : 130;
@@ -188,10 +201,17 @@ export function renderSessionCard(
   // Retention bar chart
   const barChartH = isStory ? 360 : 280;
   ctx.fillStyle = COLORS.text;
-  ctx.font = "600 28px -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.fillText("RETENTION TIMES", centerX, cy);
+  ctx.font = '600 28px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.fillText('RETENTION TIMES', centerX, cy);
   cy += 50;
-  drawRetentionBars(ctx, data.retentionTimesSeconds, 80, cy, w - 160, barChartH);
+  drawRetentionBars(
+    ctx,
+    data.retentionTimesSeconds,
+    80,
+    cy,
+    w - 160,
+    barChartH,
+  );
   cy += barChartH + 60;
 
   // Streak badge
@@ -204,34 +224,34 @@ export function renderSessionCard(
 export function renderProgressCard(
   canvas: HTMLCanvasElement,
   data: ProgressCardData,
-  ratio: AspectRatio
+  ratio: AspectRatio,
 ): void {
   const { w, h } = getDimensions(ratio);
   canvas.width = w;
   canvas.height = h;
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
 
   ctx.fillStyle = COLORS.bg;
   ctx.fillRect(0, 0, w, h);
 
   const centerX = w / 2;
-  const isStory = ratio === "9:16";
+  const isStory = ratio === '9:16';
   let cy = isStory ? 240 : 100;
 
   // Title
   ctx.fillStyle = COLORS.accentLight;
-  ctx.font = "600 36px -apple-system, BlinkMacSystemFont, sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText("MY PROGRESS", centerX, cy);
+  ctx.font = '600 36px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText('MY PROGRESS', centerX, cy);
   cy += isStory ? 100 : 70;
 
   // Stats grid
   const gridStats = [
-    { label: "Sessions", value: String(data.totalSessions) },
-    { label: "Best Retention", value: formatTime(data.bestRetention) },
-    { label: "Cold Minutes", value: String(data.totalColdMinutes) },
-    { label: "Breathing Streak", value: `${data.breathingStreakDays}d` },
+    { label: 'Sessions', value: String(data.totalSessions) },
+    { label: 'Best Retention', value: formatTime(data.bestRetention) },
+    { label: 'Cold Minutes', value: String(data.totalColdMinutes) },
+    { label: 'Breathing Streak', value: `${data.breathingStreakDays}d` },
   ];
   const colW = 400;
   const rowH = 120;
@@ -242,11 +262,11 @@ export function renderProgressCard(
     const sy = cy + row * rowH;
 
     ctx.fillStyle = COLORS.text;
-    ctx.font = "bold 52px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.textAlign = "center";
+    ctx.font = 'bold 52px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
     ctx.fillText(gridStats[i].value, sx, sy);
     ctx.fillStyle = COLORS.textMuted;
-    ctx.font = "500 26px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.font = '500 26px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.fillText(gridStats[i].label, sx, sy + 56);
   }
   cy += rowH * 2 + 40;
@@ -255,9 +275,9 @@ export function renderProgressCard(
   if (data.retentionTimesAvg.length > 0) {
     const barH = isStory ? 320 : 240;
     ctx.fillStyle = COLORS.text;
-    ctx.font = "600 28px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("AVG RETENTION BY ROUND", centerX, cy);
+    ctx.font = '600 28px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('AVG RETENTION BY ROUND', centerX, cy);
     cy += 50;
     drawRetentionBars(ctx, data.retentionTimesAvg, 80, cy, w - 160, barH);
   }
@@ -268,7 +288,7 @@ export function renderProgressCard(
 export function getSessionCardData(
   retentionTimesSeconds: number[],
   totalDurationSeconds: number,
-  rounds: number
+  rounds: number,
 ): SessionCardData {
   const breathingSessions = getBreathingSessions();
   const coldSessions = getColdSessions();
@@ -292,14 +312,15 @@ export function getProgressCardData(): ProgressCardData {
   const breathingStreak = calculateStreak(breathingSessions);
   const coldStreak = calculateStreak(coldSessions);
   const totalColdMinutes = Math.round(
-    coldSessions.reduce((sum, s) => sum + s.duration, 0) / 60
+    coldSessions.reduce((sum, s) => sum + s.duration, 0) / 60,
   );
 
   let bestRetention = 0;
   const roundTotals: Record<number, { sum: number; count: number }> = {};
   for (const s of breathingSessions) {
     for (let i = 0; i < s.retentionTimes.length; i++) {
-      if (s.retentionTimes[i] > bestRetention) bestRetention = s.retentionTimes[i];
+      if (s.retentionTimes[i] > bestRetention)
+        bestRetention = s.retentionTimes[i];
       if (!roundTotals[i]) roundTotals[i] = { sum: 0, count: 0 };
       roundTotals[i].sum += s.retentionTimes[i];
       roundTotals[i].count++;
@@ -310,7 +331,9 @@ export function getProgressCardData(): ProgressCardData {
   const retentionTimesAvg: number[] = [];
   for (let i = 0; i < maxRounds; i++) {
     if (roundTotals[i]) {
-      retentionTimesAvg.push(Math.round(roundTotals[i].sum / roundTotals[i].count));
+      retentionTimesAvg.push(
+        Math.round(roundTotals[i].sum / roundTotals[i].count),
+      );
     }
   }
 
@@ -324,17 +347,19 @@ export function getProgressCardData(): ProgressCardData {
   };
 }
 
-export async function shareOrDownload(canvas: HTMLCanvasElement): Promise<void> {
+export async function shareOrDownload(
+  canvas: HTMLCanvasElement,
+): Promise<void> {
   const blob = await new Promise<Blob>((resolve) =>
-    canvas.toBlob((b) => resolve(b!), "image/png")
+    canvas.toBlob((b) => resolve(b!), 'image/png'),
   );
-  const file = new File([blob], "wimhof-session.png", { type: "image/png" });
+  const file = new File([blob], 'wimhof-session.png', { type: 'image/png' });
 
   if (navigator.share && navigator.canShare?.({ files: [file] })) {
     await navigator.share({ files: [file] });
   } else {
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = file.name;
     a.click();

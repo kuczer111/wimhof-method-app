@@ -2,15 +2,15 @@
 // Generates inhale/exhale tones, hold chimes, and countdown beeps.
 // Respects the muted preference from storage.
 
-import { getPreferences, savePreferences } from "./storage";
+import { getPreferences, savePreferences } from './storage';
 
 let ctx: AudioContext | null = null;
 
 function getContext(): AudioContext {
-  if (!ctx || ctx.state === "closed") {
+  if (!ctx || ctx.state === 'closed') {
     ctx = new AudioContext();
   }
-  if (ctx.state === "suspended") {
+  if (ctx.state === 'suspended') {
     ctx.resume();
   }
   return ctx;
@@ -18,21 +18,21 @@ function getContext(): AudioContext {
 
 // --- Audio mode helpers ---
 
-export type AudioMode = "voice" | "tone" | "silent" | "haptic";
+export type AudioMode = 'voice' | 'tone' | 'silent' | 'haptic';
 
 function getAudioMode(): AudioMode {
   return getPreferences().audioMode;
 }
 
 function isHaptic(): boolean {
-  return getAudioMode() === "haptic";
+  return getAudioMode() === 'haptic';
 }
 
 // --- Mute toggle ---
 
 export function isMuted(): boolean {
   const mode = getAudioMode();
-  return getPreferences().muted || mode === "silent" || mode === "haptic";
+  return getPreferences().muted || mode === 'silent' || mode === 'haptic';
 }
 
 export function setMuted(muted: boolean): void {
@@ -50,7 +50,7 @@ export function toggleMute(): boolean {
 function playTone(
   frequency: number,
   duration: number,
-  type: OscillatorType = "sine",
+  type: OscillatorType = 'sine',
   gainValue = 0.3,
 ): void {
   if (isMuted()) return;
@@ -78,12 +78,15 @@ function playChime(frequencies: number[], duration: number): void {
   const ac = getContext();
   const masterGain = ac.createGain();
   masterGain.gain.setValueAtTime(0.25, ac.currentTime);
-  masterGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + duration);
+  masterGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    ac.currentTime + duration,
+  );
   masterGain.connect(ac.destination);
 
   for (const freq of frequencies) {
     const osc = ac.createOscillator();
-    osc.type = "sine";
+    osc.type = 'sine';
     osc.frequency.value = freq;
     osc.connect(masterGain);
     osc.start(ac.currentTime);
@@ -94,7 +97,7 @@ function playChime(frequencies: number[], duration: number): void {
 // --- Haptic vibration patterns ---
 
 function vibrate(pattern: number | number[]): void {
-  if (typeof navigator !== "undefined" && navigator.vibrate) {
+  if (typeof navigator !== 'undefined' && navigator.vibrate) {
     navigator.vibrate(pattern);
   }
 }
@@ -133,14 +136,17 @@ export function vibrateCountdownFinal(): void {
 
 /** Rising tone for inhale phase (C5 → E5 sweep, 0.4s) */
 export function playInhaleTone(): void {
-  if (isHaptic()) { vibrateInhale(); return; }
+  if (isHaptic()) {
+    vibrateInhale();
+    return;
+  }
   if (isMuted()) return;
 
   const ac = getContext();
   const osc = ac.createOscillator();
   const gain = ac.createGain();
 
-  osc.type = "sine";
+  osc.type = 'sine';
   osc.frequency.setValueAtTime(523.25, ac.currentTime); // C5
   osc.frequency.linearRampToValueAtTime(659.25, ac.currentTime + 0.4); // E5
   gain.gain.setValueAtTime(0.3, ac.currentTime);
@@ -154,14 +160,17 @@ export function playInhaleTone(): void {
 
 /** Falling tone for exhale phase (E5 → C5 sweep, 0.4s) */
 export function playExhaleTone(): void {
-  if (isHaptic()) { vibrateExhale(); return; }
+  if (isHaptic()) {
+    vibrateExhale();
+    return;
+  }
   if (isMuted()) return;
 
   const ac = getContext();
   const osc = ac.createOscillator();
   const gain = ac.createGain();
 
-  osc.type = "sine";
+  osc.type = 'sine';
   osc.frequency.setValueAtTime(659.25, ac.currentTime); // E5
   osc.frequency.linearRampToValueAtTime(523.25, ac.currentTime + 0.4); // C5
   gain.gain.setValueAtTime(0.3, ac.currentTime);
@@ -175,26 +184,38 @@ export function playExhaleTone(): void {
 
 /** Bright chime signaling the start of retention hold (C5+E5+G5 chord, 0.8s) */
 export function playHoldStartChime(): void {
-  if (isHaptic()) { vibrateHoldStart(); return; }
+  if (isHaptic()) {
+    vibrateHoldStart();
+    return;
+  }
   playChime([523.25, 659.25, 783.99], 0.8);
 }
 
 /** Warm resolved chime signaling end of retention hold (C4+E4+G4+C5, 1s) */
 export function playHoldEndChime(): void {
-  if (isHaptic()) { vibrateHoldEnd(); return; }
+  if (isHaptic()) {
+    vibrateHoldEnd();
+    return;
+  }
   playChime([261.63, 329.63, 392.0, 523.25], 1.0);
 }
 
 /** Short beep for countdown (last seconds of recovery breath) */
 export function playCountdownBeep(): void {
-  if (isHaptic()) { vibrateCountdown(); return; }
-  playTone(880, 0.12, "sine", 0.25);
+  if (isHaptic()) {
+    vibrateCountdown();
+    return;
+  }
+  playTone(880, 0.12, 'sine', 0.25);
 }
 
 /** Final beep — slightly lower and longer */
 export function playCountdownFinalBeep(): void {
-  if (isHaptic()) { vibrateCountdownFinal(); return; }
-  playTone(440, 0.25, "sine", 0.35);
+  if (isHaptic()) {
+    vibrateCountdownFinal();
+    return;
+  }
+  playTone(440, 0.25, 'sine', 0.35);
 }
 
 // --- Lifecycle ---
@@ -212,7 +233,7 @@ export function unlockAudio(): void {
 
 /** Clean up the AudioContext when no longer needed */
 export function disposeAudio(): void {
-  if (ctx && ctx.state !== "closed") {
+  if (ctx && ctx.state !== 'closed') {
     ctx.close();
     ctx = null;
   }

@@ -1,10 +1,16 @@
-import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
-import Button from "@/components/ui/Button";
-import { getPreferences } from "@/lib/storage";
-import { formatTime } from "@/lib/format";
-import { strings } from "@/lib/i18n";
-import { requestWakeLock, releaseWakeLock } from "@/lib/wakeLock";
-import ColdSessionLog from "./ColdSessionLog";
+import {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+} from 'react';
+import Button from '@/components/ui/Button';
+import { getPreferences } from '@/lib/storage';
+import { formatTime } from '@/lib/format';
+import { strings } from '@/lib/i18n';
+import { requestWakeLock, releaseWakeLock } from '@/lib/wakeLock';
+import ColdSessionLog from './ColdSessionLog';
 
 function formatLabel(seconds: number): string {
   if (seconds < 60) return `${seconds}s`;
@@ -29,8 +35,8 @@ function CircularProgress({
       }
     }
     measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
   }, []);
 
   const stroke = 10;
@@ -43,7 +49,7 @@ function CircularProgress({
   return (
     <div
       ref={containerRef}
-      style={{ width: "min(220px, 44vw)", height: "min(220px, 44vw)" }}
+      style={{ width: 'min(220px, 44vw)', height: 'min(220px, 44vw)' }}
     >
       <svg
         width="100%"
@@ -71,7 +77,7 @@ function CircularProgress({
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           className={`transition-[stroke-dashoffset] duration-normal ${
-            exceeded ? "text-success-light" : "text-cold-light"
+            exceeded ? 'text-success-light' : 'text-cold-light'
           }`}
         />
       </svg>
@@ -120,7 +126,7 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
   useEffect(() => {
     if (running && elapsed >= target && !alertedRef.current) {
       alertedRef.current = true;
-      if (typeof navigator !== "undefined" && navigator.vibrate) {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
         navigator.vibrate([200, 100, 200, 100, 200]);
       }
     }
@@ -130,21 +136,42 @@ export default function ColdTimer({ target, onDone }: ColdTimerProps) {
     const exceeded = elapsed > target;
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-        <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.cold.heading}</h1>
+        <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">
+          {strings.cold.heading}
+        </h1>
 
-        <div className="relative" style={{ width: "min(220px, 44vw)", height: "min(220px, 44vw)" }}>
+        <div
+          className="relative"
+          style={{ width: 'min(220px, 44vw)', height: 'min(220px, 44vw)' }}
+        >
           <CircularProgress elapsed={elapsed} target={target} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-bold tabular-nums text-on-surface-light dark:text-on-surface" style={{ fontSize: "min(2.25rem, 9vw)" }}>
+            <span
+              className="font-bold tabular-nums text-on-surface-light dark:text-on-surface"
+              style={{ fontSize: 'min(2.25rem, 9vw)' }}
+            >
               {formatTime(elapsed)}
             </span>
-            <span className="text-on-surface-light-muted dark:text-on-surface-muted" style={{ fontSize: "min(0.875rem, 3vw)", marginTop: "min(0.25rem, 0.5vw)" }}>
-              {exceeded ? strings.cold.targetReached : strings.cold.targetLabel(formatLabel(target))}
+            <span
+              className="text-on-surface-light-muted dark:text-on-surface-muted"
+              style={{
+                fontSize: 'min(0.875rem, 3vw)',
+                marginTop: 'min(0.25rem, 0.5vw)',
+              }}
+            >
+              {exceeded
+                ? strings.cold.targetReached
+                : strings.cold.targetLabel(formatLabel(target))}
             </span>
           </div>
         </div>
 
-        <Button size="lg" variant="danger" className="w-full max-w-xs" onClick={stop}>
+        <Button
+          size="lg"
+          variant="danger"
+          className="w-full max-w-xs"
+          onClick={stop}
+        >
           {strings.cold.stop}
         </Button>
       </div>

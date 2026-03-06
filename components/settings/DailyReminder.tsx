@@ -1,17 +1,23 @@
-import Card from "@/components/ui/Card";
+import Card from '@/components/ui/Card';
 import {
   getReminderSettings,
   saveReminderSettings,
   requestNotificationPermission,
   getNotificationPermission,
   type ReminderSettings,
-} from "@/lib/notifications";
-import { strings } from "@/lib/i18n";
-import { useState, useEffect } from "react";
+} from '@/lib/notifications';
+import { strings } from '@/lib/i18n';
+import { useState, useEffect } from 'react';
 
 export default function DailyReminder() {
-  const [reminder, setReminder] = useState<ReminderSettings>({ enabled: false, hour: 8, minute: 0 });
-  const [notifPermission, setNotifPermission] = useState<NotificationPermission | "unsupported">("default");
+  const [reminder, setReminder] = useState<ReminderSettings>({
+    enabled: false,
+    hour: 8,
+    minute: 0,
+  });
+  const [notifPermission, setNotifPermission] = useState<
+    NotificationPermission | 'unsupported'
+  >('default');
 
   useEffect(() => {
     setReminder(getReminderSettings());
@@ -38,7 +44,7 @@ export default function DailyReminder() {
             if (!reminder.enabled) {
               const perm = await requestNotificationPermission();
               setNotifPermission(perm);
-              if (perm !== "granted") return;
+              if (perm !== 'granted') return;
             }
             const next = { ...reminder, enabled: !reminder.enabled };
             setReminder(next);
@@ -46,13 +52,13 @@ export default function DailyReminder() {
           }}
           className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${
             reminder.enabled
-              ? "bg-cold"
-              : "bg-on-surface-light/30 dark:bg-surface-overlay"
+              ? 'bg-cold'
+              : 'bg-on-surface-light/30 dark:bg-surface-overlay'
           }`}
         >
           <span
             className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-              reminder.enabled ? "translate-x-6" : "translate-x-1"
+              reminder.enabled ? 'translate-x-6' : 'translate-x-1'
             }`}
           />
         </button>
@@ -65,9 +71,9 @@ export default function DailyReminder() {
           </label>
           <input
             type="time"
-            value={`${String(reminder.hour).padStart(2, "0")}:${String(reminder.minute).padStart(2, "0")}`}
+            value={`${String(reminder.hour).padStart(2, '0')}:${String(reminder.minute).padStart(2, '0')}`}
             onChange={(e) => {
-              const [h, m] = e.target.value.split(":").map(Number);
+              const [h, m] = e.target.value.split(':').map(Number);
               const next = { ...reminder, hour: h, minute: m };
               setReminder(next);
               saveReminderSettings(next);
@@ -77,11 +83,15 @@ export default function DailyReminder() {
         </div>
       )}
 
-      {notifPermission === "denied" && (
-        <p className="mt-2 text-xs text-danger">{strings.settings.notificationsBlocked}</p>
+      {notifPermission === 'denied' && (
+        <p className="mt-2 text-xs text-danger">
+          {strings.settings.notificationsBlocked}
+        </p>
       )}
-      {notifPermission === "unsupported" && (
-        <p className="mt-2 text-xs text-on-surface-light-muted">{strings.settings.notificationsUnsupported}</p>
+      {notifPermission === 'unsupported' && (
+        <p className="mt-2 text-xs text-on-surface-light-muted">
+          {strings.settings.notificationsUnsupported}
+        </p>
       )}
     </Card>
   );

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { getBreathingSessions, getColdSessions } from "@/lib/storage";
+import { useMemo } from 'react';
+import { getBreathingSessions, getColdSessions } from '@/lib/storage';
 
-function getTimeOfDay(): "morning" | "afternoon" | "evening" {
+function getTimeOfDay(): 'morning' | 'afternoon' | 'evening' {
   const hour = new Date().getHours();
-  if (hour < 12) return "morning";
-  if (hour < 17) return "afternoon";
-  return "evening";
+  if (hour < 12) return 'morning';
+  if (hour < 17) return 'afternoon';
+  return 'evening';
 }
 
 function getTip(): string {
@@ -19,24 +19,24 @@ function getTip(): string {
   const twoHoursAgo = now - 2 * 60 * 60 * 1000;
 
   const recentCold = coldSessions.some(
-    (s) => new Date(s.date).getTime() > twoHoursAgo
+    (s) => new Date(s.date).getTime() > twoHoursAgo,
   );
 
   const todayStr = new Date().toISOString().slice(0, 10);
   const sessionToday = breathingSessions.some(
-    (s) => s.date.slice(0, 10) === todayStr
+    (s) => s.date.slice(0, 10) === todayStr,
   );
 
   const totalSessions = breathingSessions.length;
 
   // Post-cold tip takes priority
   if (recentCold) {
-    return "Great cold session! Breathing now can deepen recovery and calm your nervous system.";
+    return 'Great cold session! Breathing now can deepen recovery and calm your nervous system.';
   }
 
   // Already practiced today
   if (sessionToday) {
-    return "Second session of the day — focus on depth over intensity. Let your body guide the pace.";
+    return 'Second session of the day — focus on depth over intensity. Let your body guide the pace.';
   }
 
   // New user encouragement
@@ -45,15 +45,15 @@ function getTip(): string {
   }
 
   // Time-of-day tips
-  if (timeOfDay === "morning") {
-    return "Morning sessions boost focus and energy. Breathe fully and set your intention for the day.";
+  if (timeOfDay === 'morning') {
+    return 'Morning sessions boost focus and energy. Breathe fully and set your intention for the day.';
   }
-  if (timeOfDay === "evening") {
+  if (timeOfDay === 'evening') {
     return "Evening practice helps release the day's tension. Use a slower pace for deeper relaxation.";
   }
 
   // Afternoon / default
-  return "Find a comfortable position, relax your shoulders, and let each breath be full and effortless.";
+  return 'Find a comfortable position, relax your shoulders, and let each breath be full and effortless.';
 }
 
 export default function SessionTip() {

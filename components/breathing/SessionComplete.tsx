@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Button from "@/components/ui/Button";
-import ShareButton from "@/components/ShareButton";
+import { useState } from 'react';
+import Button from '@/components/ui/Button';
+import ShareButton from '@/components/ShareButton';
 import {
   saveBreathingSession,
   savePreferences,
@@ -10,11 +10,15 @@ import {
   generateId,
   type BreathingSession,
   type SessionConfig,
-} from "@/lib/storage";
-import { formatTimeMs } from "@/lib/format";
-import { strings } from "@/lib/i18n";
-import { checkBreathingMilestones } from "@/lib/milestones";
-import { renderSessionCard, getSessionCardData, shareOrDownload } from "@/lib/shareCard";
+} from '@/lib/storage';
+import { formatTimeMs } from '@/lib/format';
+import { strings } from '@/lib/i18n';
+import { checkBreathingMilestones } from '@/lib/milestones';
+import {
+  renderSessionCard,
+  getSessionCardData,
+  shareOrDownload,
+} from '@/lib/shareCard';
 
 interface SessionCompleteProps {
   config: SessionConfig;
@@ -51,13 +55,13 @@ export default function SessionComplete({
 }: SessionCompleteProps) {
   const { rounds, breathsPerRound, pace } = config;
   const [feelingRating, setFeelingRating] = useState<number | null>(null);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState('');
   const [saved, setSaved] = useState(false);
 
   const previousBests = getPersonalBests();
 
   const retentionTimesSeconds = retentionTimes.map((ms) =>
-    Math.round(ms / 1000)
+    Math.round(ms / 1000),
   );
 
   const newPersonalBests = new Set<number>();
@@ -98,7 +102,9 @@ export default function SessionComplete({
       <p className="text-sm font-medium uppercase tracking-wider text-success dark:text-success-light">
         {strings.breathing.sessionComplete.status}
       </p>
-      <p className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.breathing.sessionComplete.message}</p>
+      <p className="text-2xl font-bold text-on-surface-light dark:text-on-surface">
+        {strings.breathing.sessionComplete.message}
+      </p>
 
       {/* Summary stats */}
       <div className="flex gap-6 text-center">
@@ -106,7 +112,9 @@ export default function SessionComplete({
           <p className="text-2xl font-bold tabular-nums text-on-surface-light dark:text-on-surface">
             {formatTimeMs(totalDurationMs)}
           </p>
-          <p className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{strings.breathing.sessionComplete.totalTime}</p>
+          <p className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">
+            {strings.breathing.sessionComplete.totalTime}
+          </p>
         </div>
         <div>
           <p className="text-2xl font-bold tabular-nums text-on-surface-light dark:text-on-surface">
@@ -127,7 +135,9 @@ export default function SessionComplete({
           <ul className="flex flex-col gap-2">
             {retentionTimes.map((ms, i) => (
               <li key={i} className="flex items-center justify-between text-sm">
-                <span className="text-on-surface-light-muted dark:text-on-surface-muted">{strings.breathing.sessionComplete.roundNumber(i + 1)}</span>
+                <span className="text-on-surface-light-muted dark:text-on-surface-muted">
+                  {strings.breathing.sessionComplete.roundNumber(i + 1)}
+                </span>
                 <span className="flex items-center gap-2">
                   <span className="font-mono font-semibold tabular-nums text-on-surface-light dark:text-on-surface">
                     {formatTimeMs(ms)}
@@ -154,7 +164,9 @@ export default function SessionComplete({
             {strings.guidedMode.enhancedDebrief.retentionExplanation}
           </p>
           <p className="mb-3 text-sm leading-relaxed text-on-surface-faint dark:text-on-surface-muted">
-            {strings.guidedMode.enhancedDebrief.firstRoundNote(formatTimeMs(retentionTimes[0]))}
+            {strings.guidedMode.enhancedDebrief.firstRoundNote(
+              formatTimeMs(retentionTimes[0]),
+            )}
           </p>
           <p className="text-sm font-medium text-brand-dark dark:text-brand-light">
             {strings.guidedMode.enhancedDebrief.improvementTip}
@@ -179,8 +191,8 @@ export default function SessionComplete({
                 aria-label={`${value} - ${label}`}
                 className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
                   isSelected
-                    ? "bg-brand text-white"
-                    : "bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint"
+                    ? 'bg-brand text-white'
+                    : 'bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint'
                 }`}
               >
                 <span className="text-lg font-bold">{value}</span>
@@ -217,7 +229,7 @@ export default function SessionComplete({
             const data = getSessionCardData(
               retentionTimesSeconds,
               Math.round(totalDurationMs / 1000),
-              rounds
+              rounds,
             );
             renderSessionCard(canvas, data, ratio);
           }}
@@ -225,7 +237,7 @@ export default function SessionComplete({
         />
         <Button
           size="lg"
-          variant={saved ? "primary" : "secondary"}
+          variant={saved ? 'primary' : 'secondary'}
           className="w-full"
           onClick={handleDone}
         >

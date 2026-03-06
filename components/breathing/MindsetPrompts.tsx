@@ -1,13 +1,16 @@
-import Card from "@/components/ui/Card";
-import type { SessionConfig } from "@/lib/storage";
-import { strings } from "@/lib/i18n";
+import Card from '@/components/ui/Card';
+import type { SessionConfig } from '@/lib/storage';
+import { strings } from '@/lib/i18n';
 
 interface MindsetPromptsProps {
   config: SessionConfig;
   onConfigChange: (config: SessionConfig) => void;
 }
 
-export default function MindsetPrompts({ config, onConfigChange }: MindsetPromptsProps) {
+export default function MindsetPrompts({
+  config,
+  onConfigChange,
+}: MindsetPromptsProps) {
   return (
     <Card>
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
@@ -18,11 +21,11 @@ export default function MindsetPrompts({ config, onConfigChange }: MindsetPrompt
           <input
             key={i}
             type="text"
-            value={config.mindsetPrompts?.[i] ?? ""}
+            value={config.mindsetPrompts?.[i] ?? ''}
             onChange={(e) => {
               const prompts = Array.from(
                 { length: config.rounds },
-                (_, j) => config.mindsetPrompts?.[j] ?? ""
+                (_, j) => config.mindsetPrompts?.[j] ?? '',
               );
               prompts[i] = e.target.value;
               onConfigChange({ ...config, mindsetPrompts: prompts });

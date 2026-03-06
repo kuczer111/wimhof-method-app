@@ -1,4 +1,4 @@
-import type { BreathingSession } from "@/lib/storage";
+import type { BreathingSession } from '@/lib/storage';
 
 export interface ChartPoint {
   label: string;
@@ -19,7 +19,10 @@ function getWeekKey(dateStr: string): string {
   return d.toISOString().slice(0, 10);
 }
 
-function computeTrendLine(points: { x: number; y: number }[]): { slope: number; intercept: number } {
+function computeTrendLine(points: { x: number; y: number }[]): {
+  slope: number;
+  intercept: number;
+} {
   const n = points.length;
   if (n < 2) return { slope: 0, intercept: points[0]?.y ?? 0 };
   const sumX = points.reduce((a, p) => a + p.x, 0);
@@ -33,7 +36,7 @@ function computeTrendLine(points: { x: number; y: number }[]): { slope: number; 
 
 export function buildChartData(sessions: BreathingSession[]) {
   const sorted = [...sessions].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   let maxRetention = 0;
@@ -49,7 +52,10 @@ export function buildChartData(sessions: BreathingSession[]) {
     if (isPR) maxRetention = rounded;
     if (s.retentionTimes.length > maxR) maxR = s.retentionTimes.length;
     return {
-      label: new Date(s.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+      label: new Date(s.date).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+      }),
       avgRetention: rounded,
       date: s.date,
       isPR,
@@ -78,8 +84,15 @@ export function buildChartData(sessions: BreathingSession[]) {
 
   const totalAvg =
     points.length > 0
-      ? Math.round(points.reduce((a, p) => a + p.avgRetention, 0) / points.length)
+      ? Math.round(
+          points.reduce((a, p) => a + p.avgRetention, 0) / points.length,
+        )
       : 0;
 
-  return { data: points, avg: totalAvg, prValue: maxRetention, maxRounds: maxR };
+  return {
+    data: points,
+    avg: totalAvg,
+    prValue: maxRetention,
+    maxRounds: maxR,
+  };
 }

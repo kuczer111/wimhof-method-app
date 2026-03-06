@@ -30,6 +30,7 @@ After the last power breath, the practitioner exhales and holds — lungs mostly
 One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly. Completes one round. A standard session consists of 3–4 rounds.
 
 #### Safety Rules for Breathing
+
 - Never practice in or near water
 - Never practice while driving or operating machinery
 - Do not force the exhale hold
@@ -41,12 +42,14 @@ One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly.
 ### Pillar 2: Cold Exposure
 
 #### Cold Shower Protocol
+
 - Week 1–2: End warm shower with 30 seconds cold
 - Week 3–4: 1 minute cold at the end
 - Week 5–8: 2 minutes cold
 - Month 2+: Full cold showers (2–3 minutes)
 
 #### Physiological Benefits
+
 - Increased norepinephrine (up to 300%)
 - Reduced inflammatory markers
 - Improved insulin sensitivity
@@ -69,31 +72,37 @@ One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly.
 ### Module 1 — Guided Breathing Sessions
 
 #### 1.1 Breathing Round Engine
+
 - Configurable rounds (default 3, range 1–5)
 - Three phases: power breaths, retention hold, recovery breath hold
 - Distinct audio and visual cues per phase
 
 #### 1.2 Breathing Pace Control
+
 - Slow (2.5s), Medium (2s), Fast (1.5s)
 - Visual animation locked to pace
 - Audio: voice prompts or tones
 
 #### 1.3 Breath Count Configuration
+
 - Default 30, options: 20, 30, 40
 - Current breath number displayed prominently
 
 #### 1.4 Retention Timer and Tracking
+
 - Elapsed time display (not countdown)
 - User manually ends hold by tapping
 - Retention time recorded per round
 - End of session shows all retention times
 
 #### 1.5 Recovery Breath Hold
+
 - Fixed 15-second countdown
 - Distinct animation/color
 - Auto-advance to next round
 
 #### 1.6 Session Completion Screen
+
 - Total duration
 - All retention times by round
 - Personal best per round position
@@ -104,15 +113,18 @@ One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly.
 ### Module 2 — Cold Exposure Tracker
 
 #### 2.1 Cold Shower Timer
+
 - Configurable target (30s → 3 min)
 - Visual progress bar + elapsed time
 - Alert at target, option to continue
 
 #### 2.2 Cold Log
+
 - Date, duration, temperature (optional), type, rating
 - Running streak counter
 
 #### 2.3 Progressive Protocol Guide
+
 - 8-week progression plan
 - Mark each day complete
 - Milestones
@@ -122,15 +134,18 @@ One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly.
 ### Module 3 — Progress and Analytics
 
 #### 3.1 Breathing Progress Charts
+
 - Retention time over time (line chart)
 - Average per week, personal record
 - Total sessions
 
 #### 3.2 Cold Exposure Stats
+
 - Total minutes, streak calendar (heatmap)
 - Distribution by type
 
 #### 3.3 Combined Dashboard
+
 - Weekly view
 - Consistency score
 - Monthly summary
@@ -140,9 +155,11 @@ One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly.
 ### Module 4 — Session Presets
 
 #### 4.1 Preset Sessions
+
 - Beginner, Standard, Deep Practice, Morning Activation
 
 #### 4.2 Custom Session Builder
+
 - Save up to 5 named custom presets
 
 ---
@@ -150,15 +167,18 @@ One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly.
 ### Module 5 — Safety and Education
 
 #### 5.1 Mandatory Onboarding Safety Screen
+
 - Cannot be skipped on first launch
 - Critical safety rules listed
 - User must acknowledge
 
 #### 5.2 In-Session Safety Reminder
+
 - Before every breathing session
 - Dismiss button required
 
 #### 5.3 Method Education Library
+
 - Articles on each pillar (500–800 words)
 - FAQ: tingling, lightheadedness, muscle cramps
 
@@ -191,15 +211,15 @@ One very deep inhale, held for 10–15 seconds. Re-oxygenates the blood rapidly.
 
 ## Technical Notes
 
-| Area | Recommendation |
-|---|---|
-| Platform | PWA — Next.js + TypeScript + Tailwind CSS |
-| Auth | Clerk |
+| Area          | Recommendation                               |
+| ------------- | -------------------------------------------- |
+| Platform      | PWA — Next.js + TypeScript + Tailwind CSS    |
+| Auth          | Clerk                                        |
 | Local storage | localStorage + IndexedDB for session history |
-| Charts | Recharts |
-| Audio | Web Audio API |
-| Offline-first | All core features work offline |
-| PWA | Installable on iPhone home screen |
+| Charts        | Recharts                                     |
+| Audio         | Web Audio API                                |
+| Offline-first | All core features work offline               |
+| PWA           | Installable on iPhone home screen            |
 
 ---
 

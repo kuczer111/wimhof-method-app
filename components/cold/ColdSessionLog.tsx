@@ -1,11 +1,25 @@
-import { useState } from "react";
-import Button from "@/components/ui/Button";
-import { saveColdSession, generateId, getPreferences, type ColdSession } from "@/lib/storage";
-import { checkColdMilestones } from "@/lib/milestones";
-import { formatTime, getTemperatureUnitLabel, toStorageCelsius } from "@/lib/format";
-import { strings } from "@/lib/i18n";
+import { useState } from 'react';
+import Button from '@/components/ui/Button';
+import {
+  saveColdSession,
+  generateId,
+  getPreferences,
+  type ColdSession,
+} from '@/lib/storage';
+import { checkColdMilestones } from '@/lib/milestones';
+import {
+  formatTime,
+  getTemperatureUnitLabel,
+  toStorageCelsius,
+} from '@/lib/format';
+import { strings } from '@/lib/i18n';
 
-const COLD_TYPES: ColdSession["type"][] = ["shower", "bath", "outdoor", "other"];
+const COLD_TYPES: ColdSession['type'][] = [
+  'shower',
+  'bath',
+  'outdoor',
+  'other',
+];
 const FEELING_LABELS = strings.common.feelingLabels;
 
 interface ColdSessionLogProps {
@@ -14,9 +28,13 @@ interface ColdSessionLogProps {
   onDone: () => void;
 }
 
-export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionLogProps) {
-  const [coldType, setColdType] = useState<ColdSession["type"]>("shower");
-  const [temperature, setTemperature] = useState("");
+export default function ColdSessionLog({
+  elapsed,
+  target,
+  onDone,
+}: ColdSessionLogProps) {
+  const [coldType, setColdType] = useState<ColdSession['type']>('shower');
+  const [temperature, setTemperature] = useState('');
   const [rating, setRating] = useState<number | null>(null);
   const [saved, setSaved] = useState(false);
 
@@ -33,7 +51,12 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
       duration: elapsed,
       targetDuration: target,
       type: coldType,
-      ...(temperature.trim() && { temperature: toStorageCelsius(Number(temperature), getPreferences().temperatureUnit) }),
+      ...(temperature.trim() && {
+        temperature: toStorageCelsius(
+          Number(temperature),
+          getPreferences().temperatureUnit,
+        ),
+      }),
       ...(rating !== null && { rating }),
     };
     saveColdSession(session);
@@ -51,7 +74,9 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
       <p className="text-sm font-medium uppercase tracking-wider text-cold-light">
         {strings.cold.sessionComplete}
       </p>
-      <p className="text-4xl font-bold text-on-surface-light dark:text-on-surface">{formatTime(elapsed)}</p>
+      <p className="text-4xl font-bold text-on-surface-light dark:text-on-surface">
+        {formatTime(elapsed)}
+      </p>
       <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.cold.targetLabel(formatLabel(target))}
       </p>
@@ -69,8 +94,8 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
               onClick={() => setColdType(t)}
               className={`rounded-xl px-4 py-3 text-sm font-medium capitalize transition-colors ${
                 coldType === t
-                  ? "bg-cold text-white"
-                  : "bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint"
+                  ? 'bg-cold text-white'
+                  : 'bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint'
               }`}
             >
               {t}
@@ -93,7 +118,9 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
             placeholder={strings.cold.temperaturePlaceholder}
             className="w-full rounded-xl border border-on-surface-light/20 bg-on-surface-light/[0.06] px-3 py-2.5 text-sm text-on-surface-light placeholder:text-on-surface-muted focus:border-cold focus:outline-none focus:ring-1 focus:ring-cold dark:border-on-surface-faint dark:bg-surface-overlay/60 dark:text-on-surface dark:placeholder:text-on-surface-faint"
           />
-          <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{getTemperatureUnitLabel(getPreferences().temperatureUnit)}</span>
+          <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+            {getTemperatureUnitLabel(getPreferences().temperatureUnit)}
+          </span>
         </div>
       </div>
 
@@ -115,8 +142,8 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
                 aria-label={`${value} - ${label}`}
                 className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
                   isSelected
-                    ? "bg-cold text-white"
-                    : "bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint"
+                    ? 'bg-cold text-white'
+                    : 'bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint'
                 }`}
               >
                 <span className="text-lg font-bold">{value}</span>
@@ -130,13 +157,17 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
       {/* Actions */}
       <div className="flex w-full max-w-xs flex-col gap-3 pt-2">
         {!saved && (
-          <Button size="lg" className="w-full bg-cold active:bg-cold-dark" onClick={handleSave}>
+          <Button
+            size="lg"
+            className="w-full bg-cold active:bg-cold-dark"
+            onClick={handleSave}
+          >
             {strings.common.saveSession}
           </Button>
         )}
         <Button
           size="lg"
-          variant={saved ? "primary" : "secondary"}
+          variant={saved ? 'primary' : 'secondary'}
           className="w-full"
           onClick={handleDone}
         >

@@ -1,4 +1,4 @@
-import Card from "@/components/ui/Card";
+import Card from '@/components/ui/Card';
 
 interface ToggleCardProps {
   title: string;
@@ -8,7 +8,13 @@ interface ToggleCardProps {
   onToggle: () => void;
 }
 
-export default function ToggleCard({ title, description, checked, ariaLabel, onToggle }: ToggleCardProps) {
+export default function ToggleCard({
+  title,
+  description,
+  checked,
+  ariaLabel,
+  onToggle,
+}: ToggleCardProps) {
   return (
     <Card>
       <div className="flex items-center justify-between">
@@ -27,12 +33,14 @@ export default function ToggleCard({ title, description, checked, ariaLabel, onT
           aria-label={ariaLabel}
           onClick={onToggle}
           className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${
-            checked ? "bg-cold" : "bg-on-surface-light/30 dark:bg-surface-overlay"
+            checked
+              ? 'bg-cold'
+              : 'bg-on-surface-light/30 dark:bg-surface-overlay'
           }`}
         >
           <span
             className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-              checked ? "translate-x-6" : "translate-x-1"
+              checked ? 'translate-x-6' : 'translate-x-1'
             }`}
           />
         </button>

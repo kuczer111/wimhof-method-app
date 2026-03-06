@@ -1,6 +1,6 @@
-import { strings } from "@/lib/i18n";
-import type { ProgramProgress } from "@/lib/program";
-import { BEGINNER_PROGRAM } from "@/lib/program";
+import { strings } from '@/lib/i18n';
+import type { ProgramProgress } from '@/lib/program';
+import { BEGINNER_PROGRAM } from '@/lib/program';
 
 export default function CalendarView({
   program,
@@ -12,10 +12,22 @@ export default function CalendarView({
   todayDayNumber: number | null;
 }) {
   const weeks = [
-    { label: strings.program.week(1), days: program.days.filter((d) => d.dayNumber <= 7) },
-    { label: strings.program.week(2), days: program.days.filter((d) => d.dayNumber >= 8 && d.dayNumber <= 14) },
-    { label: strings.program.week(3), days: program.days.filter((d) => d.dayNumber >= 15 && d.dayNumber <= 21) },
-    { label: strings.program.week(4), days: program.days.filter((d) => d.dayNumber >= 22) },
+    {
+      label: strings.program.week(1),
+      days: program.days.filter((d) => d.dayNumber <= 7),
+    },
+    {
+      label: strings.program.week(2),
+      days: program.days.filter((d) => d.dayNumber >= 8 && d.dayNumber <= 14),
+    },
+    {
+      label: strings.program.week(3),
+      days: program.days.filter((d) => d.dayNumber >= 15 && d.dayNumber <= 21),
+    },
+    {
+      label: strings.program.week(4),
+      days: program.days.filter((d) => d.dayNumber >= 22),
+    },
   ];
 
   return (
@@ -27,25 +39,29 @@ export default function CalendarView({
           </h3>
           <div className="flex gap-1.5">
             {week.days.map((day) => {
-              const isCompleted = progress.completedDays.includes(day.dayNumber);
+              const isCompleted = progress.completedDays.includes(
+                day.dayNumber,
+              );
               const isToday = day.dayNumber === todayDayNumber;
-              const isFuture = todayDayNumber !== null && day.dayNumber > todayDayNumber;
+              const isFuture =
+                todayDayNumber !== null && day.dayNumber > todayDayNumber;
 
-              let bg = "bg-on-surface-light/[0.12] dark:bg-surface-overlay";
-              let text = "text-on-surface-light-muted dark:text-on-surface-muted";
+              let bg = 'bg-on-surface-light/[0.12] dark:bg-surface-overlay';
+              let text =
+                'text-on-surface-light-muted dark:text-on-surface-muted';
 
               if (isCompleted) {
-                bg = "bg-success dark:bg-success-dark";
-                text = "text-white";
+                bg = 'bg-success dark:bg-success-dark';
+                text = 'text-white';
               } else if (isToday) {
-                bg = "bg-brand dark:bg-brand-dark";
-                text = "text-white";
+                bg = 'bg-brand dark:bg-brand-dark';
+                text = 'text-white';
               } else if (day.isRestDay) {
-                bg = "bg-on-surface-light/[0.06] dark:bg-surface-overlay/50";
-                text = "text-on-surface-light-muted dark:text-on-surface-faint";
+                bg = 'bg-on-surface-light/[0.06] dark:bg-surface-overlay/50';
+                text = 'text-on-surface-light-muted dark:text-on-surface-faint';
               } else if (isFuture) {
-                bg = "bg-on-surface-light/[0.06] dark:bg-surface-overlay/50";
-                text = "text-on-surface-light-muted dark:text-on-surface-faint";
+                bg = 'bg-on-surface-light/[0.06] dark:bg-surface-overlay/50';
+                text = 'text-on-surface-light-muted dark:text-on-surface-faint';
               }
 
               return (
@@ -55,8 +71,16 @@ export default function CalendarView({
                   title={day.label}
                 >
                   {isCompleted ? (
-                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-                      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                    <svg
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="h-4 w-4"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   ) : (
                     day.dayNumber

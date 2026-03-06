@@ -1,6 +1,6 @@
-import type { BreathingSession } from "@/lib/storage";
-import { strings } from "@/lib/i18n";
-import { safeAvgRetention, startOfWeek } from "@/lib/analytics";
+import type { BreathingSession } from '@/lib/storage';
+import { strings } from '@/lib/i18n';
+import { safeAvgRetention, startOfWeek } from '@/lib/analytics';
 
 interface InsightCardProps {
   sessions: BreathingSession[];
@@ -13,12 +13,13 @@ export default function InsightCard({ sessions }: InsightCardProps) {
   if (sessions.length < 3) return null;
 
   const sorted = [...sessions].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   const earliest = new Date(sorted[0].date);
   const latest = new Date(sorted[sorted.length - 1].date);
-  const spanDays = (latest.getTime() - earliest.getTime()) / (1000 * 60 * 60 * 24);
+  const spanDays =
+    (latest.getTime() - earliest.getTime()) / (1000 * 60 * 60 * 24);
   if (spanDays < 14) return null;
 
   // Split into recent week vs prior week
@@ -43,29 +44,30 @@ export default function InsightCard({ sessions }: InsightCardProps) {
   const recentAvg = safeAvgRetention(recentSessions);
   const priorAvg = safeAvgRetention(priorSessions);
 
-  const changePct = priorAvg > 0 ? Math.round(((recentAvg - priorAvg) / priorAvg) * 100) : 0;
+  const changePct =
+    priorAvg > 0 ? Math.round(((recentAvg - priorAvg) / priorAvg) * 100) : 0;
 
-  let pattern: "improving" | "plateau" | "declining";
-  if (changePct > 5) pattern = "improving";
-  else if (changePct < -5) pattern = "declining";
-  else pattern = "plateau";
+  let pattern: 'improving' | 'plateau' | 'declining';
+  if (changePct > 5) pattern = 'improving';
+  else if (changePct < -5) pattern = 'declining';
+  else pattern = 'plateau';
 
   const patternText =
-    pattern === "improving"
+    pattern === 'improving'
       ? s.improving(changePct)
-      : pattern === "declining"
-      ? s.declining
-      : s.plateau;
+      : pattern === 'declining'
+        ? s.declining
+        : s.plateau;
 
   // Suggestion based on pattern and session data
   const avgRounds = Math.round(
-    recentSessions.reduce((a, se) => a + se.rounds, 0) / recentSessions.length
+    recentSessions.reduce((a, se) => a + se.rounds, 0) / recentSessions.length,
   );
 
   let suggestion: string;
-  if (pattern === "improving" && avgRounds <= 3) {
+  if (pattern === 'improving' && avgRounds <= 3) {
     suggestion = s.tryMoreRounds;
-  } else if (pattern === "plateau") {
+  } else if (pattern === 'plateau') {
     suggestion = s.trySlowerPace;
   } else {
     suggestion = s.keepGoing;

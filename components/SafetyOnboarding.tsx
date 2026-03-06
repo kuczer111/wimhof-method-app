@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { getPreferences, savePreferences } from "@/lib/storage";
-import Button from "@/components/ui/Button";
-import { strings } from "@/lib/i18n";
+import { useEffect, useState } from 'react';
+import { getPreferences, savePreferences } from '@/lib/storage';
+import Button from '@/components/ui/Button';
+import { strings } from '@/lib/i18n';
 
 const SAFETY_RULES = strings.safety.onboarding.rules;
 
@@ -39,18 +39,17 @@ export default function SafetyOnboarding() {
 
         <ul className="mb-6 space-y-3">
           {SAFETY_RULES.map((rule) => (
-            <li key={rule} className="flex gap-3 text-sm text-on-surface-light dark:text-on-surface">
+            <li
+              key={rule}
+              className="flex gap-3 text-sm text-on-surface-light dark:text-on-surface"
+            >
               <span className="mt-0.5 shrink-0 text-warning">&#x2022;</span>
               {rule}
             </li>
           ))}
         </ul>
 
-        <Button
-          size="lg"
-          className="w-full"
-          onClick={handleAcknowledge}
-        >
+        <Button size="lg" className="w-full" onClick={handleAcknowledge}>
           {strings.safety.onboarding.acknowledge}
         </Button>
       </div>

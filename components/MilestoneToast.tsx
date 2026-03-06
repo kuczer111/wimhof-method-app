@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from 'react';
 import {
   subscribeMilestones,
   consumePendingMilestone,
   MILESTONE_DEFINITIONS,
   type Milestone,
-} from "@/lib/milestones";
+} from '@/lib/milestones';
 import {
   LungsIcon,
   SnowflakeIcon,
@@ -16,10 +16,13 @@ import {
   MedalIcon,
   GraduationIcon,
   StarIcon,
-} from "@/components/ui/Icon";
-import { type ComponentType } from "react";
+} from '@/components/ui/Icon';
+import { type ComponentType } from 'react';
 
-const ICON_MAP: Record<string, ComponentType<{ size?: "sm" | "md" | "lg"; className?: string }>> = {
+const ICON_MAP: Record<
+  string,
+  ComponentType<{ size?: 'sm' | 'md' | 'lg'; className?: string }>
+> = {
   lungs: LungsIcon,
   snowflake: SnowflakeIcon,
   fire: FireIcon,
@@ -51,7 +54,10 @@ function MilestoneDisplay({
         onClick={onDismiss}
         className="flex w-full items-center gap-4 rounded-2xl border border-warning-light/40 bg-gradient-to-r from-warning/[0.08] to-warning-light/[0.08] p-4 shadow-lg dark:border-warning-dark/50 dark:from-warning-dark/40 dark:to-warning/30"
       >
-        <IconComponent size="lg" className="shrink-0 text-warning-dark dark:text-warning-light" />
+        <IconComponent
+          size="lg"
+          className="shrink-0 text-warning-dark dark:text-warning-light"
+        />
         <div className="flex-1 text-left">
           <p className="text-xs font-semibold uppercase tracking-wider text-warning-dark dark:text-warning-light">
             Achievement Unlocked

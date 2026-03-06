@@ -12,8 +12,8 @@ export interface Chapter {
 export const CHAPTERS: Chapter[] = [
   {
     id: 1,
-    title: "Who Is Wim Hof and Why Does It Matter",
-    summary: "The origins of the method and the man behind it.",
+    title: 'Who Is Wim Hof and Why Does It Matter',
+    summary: 'The origins of the method and the man behind it.',
     gated: false,
     content: `Wim Hof, known worldwide as "The Iceman," is a Dutch extreme athlete who has spent decades pushing the boundaries of what scientists believed the human body could endure. Born in 1959 in Sittard, Netherlands, Hof first discovered his affinity for cold exposure as a teenager when he felt an irresistible pull toward the icy waters of a park canal. That moment sparked a lifelong exploration of breathing, cold, and mental focus.
 
@@ -33,8 +33,8 @@ This guide will walk you through every aspect of the method — the breathing te
   },
   {
     id: 2,
-    title: "The Breathing Technique",
-    summary: "A complete technical description of the WHM breathing rounds.",
+    title: 'The Breathing Technique',
+    summary: 'A complete technical description of the WHM breathing rounds.',
     gated: false,
     content: `The Wim Hof Method breathing technique is a controlled hyperventilation exercise followed by breath retention. It is the foundation of the method and the part most people begin with. Understanding the mechanics will help you practice safely and effectively.
 
@@ -78,8 +78,8 @@ If you feel panic, excessive discomfort, or pain, stop immediately and breathe n
   },
   {
     id: 3,
-    title: "Cold Exposure",
-    summary: "From cold showers to ice baths: building your cold practice.",
+    title: 'Cold Exposure',
+    summary: 'From cold showers to ice baths: building your cold practice.',
     gated: false,
     content: `Cold exposure is the second pillar of the Wim Hof Method and arguably the one that produces the most immediate, visceral results. Unlike breathing, which requires some explanation and practice, cold exposure delivers instant feedback: you step into cold water and your body responds powerfully and unmistakably.
 
@@ -132,8 +132,9 @@ Track your cold exposure sessions — duration, subjective difficulty, and how y
   },
   {
     id: 4,
-    title: "The Mindset Pillar",
-    summary: "Mental focus, intention setting, and the inner game of the method.",
+    title: 'The Mindset Pillar',
+    summary:
+      'Mental focus, intention setting, and the inner game of the method.',
     gated: true,
     content: `Mindset is the third pillar of the Wim Hof Method and the one most often overlooked by beginners. While breathing provides the physiological foundation and cold exposure delivers the physical challenge, mindset is what ties everything together and determines whether the practice becomes transformative or just another routine.
 
@@ -177,8 +178,9 @@ Wim Hof often says, "The cold is your warm friend." What he means is that the ch
   },
   {
     id: 5,
-    title: "The Science Behind the Method",
-    summary: "Research findings on breathing, cold, and voluntary autonomic influence.",
+    title: 'The Science Behind the Method',
+    summary:
+      'Research findings on breathing, cold, and voluntary autonomic influence.',
     gated: true,
     content: `The Wim Hof Method has moved from fringe curiosity to legitimate scientific inquiry over the past decade. While research is still evolving and many questions remain open, several key studies provide a solid foundation for understanding what happens in the body during practice.
 
@@ -226,8 +228,8 @@ The method is not a replacement for medical treatment. It should be viewed as a 
   },
   {
     id: 6,
-    title: "Common Side Effects and What They Mean",
-    summary: "Tingling, lightheadedness, emotions, and when to stop.",
+    title: 'Common Side Effects and What They Mean',
+    summary: 'Tingling, lightheadedness, emotions, and when to stop.',
     gated: true,
     content: `Every new practitioner experiences unusual sensations during the Wim Hof Method. Most are harmless and expected consequences of the breathing technique's effect on blood chemistry. Understanding what causes these sensations helps you practice confidently and recognize the rare situations that require caution.
 
@@ -279,8 +281,9 @@ The distinction between discomfort and danger is important. Tingling, lightheade
   },
   {
     id: 7,
-    title: "Combining All Three Pillars",
-    summary: "Building a daily routine that integrates breathing, cold, and mindset.",
+    title: 'Combining All Three Pillars',
+    summary:
+      'Building a daily routine that integrates breathing, cold, and mindset.',
     gated: true,
     content: `The Wim Hof Method delivers its strongest results when all three pillars — breathing, cold exposure, and mindset — are practiced together consistently. Each pillar reinforces the others, creating a compound effect that exceeds what any single element provides alone. This chapter covers how to structure a daily practice and integrate the pillars effectively.
 
@@ -344,8 +347,9 @@ After the first month, your practice becomes more personal. You will know what w
   },
   {
     id: 8,
-    title: "Advanced Practices",
-    summary: "Extended retention, meditation integration, and pushing your limits safely.",
+    title: 'Advanced Practices',
+    summary:
+      'Extended retention, meditation integration, and pushing your limits safely.',
     gated: true,
     content: `Once you have built a consistent daily practice over several weeks, you may want to explore more advanced applications of the Wim Hof Method. This chapter covers techniques that experienced practitioners use to deepen their practice. These should only be attempted after you are comfortable with the fundamentals and consistently practicing all three pillars.
 

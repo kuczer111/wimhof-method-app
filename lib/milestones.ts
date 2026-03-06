@@ -1,22 +1,22 @@
-import { getDB } from "./db";
+import { getDB } from './db';
 import {
   getBreathingSessions,
   getColdSessions,
   type BreathingSession,
   type ColdSession,
-} from "./storage";
-import { calculateStreak } from "./analytics";
+} from './storage';
+import { calculateStreak } from './analytics';
 
 // --- Types ---
 
 export type MilestoneType =
-  | "retention_2min"
-  | "cold_3min"
-  | "streak_7"
-  | "streak_30"
-  | "streak_100"
-  | "new_pb"
-  | "program_complete";
+  | 'retention_2min'
+  | 'cold_3min'
+  | 'streak_7'
+  | 'streak_30'
+  | 'streak_100'
+  | 'new_pb'
+  | 'program_complete';
 
 export interface Milestone {
   id: string;
@@ -32,50 +32,51 @@ export interface MilestoneDefinition {
   icon: string;
 }
 
-export const MILESTONE_DEFINITIONS: Record<MilestoneType, MilestoneDefinition> = {
-  retention_2min: {
-    type: "retention_2min",
-    title: "Deep Diver",
-    description: "Held your breath for over 2 minutes",
-    icon: "lungs",
-  },
-  cold_3min: {
-    type: "cold_3min",
-    title: "Ice Warrior",
-    description: "Completed 3+ minutes of cold exposure",
-    icon: "snowflake",
-  },
-  streak_7: {
-    type: "streak_7",
-    title: "One Week Strong",
-    description: "Practiced 7 days in a row",
-    icon: "fire",
-  },
-  streak_30: {
-    type: "streak_30",
-    title: "Monthly Master",
-    description: "Practiced 30 days in a row",
-    icon: "calendar",
-  },
-  streak_100: {
-    type: "streak_100",
-    title: "Century Club",
-    description: "Practiced 100 days in a row",
-    icon: "trophy",
-  },
-  new_pb: {
-    type: "new_pb",
-    title: "Personal Best!",
-    description: "Set a new retention record",
-    icon: "medal",
-  },
-  program_complete: {
-    type: "program_complete",
-    title: "Program Graduate",
-    description: "Completed a training program",
-    icon: "graduation",
-  },
-};
+export const MILESTONE_DEFINITIONS: Record<MilestoneType, MilestoneDefinition> =
+  {
+    retention_2min: {
+      type: 'retention_2min',
+      title: 'Deep Diver',
+      description: 'Held your breath for over 2 minutes',
+      icon: 'lungs',
+    },
+    cold_3min: {
+      type: 'cold_3min',
+      title: 'Ice Warrior',
+      description: 'Completed 3+ minutes of cold exposure',
+      icon: 'snowflake',
+    },
+    streak_7: {
+      type: 'streak_7',
+      title: 'One Week Strong',
+      description: 'Practiced 7 days in a row',
+      icon: 'fire',
+    },
+    streak_30: {
+      type: 'streak_30',
+      title: 'Monthly Master',
+      description: 'Practiced 30 days in a row',
+      icon: 'calendar',
+    },
+    streak_100: {
+      type: 'streak_100',
+      title: 'Century Club',
+      description: 'Practiced 100 days in a row',
+      icon: 'trophy',
+    },
+    new_pb: {
+      type: 'new_pb',
+      title: 'Personal Best!',
+      description: 'Set a new retention record',
+      icon: 'medal',
+    },
+    program_complete: {
+      type: 'program_complete',
+      title: 'Program Graduate',
+      description: 'Completed a training program',
+      icon: 'graduation',
+    },
+  };
 
 // --- Milestone storage ---
 
@@ -84,7 +85,7 @@ let milestoneCache: Milestone[] | null = null;
 async function ensureCache(): Promise<Milestone[]> {
   if (milestoneCache) return milestoneCache;
   const db = await getDB();
-  milestoneCache = (await db.getAll("milestones")) as Milestone[];
+  milestoneCache = (await db.getAll('milestones')) as Milestone[];
   return milestoneCache;
 }
 
@@ -92,16 +93,18 @@ export async function getUnlockedMilestones(): Promise<Milestone[]> {
   return ensureCache();
 }
 
-export async function isMilestoneUnlocked(type: MilestoneType): Promise<boolean> {
+export async function isMilestoneUnlocked(
+  type: MilestoneType,
+): Promise<boolean> {
   const milestones = await ensureCache();
   return milestones.some((m) => m.type === type);
 }
 
-const REPEATABLE_MILESTONES = new Set<MilestoneType>(["new_pb"]);
+const REPEATABLE_MILESTONES = new Set<MilestoneType>(['new_pb']);
 
 async function unlockMilestone(
   type: MilestoneType,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ): Promise<Milestone | null> {
   if (!REPEATABLE_MILESTONES.has(type)) {
     const already = await isMilestoneUnlocked(type);
@@ -116,8 +119,10 @@ async function unlockMilestone(
   };
 
   const db = await getDB();
-  await db.put("milestones", milestone);
-  milestoneCache = milestoneCache ? [...milestoneCache, milestone] : [milestone];
+  await db.put('milestones', milestone);
+  milestoneCache = milestoneCache
+    ? [...milestoneCache, milestone]
+    : [milestone];
 
   return milestone;
 }
@@ -147,14 +152,14 @@ function notifyListeners() {
 }
 
 export async function checkBreathingMilestones(
-  session: BreathingSession
+  session: BreathingSession,
 ): Promise<void> {
   const newMilestones: Milestone[] = [];
 
   // Check retention over 2 minutes (120 seconds)
   const maxRetention = Math.max(...session.retentionTimes);
   if (maxRetention >= 120) {
-    const m = await unlockMilestone("retention_2min", {
+    const m = await unlockMilestone('retention_2min', {
       seconds: maxRetention,
     });
     if (m) newMilestones.push(m);
@@ -170,7 +175,7 @@ export async function checkBreathingMilestones(
   }, 0);
 
   if (maxRetention > previousBest && previousBest > 0) {
-    const m = await unlockMilestone("new_pb", {
+    const m = await unlockMilestone('new_pb', {
       seconds: maxRetention,
       previousBest,
     });
@@ -191,7 +196,7 @@ export async function checkColdMilestones(session: ColdSession): Promise<void> {
 
   // Check cold exposure over 3 minutes (180 seconds)
   if (session.duration >= 180) {
-    const m = await unlockMilestone("cold_3min", {
+    const m = await unlockMilestone('cold_3min', {
       seconds: session.duration,
     });
     if (m) newMilestones.push(m);
@@ -207,7 +212,7 @@ export async function checkColdMilestones(session: ColdSession): Promise<void> {
 }
 
 export async function checkProgramMilestone(programId: string): Promise<void> {
-  const m = await unlockMilestone("program_complete", { programId });
+  const m = await unlockMilestone('program_complete', { programId });
   if (m) {
     pendingMilestones.push(m);
     notifyListeners();
@@ -215,7 +220,7 @@ export async function checkProgramMilestone(programId: string): Promise<void> {
 }
 
 async function checkStreakMilestones(
-  newMilestones: Milestone[]
+  newMilestones: Milestone[],
 ): Promise<void> {
   const breathingSessions = getBreathingSessions();
   const coldSessions = getColdSessions();
@@ -229,15 +234,15 @@ async function checkStreakMilestones(
   const streak = calculateStreak(allDates);
 
   if (streak >= 7) {
-    const m = await unlockMilestone("streak_7");
+    const m = await unlockMilestone('streak_7');
     if (m) newMilestones.push(m);
   }
   if (streak >= 30) {
-    const m = await unlockMilestone("streak_30");
+    const m = await unlockMilestone('streak_30');
     if (m) newMilestones.push(m);
   }
   if (streak >= 100) {
-    const m = await unlockMilestone("streak_100");
+    const m = await unlockMilestone('streak_100');
     if (m) newMilestones.push(m);
   }
 }

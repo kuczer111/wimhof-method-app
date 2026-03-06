@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Modal from "@/components/ui/Modal";
-import Button from "@/components/ui/Button";
-import { strings } from "@/lib/i18n";
+import { useState } from 'react';
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import { strings } from '@/lib/i18n';
 
 const SAFETY_POINTS = strings.safety.reminder.points;
 
@@ -20,10 +20,17 @@ export default function SafetyReminder({ onProceed }: SafetyReminderProps) {
   }
 
   return (
-    <Modal open={open} onClose={() => setOpen(false)} title={strings.safety.reminder.title}>
+    <Modal
+      open={open}
+      onClose={() => setOpen(false)}
+      title={strings.safety.reminder.title}
+    >
       <ul className="mb-6 space-y-2">
         {SAFETY_POINTS.map((point) => (
-          <li key={point} className="flex gap-2 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+          <li
+            key={point}
+            className="flex gap-2 text-sm text-on-surface-light-muted dark:text-on-surface-muted"
+          >
             <span className="shrink-0 text-warning">&#x2022;</span>
             {point}
           </li>

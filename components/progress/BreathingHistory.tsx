@@ -1,10 +1,10 @@
-import dynamic from "next/dynamic";
-import Card from "@/components/ui/Card";
-import type { BreathingSession } from "@/lib/storage";
-import { formatDuration } from "@/lib/format";
-import { strings } from "@/lib/i18n";
+import dynamic from 'next/dynamic';
+import Card from '@/components/ui/Card';
+import type { BreathingSession } from '@/lib/storage';
+import { formatDuration } from '@/lib/format';
+import { strings } from '@/lib/i18n';
 
-const RetentionChart = dynamic(() => import("./RetentionChart"), {
+const RetentionChart = dynamic(() => import('./RetentionChart'), {
   loading: () => (
     <div className="rounded-2xl bg-white p-4 dark:bg-surface-overlay">
       <div className="mb-2 h-4 w-32 animate-pulse rounded bg-on-surface-light/10 dark:bg-on-surface-faint" />
@@ -17,11 +17,11 @@ const RetentionChart = dynamic(() => import("./RetentionChart"), {
 function formatDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -40,14 +40,19 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
         <Card key={s.id}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{formatDate(s.date)}</p>
+              <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+                {formatDate(s.date)}
+              </p>
               <p className="mt-1 font-semibold">
                 {strings.progress.roundLabel(s.rounds)}
               </p>
             </div>
             {s.feelingRating && (
-              <span className="text-lg" aria-label={`Feeling rating: ${s.feelingRating} out of 5`}>
-                {"*".repeat(s.feelingRating)}
+              <span
+                className="text-lg"
+                aria-label={`Feeling rating: ${s.feelingRating} out of 5`}
+              >
+                {'*'.repeat(s.feelingRating)}
               </span>
             )}
           </div>
@@ -70,7 +75,11 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
   );
 }
 
-export default function BreathingHistory({ sessions }: { sessions: BreathingSession[] }) {
+export default function BreathingHistory({
+  sessions,
+}: {
+  sessions: BreathingSession[];
+}) {
   return (
     <div className="flex flex-col gap-4">
       <RetentionChart sessions={sessions} />

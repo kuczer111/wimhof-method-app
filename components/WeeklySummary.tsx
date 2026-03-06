@@ -1,14 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
+import { getBreathingSessions, getColdSessions } from '@/lib/storage';
+import { strings } from '@/lib/i18n';
 import {
-  getBreathingSessions,
-  getColdSessions,
-} from "@/lib/storage";
-import { strings } from "@/lib/i18n";
-import { safeAvgRetention, calculateStreak, startOfWeek, formatSeconds } from "@/lib/analytics";
+  safeAvgRetention,
+  calculateStreak,
+  startOfWeek,
+  formatSeconds,
+} from '@/lib/analytics';
 
-const DISMISSED_KEY = "whm_weekly_summary_dismissed";
+const DISMISSED_KEY = 'whm_weekly_summary_dismissed';
 
 function shouldShow(): boolean {
   const now = new Date();
@@ -39,16 +41,16 @@ function dismiss() {
 
 function getSuggestion(
   sessionDiff: number,
-  retTrend: "up" | "down" | "flat",
+  retTrend: 'up' | 'down' | 'flat',
   coldTotal: number,
-  breathingStreak: number
+  breathingStreak: number,
 ): string {
   const s = strings.weeklySummary.suggestions;
   if (breathingStreak === 0) return s.startStreak;
   if (sessionDiff < 0) return s.moreSessions;
-  if (retTrend === "down") return s.focusRetention;
+  if (retTrend === 'down') return s.focusRetention;
   if (coldTotal === 0) return s.tryCold;
-  if (retTrend === "flat") return s.addRound;
+  if (retTrend === 'flat') return s.addRound;
   return s.keepItUp;
 }
 
@@ -86,16 +88,16 @@ export default function WeeklySummary() {
     };
 
     const breathingLastWeek = breathing.filter((s) =>
-      inRange(s.date, lastMonday, thisMonday)
+      inRange(s.date, lastMonday, thisMonday),
     );
     const breathingPrevWeek = breathing.filter((s) =>
-      inRange(s.date, prevMonday, lastMonday)
+      inRange(s.date, prevMonday, lastMonday),
     );
     const coldLastWeek = cold.filter((s) =>
-      inRange(s.date, lastMonday, thisMonday)
+      inRange(s.date, lastMonday, thisMonday),
     );
     const coldPrevWeek = cold.filter((s) =>
-      inRange(s.date, prevMonday, lastMonday)
+      inRange(s.date, prevMonday, lastMonday),
     );
 
     const sessionsLastWeek = breathingLastWeek.length + coldLastWeek.length;
@@ -110,19 +112,19 @@ export default function WeeklySummary() {
     const breathingStreak = calculateStreak(breathing);
     const coldStreak = calculateStreak(cold);
 
-    const retTrend: "up" | "down" | "flat" =
+    const retTrend: 'up' | 'down' | 'flat' =
       avgRetentionLast > avgRetentionPrev + 2
-        ? "up"
+        ? 'up'
         : avgRetentionLast < avgRetentionPrev - 2
-        ? "down"
-        : "flat";
+          ? 'down'
+          : 'flat';
 
     const sessionDiff = sessionsLastWeek - sessionsPrevWeek;
     const suggestion = getSuggestion(
       sessionDiff,
       retTrend,
       coldTotalLast,
-      breathingStreak
+      breathingStreak,
     );
 
     setData({
@@ -144,17 +146,18 @@ export default function WeeklySummary() {
   const sessionDiff = data.sessionsLastWeek - data.sessionsPrevWeek;
   const retTrend =
     data.avgRetentionLast > data.avgRetentionPrev + 2
-      ? "up"
+      ? 'up'
       : data.avgRetentionLast < data.avgRetentionPrev - 2
-      ? "down"
-      : "flat";
-  const trendArrow = retTrend === "up" ? "\u2191" : retTrend === "down" ? "\u2193" : "\u2192";
+        ? 'down'
+        : 'flat';
+  const trendArrow =
+    retTrend === 'up' ? '\u2191' : retTrend === 'down' ? '\u2193' : '\u2192';
   const trendColor =
-    retTrend === "up"
-      ? "text-success"
-      : retTrend === "down"
-      ? "text-danger-light"
-      : "text-on-surface-muted";
+    retTrend === 'up'
+      ? 'text-success'
+      : retTrend === 'down'
+        ? 'text-danger-light'
+        : 'text-on-surface-muted';
 
   const handleDismiss = () => {
     dismiss();
@@ -171,8 +174,18 @@ export default function WeeklySummary() {
             className="text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"
             aria-label="Dismiss"
           >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -180,26 +193,34 @@ export default function WeeklySummary() {
         {/* Sessions comparison */}
         <div className="mb-3 rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{s.sessions}</span>
+            <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+              {s.sessions}
+            </span>
             <span className="text-xs text-on-surface-muted dark:text-on-surface-faint">
               {sessionDiff > 0
                 ? `+${sessionDiff} vs prev week`
                 : sessionDiff < 0
-                ? `${sessionDiff} vs prev week`
-                : "same as prev week"}
+                  ? `${sessionDiff} vs prev week`
+                  : 'same as prev week'}
             </span>
           </div>
-          <p className="mt-1 text-2xl font-bold tabular-nums">{data.sessionsLastWeek}</p>
+          <p className="mt-1 text-2xl font-bold tabular-nums">
+            {data.sessionsLastWeek}
+          </p>
         </div>
 
         {/* Two-column stats */}
         <div className="mb-3 grid grid-cols-2 gap-2">
           {/* Avg retention */}
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
-            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.avgRetention}</span>
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">
+              {s.avgRetention}
+            </span>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-xl font-bold tabular-nums">
-                {data.avgRetentionLast > 0 ? formatSeconds(data.avgRetentionLast) : "--"}
+                {data.avgRetentionLast > 0
+                  ? formatSeconds(data.avgRetentionLast)
+                  : '--'}
               </span>
               {data.avgRetentionLast > 0 && (
                 <span className={`text-sm ${trendColor}`}>{trendArrow}</span>
@@ -209,9 +230,13 @@ export default function WeeklySummary() {
 
           {/* Cold total */}
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
-            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.coldTotal}</span>
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">
+              {s.coldTotal}
+            </span>
             <p className="mt-1 text-xl font-bold tabular-nums">
-              {data.coldTotalLast > 0 ? formatSeconds(data.coldTotalLast) : "--"}
+              {data.coldTotalLast > 0
+                ? formatSeconds(data.coldTotalLast)
+                : '--'}
             </p>
           </div>
         </div>
@@ -219,23 +244,37 @@ export default function WeeklySummary() {
         {/* Streaks */}
         <div className="mb-3 grid grid-cols-2 gap-2">
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
-            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.breathingStreak}</span>
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">
+              {s.breathingStreak}
+            </span>
             <p className="mt-1 text-xl font-bold tabular-nums">
-              {data.breathingStreak} <span className="text-xs font-normal text-on-surface-light-muted">{s.days}</span>
+              {data.breathingStreak}{' '}
+              <span className="text-xs font-normal text-on-surface-light-muted">
+                {s.days}
+              </span>
             </p>
           </div>
           <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
-            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.coldStreak}</span>
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">
+              {s.coldStreak}
+            </span>
             <p className="mt-1 text-xl font-bold tabular-nums">
-              {data.coldStreak} <span className="text-xs font-normal text-on-surface-light-muted">{s.days}</span>
+              {data.coldStreak}{' '}
+              <span className="text-xs font-normal text-on-surface-light-muted">
+                {s.days}
+              </span>
             </p>
           </div>
         </div>
 
         {/* Suggestion */}
         <div className="mb-4 rounded-xl bg-brand/[0.08] p-3 dark:bg-brand-dark/20">
-          <span className="text-xs font-medium text-brand-dark dark:text-brand-light">{s.suggestionLabel}</span>
-          <p className="mt-1 text-sm text-on-surface-light dark:text-on-surface">{data.suggestion}</p>
+          <span className="text-xs font-medium text-brand-dark dark:text-brand-light">
+            {s.suggestionLabel}
+          </span>
+          <p className="mt-1 text-sm text-on-surface-light dark:text-on-surface">
+            {data.suggestion}
+          </p>
         </div>
 
         <button

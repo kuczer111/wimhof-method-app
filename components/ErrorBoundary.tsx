@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { trackError } from "./ErrorTracker";
+import React from 'react';
+import { trackError } from './ErrorTracker';
 
 interface State {
   hasError: boolean;
@@ -21,7 +21,7 @@ export default class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    trackError("error_boundary", error, info.componentStack?.slice(0, 500));
+    trackError('error_boundary', error, info.componentStack?.slice(0, 500));
   }
 
   render() {
