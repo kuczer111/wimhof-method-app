@@ -42,12 +42,12 @@ qa.sh  -->  QA-FINDINGS.md  -->  plan.sh fix  -->  TASKS.md  -->  ralph.sh fix  
 
 ### 1. Write a spec
 
-Create a spec file named `SPEC-vX.md` (e.g., `SPEC-v5.md`). The version number is for your reference only — the scripts don't auto-detect the latest version. You must tell `plan.sh` which spec to use.
+Create a spec file named `SPEC-vX.md` (e.g., `SPEC-v5.md`). The scripts auto-detect the highest-versioned spec file, so just create the file and you're good.
 
 ### 2. Generate tasks
 
 ```bash
-SPEC_FILE=SPEC-v5.md ./plan.sh spec
+./plan.sh spec
 ```
 
 This reads your spec and TASKS.md, then appends new tasks. Task numbering is auto-detected (continues from the highest existing number).
@@ -190,6 +190,7 @@ All scripts send push notifications via [ntfy.sh](https://ntfy.sh). The topic is
 
 Events notified:
 
+- **plan.sh**: planning done (with task count)
 - **ralph.sh**: task complete, task failed, all done, push failed, suspicious commit size
 - **qa.sh**: pass complete, pass failed/timed out, QA complete
 
@@ -215,8 +216,8 @@ Events notified:
 # 1. Write spec
 vim SPEC-v5.md
 
-# 2. Plan and execute
-SPEC_FILE=SPEC-v5.md ./plan.sh spec
+# 2. Plan and execute (auto-detects SPEC-v5.md)
+./plan.sh spec
 # review TASKS.md, commit
 ./ralph.sh spec
 

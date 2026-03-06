@@ -23,7 +23,8 @@ function formatDate(iso: string): string {
 function ColdStats({ sessions }: { sessions: ColdSession[] }) {
   const { totalMinutes, streak, calendarDays } = useMemo(() => {
     const totalSec = sessions.reduce((sum, s) => sum + s.duration, 0);
-    const totalMin = Math.round(totalSec / 60);
+    const totalMin =
+      totalSec > 0 && totalSec < 60 ? '< 1' : Math.round(totalSec / 60);
 
     const sessionDates = new Set(
       sessions.map((s) => new Date(s.date).toISOString().slice(0, 10)),
