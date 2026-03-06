@@ -37,3 +37,12 @@
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-enter {
+    animation: none;
+  }
+  .animate-slide-up {
+    animation: none;
+  }
+}
