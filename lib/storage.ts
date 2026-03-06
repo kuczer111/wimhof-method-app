@@ -357,43 +357,15 @@ export function savePreferences(prefs: Partial<UserPreferences>): void {
   getDB().then((db) => db.put("preferences", cache.preferences, "user"));
 }
 
-// --- Program progress ---
+// --- Program progress (re-exported from lib/programStorage.ts) ---
 
-export { type ProgramProgress } from "./program";
-
-let programProgressCache: Map<string, import("./program").ProgramProgress> | null = null;
-
-async function ensureProgramProgressCache(): Promise<Map<string, import("./program").ProgramProgress>> {
-  if (programProgressCache) return programProgressCache;
-  const db = await getDB();
-  const all = await db.getAll("program_progress");
-  programProgressCache = new Map(all.map((p) => [p.programId, p as import("./program").ProgramProgress]));
-  return programProgressCache;
-}
-
-export async function getProgramProgress(programId: string): Promise<import("./program").ProgramProgress | undefined> {
-  const cache = await ensureProgramProgressCache();
-  return cache.get(programId);
-}
-
-export async function getAllProgramProgress(): Promise<import("./program").ProgramProgress[]> {
-  const cache = await ensureProgramProgressCache();
-  return Array.from(cache.values());
-}
-
-export async function saveProgramProgress(progress: import("./program").ProgramProgress): Promise<void> {
-  const cache = await ensureProgramProgressCache();
-  cache.set(progress.programId, progress);
-  const db = await getDB();
-  await db.put("program_progress", progress);
-}
-
-export async function deleteProgramProgress(programId: string): Promise<void> {
-  const cache = await ensureProgramProgressCache();
-  cache.delete(programId);
-  const db = await getDB();
-  await db.delete("program_progress", programId);
-}
+export {
+  type ProgramProgress,
+  getProgramProgress,
+  getAllProgramProgress,
+  saveProgramProgress,
+  deleteProgramProgress,
+} from "./programStorage";
 
 // --- Clear all data ---
 
