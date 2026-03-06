@@ -32,7 +32,7 @@ fi
 # ── TEMP FILES & CLEANUP ──
 FUNCTIONAL_FILE=$(mktemp /tmp/qa-functional-XXXXXX)
 VISUAL_FILE=$(mktemp /tmp/qa-visual-XXXXXX)
-trap 'rm -f "$FUNCTIONAL_FILE" "$VISUAL_FILE"' EXIT INT TERM HUP
+trap 'stop_heartbeat; rm -f "$FUNCTIONAL_FILE" "$VISUAL_FILE"' EXIT INT TERM HUP
 
 # ── ALLOWED TOOLS (security: restrict to browser MCP only) ──
 PLAYWRIGHT_TOOLS="mcp__playwright__browser_navigate,mcp__playwright__browser_screenshot,mcp__playwright__browser_click,mcp__playwright__browser_type,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait,mcp__playwright__browser_tab_list,mcp__playwright__browser_tab_new,mcp__playwright__browser_tab_select,mcp__playwright__browser_tab_close,mcp__playwright__browser_select_option,mcp__playwright__browser_hover,mcp__playwright__browser_drag,mcp__playwright__browser_press_key,mcp__playwright__browser_resize,mcp__playwright__browser_handle_dialog,mcp__playwright__browser_file_upload,mcp__playwright__browser_pdf_save,mcp__playwright__browser_close,mcp__playwright__browser_console_messages,mcp__playwright__browser_network_requests"
@@ -181,6 +181,33 @@ Include EVERY issue no matter how small.
 EOF
 }
 
+# ── HEARTBEAT (prints elapsed time every 60s while Claude runs) ──
+HEARTBEAT_PID=""
+
+start_heartbeat() {
+  local label="$1"
+  local start_ts
+  start_ts=$(date +%s)
+  (
+    trap 'exit 0' TERM
+    while true; do
+      sleep 60 &
+      wait $! 2>/dev/null || exit 0
+      local elapsed=$(( ($(date +%s) - start_ts) / 60 ))
+      echo "[$(date +%H:%M:%S)] ${label} still running... (${elapsed}min elapsed)"
+    done
+  ) &
+  HEARTBEAT_PID=$!
+}
+
+stop_heartbeat() {
+  if [ -n "$HEARTBEAT_PID" ]; then
+    kill "$HEARTBEAT_PID" 2>/dev/null || true
+    wait "$HEARTBEAT_PID" 2>/dev/null || true
+    HEARTBEAT_PID=""
+  fi
+}
+
 # ── RUNNER ──
 run_claude() {
   local prompt="$1"
@@ -188,7 +215,11 @@ run_claude() {
   local label="$3"
   local allowed_tools="$4"
 
-  echo "Running: ${label}..."
+  echo ""
+  echo "[$(date +%H:%M:%S)] Starting: ${label}..."
+  notify "Starting: ${label}"
+
+  start_heartbeat "$label"
 
   local rc=0
   timeout "${TIMEOUT}" \
@@ -197,12 +228,14 @@ run_claude() {
     -- "$prompt" \
     2>&1 | tee "$output_file" || rc=$?
 
+  stop_heartbeat
+
   if [ "$rc" -ne 0 ]; then
     if [ "$rc" -eq 124 ]; then
-      echo "FATAL: ${label} timed out after ${TIMEOUT}s."
+      echo "[$(date +%H:%M:%S)] FATAL: ${label} timed out after ${TIMEOUT}s."
       notify "FATAL: ${label} timed out after ${TIMEOUT}s"
     else
-      echo "FATAL: ${label} failed (exit code ${rc})."
+      echo "[$(date +%H:%M:%S)] FATAL: ${label} failed (exit code ${rc})."
       notify "FATAL: ${label} failed (exit code ${rc})"
     fi
     exit 1
@@ -218,7 +251,7 @@ run_claude() {
     echo "WARNING: ${label} output doesn't contain expected report structure. Results may be unreliable."
   fi
 
-  echo "Done: ${label} ($(wc -l < "$output_file") lines)"
+  echo "[$(date +%H:%M:%S)] Done: ${label} ($(wc -l < "$output_file") lines)"
   notify "Done: ${label}"
 }
 
@@ -337,8 +370,10 @@ echo "======================================"
 echo "QA Runner — Mode: ${MODE}"
 echo "Target: ${APP_URL}"
 echo "Model: ${QA_MODEL}"
+echo "Started: $(date +%H:%M:%S)"
 echo "======================================"
 echo ""
+notify "QA started (${MODE}) targeting ${APP_URL}"
 
 # Preflight (skip with QA_SKIP_PREFLIGHT=1 for speed)
 if [ "${QA_SKIP_PREFLIGHT:-0}" != "1" ]; then
