@@ -1,8 +1,18 @@
+import dynamic from "next/dynamic";
 import Card from "@/components/ui/Card";
 import type { BreathingSession } from "@/lib/storage";
 import { formatDuration } from "@/lib/format";
 import { strings } from "@/lib/i18n";
-import RetentionChart from "./RetentionChart";
+
+const RetentionChart = dynamic(() => import("./RetentionChart"), {
+  loading: () => (
+    <div className="rounded-2xl bg-white p-4 dark:bg-gray-800">
+      <div className="mb-2 h-4 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+      <div className="h-[200px] animate-pulse rounded bg-gray-100 dark:bg-gray-700/50" />
+    </div>
+  ),
+  ssr: false,
+});
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
