@@ -18,6 +18,7 @@ import BreathingDefaults from "@/components/settings/BreathingDefaults";
 import DataManagement from "@/components/settings/DataManagement";
 import DailyReminder from "@/components/settings/DailyReminder";
 import ToggleCard from "@/components/settings/ToggleCard";
+import Link from "next/link";
 import { strings } from "@/lib/i18n";
 
 const COLD_TARGET_OPTIONS = [
@@ -130,6 +131,10 @@ export default function SettingsPage() {
       </Card>
 
       <DataManagement onDataCleared={() => setPrefs(getPreferences())} />
+
+      <Link href="/privacy" className="block text-center text-xs text-sky-600 underline dark:text-sky-400">
+        Privacy Policy
+      </Link>
 
       <p className="text-center text-xs text-gray-600">{strings.app.version}</p>
 
