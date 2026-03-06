@@ -6,39 +6,87 @@ APP_URL="${APP_URL:-https://wimhof-method-app.vercel.app}"
 QA_FILE="${QA_FILE:-QA-FINDINGS.md}"
 MODE="${1:-smart}"  # "smart" (default), "functional", or "visual"
 TIMEOUT="${QA_TIMEOUT:-600}"  # seconds per claude call (default 10 min)
+QA_MODEL="${QA_MODEL:-claude-sonnet-4-6}"
 # ─────────────
+
+# ── macOS TIMEOUT PORTABILITY ──
+if ! command -v timeout &>/dev/null; then
+  if command -v gtimeout &>/dev/null; then
+    timeout() { gtimeout "$@"; }
+  else
+    echo "WARNING: No timeout command found (install coreutils: brew install coreutils)."
+    echo "         Claude calls will run without timeout protection."
+    timeout() { shift; "$@"; }
+  fi
+fi
 
 # ── TEMP FILES & CLEANUP ──
 FUNCTIONAL_FILE=$(mktemp /tmp/qa-functional-XXXXXX.md)
 VISUAL_FILE=$(mktemp /tmp/qa-visual-XXXXXX.md)
-trap 'rm -f "$FUNCTIONAL_FILE" "$VISUAL_FILE"' EXIT
+trap 'rm -f "$FUNCTIONAL_FILE" "$VISUAL_FILE"' EXIT INT TERM HUP
 
-# ── PREFLIGHT CHECKS ──
+# ── ALLOWED TOOLS (security: restrict to browser MCP only) ──
+PLAYWRIGHT_TOOLS="mcp__playwright__browser_navigate,mcp__playwright__browser_screenshot,mcp__playwright__browser_click,mcp__playwright__browser_type,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait,mcp__playwright__browser_tab_list,mcp__playwright__browser_tab_new,mcp__playwright__browser_tab_select,mcp__playwright__browser_tab_close,mcp__playwright__browser_select_option,mcp__playwright__browser_hover,mcp__playwright__browser_drag,mcp__playwright__browser_press_key,mcp__playwright__browser_resize,mcp__playwright__browser_handle_dialog,mcp__playwright__browser_file_upload,mcp__playwright__browser_pdf_save,mcp__playwright__browser_close,mcp__playwright__browser_console_messages,mcp__playwright__browser_network_requests"
+PUPPETEER_TOOLS="mcp__puppeteer__puppeteer_navigate,mcp__puppeteer__puppeteer_screenshot,mcp__puppeteer__puppeteer_click,mcp__puppeteer__puppeteer_fill,mcp__puppeteer__puppeteer_select,mcp__puppeteer__puppeteer_hover,mcp__puppeteer__puppeteer_evaluate"
+
+# ── PREFLIGHT CHECKS (zero tokens — config file based) ──
 preflight() {
   if ! command -v claude &>/dev/null; then
     echo "FATAL: claude CLI not found. Install it first."
     exit 1
   fi
 
+  local mcp_found=false
+  for config_path in .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json; do
+    if [ -f "$config_path" ] 2>/dev/null; then
+      mcp_found=true
+      break
+    fi
+  done
+
+  if [ "$mcp_found" = false ]; then
+    echo "FATAL: No MCP configuration files found."
+    echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @anthropic-ai/mcp-playwright --no-vision"
+    echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @anthropic-ai/mcp-puppeteer"
+    exit 1
+  fi
+
   case "$MODE" in
-    functional|smart)
-      if ! claude --dangerously-skip-permissions --print "List your available MCP tools that start with mcp__playwright. Reply ONLY with the tool names, one per line. If none, reply NONE." 2>/dev/null | grep -q "mcp__playwright"; then
-        echo "FATAL: Playwright MCP not configured. Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @anthropic-ai/mcp-playwright --no-vision"
+    functional)
+      if ! grep -ql "playwright" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+        echo "FATAL: Playwright MCP not configured."
+        echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @anthropic-ai/mcp-playwright --no-vision"
         exit 1
       fi
-      ;;&  # fall through to also check puppeteer for smart mode
+      ;;
     visual)
-      if ! claude --dangerously-skip-permissions --print "List your available MCP tools that start with mcp__puppeteer. Reply ONLY with the tool names, one per line. If none, reply NONE." 2>/dev/null | grep -q "mcp__puppeteer"; then
-        echo "FATAL: Puppeteer MCP not configured. Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @anthropic-ai/mcp-puppeteer"
+      if ! grep -ql "puppeteer" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+        echo "FATAL: Puppeteer MCP not configured."
+        echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @anthropic-ai/mcp-puppeteer"
+        exit 1
+      fi
+      ;;
+    smart)
+      local missing=""
+      if ! grep -ql "playwright" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+        missing="playwright"
+      fi
+      if ! grep -ql "puppeteer" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+        missing="${missing:+$missing, }puppeteer"
+      fi
+      if [ -n "$missing" ]; then
+        echo "FATAL: Missing MCP configuration: ${missing}"
+        [ "$missing" != "${missing/playwright/}" ] && echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @anthropic-ai/mcp-playwright --no-vision"
+        [ "$missing" != "${missing/puppeteer/}" ] && echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @anthropic-ai/mcp-puppeteer"
         exit 1
       fi
       ;;
   esac
 
-  echo "Preflight OK: claude CLI found, MCP tools available."
+  echo "Preflight OK: claude CLI found, MCP config present for ${MODE} mode."
 }
 
-# ── TEST PROMPT (heredoc for safe quoting) ──
+# ── TEST PROMPT ──
 read -r -d '' TEST_PROMPT <<PROMPT || true
 You are a QA tester for a Wim Hof Method PWA at ${APP_URL}.
 
@@ -136,13 +184,23 @@ run_claude() {
   local prompt="$1"
   local output_file="$2"
   local label="$3"
+  local allowed_tools="$4"
 
   echo "Running: ${label}..."
 
-  if ! timeout "${TIMEOUT}" \
-    env CLAUDE_MODEL=claude-sonnet-4-6 claude --dangerously-skip-permissions --print "$prompt" \
-    > "$output_file" 2>/dev/null; then
-    echo "FATAL: ${label} failed (exit code $? — timeout after ${TIMEOUT}s or claude error)."
+  local rc=0
+  timeout "${TIMEOUT}" \
+    claude --model "$QA_MODEL" --dangerously-skip-permissions --print \
+    --allowedTools "$allowed_tools" \
+    "$prompt" \
+    > "$output_file" 2>/dev/null || rc=$?
+
+  if [ "$rc" -ne 0 ]; then
+    if [ "$rc" -eq 124 ]; then
+      echo "FATAL: ${label} timed out after ${TIMEOUT}s."
+    else
+      echo "FATAL: ${label} failed (exit code ${rc})."
+    fi
     exit 1
   fi
 
@@ -168,10 +226,10 @@ run_functional() {
   run_claude "${TEST_PROMPT}
 
 ## Instructions
-Use Playwright tools (mcp__playwright). Use accessibility snapshots, NOT screenshots.
+Use Playwright tools. Use accessibility snapshots, NOT screenshots.
 For each screen: check text is visible, buttons work, navigation is correct, no errors.
 
-${instructions}" "$out" "Functional pass"
+${instructions}" "$out" "Functional pass" "$PLAYWRIGHT_TOOLS"
 }
 
 run_visual_full() {
@@ -182,10 +240,10 @@ run_visual_full() {
   run_claude "${TEST_PROMPT}
 
 ## Instructions
-Use Puppeteer tools (mcp__puppeteer). Take a screenshot at every screen.
+Use Puppeteer tools. Take a screenshot at every screen.
 For each screen: check layout, spacing, colors, overlapping elements, text readability.
 
-${instructions}" "$out" "Visual pass (full)"
+${instructions}" "$out" "Visual pass (full)" "$PUPPETEER_TOOLS"
 }
 
 run_visual_targeted() {
@@ -197,7 +255,7 @@ run_visual_targeted() {
   instructions=$(report_instructions "Visual Verification")
 
   run_claude "You are a QA tester doing a VISUAL verification of issues found in a previous functional test.
-Use Puppeteer tools (mcp__puppeteer). Take a screenshot of each flagged screen.
+Use Puppeteer tools. Take a screenshot of each flagged screen.
 
 ## Issues from functional pass
 
@@ -215,17 +273,17 @@ For the final report:
 - Mark issues that look fine visually as: DISMISSED (visual check passed)
 - Add any NEW visual issues you spot
 
-${instructions}" "$out" "Visual pass (targeted)"
+${instructions}" "$out" "Visual pass (targeted)" "$PUPPETEER_TOOLS"
 }
 
-# ── SMART MODE: check if issues were found ──
+# ── SMART MODE HELPERS ──
 has_issues() {
   local file="$1"
-  # Check for our sentinel value — more reliable than string matching
+  # Check for our sentinel value
   if grep -q "ZERO_ISSUES_FOUND" "$file" 2>/dev/null; then
     return 1  # no issues
   fi
-  # Also check for at least one finding header
+  # Check for at least one finding header
   if grep -q "^### \[F-" "$file" 2>/dev/null; then
     return 0  # has issues
   fi
@@ -235,10 +293,12 @@ has_issues() {
 }
 
 issue_count() {
-  grep -c "^### \[F-" "$1" 2>/dev/null || echo "0"
+  local count
+  count=$(grep -c "^### \[F-" "$1" 2>/dev/null) || true
+  echo "${count:-0}"
 }
 
-# ── MERGE (bash-only, no extra Claude call) ──
+# ── MERGE (bash-only, no Claude call) ──
 merge_reports() {
   local func_file="$1"
   local vis_file="$2"
@@ -271,6 +331,7 @@ EOF
 echo "======================================"
 echo "QA Runner — Mode: ${MODE}"
 echo "Target: ${APP_URL}"
+echo "Model: ${QA_MODEL}"
 echo "======================================"
 echo ""
 
@@ -328,10 +389,11 @@ case "$MODE" in
     echo "  visual      - Full screenshot scan (most thorough)"
     echo ""
     echo "Environment variables:"
-    echo "  APP_URL          - Override target URL (default: https://wimhof-method-app.vercel.app)"
-    echo "  QA_FILE          - Override output file (default: QA-FINDINGS.md)"
-    echo "  QA_TIMEOUT       - Timeout per pass in seconds (default: 600)"
-    echo "  QA_SKIP_PREFLIGHT - Set to 1 to skip MCP availability check"
+    echo "  APP_URL            - Override target URL (default: https://wimhof-method-app.vercel.app)"
+    echo "  QA_FILE            - Override output file (default: QA-FINDINGS.md)"
+    echo "  QA_TIMEOUT         - Timeout per pass in seconds (default: 600)"
+    echo "  QA_MODEL           - Override Claude model (default: claude-sonnet-4-6)"
+    echo "  QA_SKIP_PREFLIGHT  - Set to 1 to skip MCP availability check"
     exit 1
     ;;
 esac
