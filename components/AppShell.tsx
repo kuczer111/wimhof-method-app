@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getPreferences } from "@/lib/storage";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 import BottomNav from "./BottomNav";
 import SafetyOnboarding from "./SafetyOnboarding";
 import StorageProvider from "./StorageProvider";
@@ -11,6 +12,7 @@ import WeeklySummary from "./WeeklySummary";
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  useReducedMotion(); // sync reduced-motion class on <html>
 
   useEffect(() => {
     const prefs = getPreferences();

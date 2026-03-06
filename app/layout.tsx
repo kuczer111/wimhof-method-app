@@ -33,7 +33,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("whm_theme")||"system";var d=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark")}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem("whm_theme")||"system";var d=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.classList.add("dark");var r=localStorage.getItem("whm_reduced_motion");if(r==="true")document.documentElement.classList.add("reduced-motion")}catch(e){}})()`,
           }}
         />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />

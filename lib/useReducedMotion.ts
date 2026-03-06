@@ -22,5 +22,20 @@ export function useReducedMotion(): boolean {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  // Sync reduced-motion class on <html> and localStorage for the inline script
+  useEffect(() => {
+    const appPref = getPreferences().reducedMotion;
+    document.documentElement.classList.toggle("reduced-motion", appPref);
+    try {
+      if (appPref) {
+        localStorage.setItem("whm_reduced_motion", "true");
+      } else {
+        localStorage.removeItem("whm_reduced_motion");
+      }
+    } catch (_) {
+      // ignore storage errors
+    }
+  });
+
   return reduced;
 }

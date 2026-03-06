@@ -37,13 +37,29 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-page-enter {
-    animation: none;
+  .animate-page-enter,
+  .animate-slide-up,
+  .animate-phase-fade,
+  .animate-spin {
+    animation: none !important;
   }
-  .animate-slide-up {
-    animation: none;
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
   }
-  .animate-phase-fade {
-    animation: none;
-  }
+}
+
+.reduced-motion .animate-page-enter,
+.reduced-motion .animate-slide-up,
+.reduced-motion .animate-phase-fade,
+.reduced-motion .animate-spin {
+  animation: none !important;
+}
+
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  transition-duration: 0.01ms !important;
 }
