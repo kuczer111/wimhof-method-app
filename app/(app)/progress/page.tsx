@@ -35,7 +35,7 @@ export default function ProgressPage() {
   }, []);
 
   return (
-    <div className="flex flex-col px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-8">
+    <div className="flex flex-col px-4 pb-[var(--nav-height)] pt-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">{strings.progress.heading}</h1>

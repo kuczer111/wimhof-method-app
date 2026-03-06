@@ -51,7 +51,7 @@ export default function SettingsPage() {
   if (!prefs) return null;
 
   return (
-    <div className="flex flex-col gap-6 px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-12">
+    <div className="flex flex-col gap-6 px-4 pb-[var(--nav-height)] pt-12">
       <h1 className="text-2xl font-bold">{strings.settings.heading}</h1>
 
       <AudioSettings audioMode={prefs.audioMode} onUpdate={update} />

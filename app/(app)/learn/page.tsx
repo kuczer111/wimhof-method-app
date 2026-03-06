@@ -57,7 +57,7 @@ export default function LearnPage() {
   // Reader view
   if (activeChapter) {
     return (
-      <div className="min-h-screen bg-white pb-[calc(5rem+env(safe-area-inset-bottom))] dark:bg-surface-base">
+      <div className="min-h-screen bg-white pb-[var(--nav-height)] dark:bg-surface-base">
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center gap-3 border-b border-on-surface-light/[0.12] bg-white/80 px-4 py-3 backdrop-blur-lg dark:border-surface-overlay dark:bg-surface-base/80">
           <button
@@ -87,7 +87,7 @@ export default function LearnPage() {
 
   // Chapter list view
   return (
-    <div className="min-h-screen bg-white pb-[calc(5rem+env(safe-area-inset-bottom))] dark:bg-surface-base">
+    <div className="min-h-screen bg-white pb-[var(--nav-height)] dark:bg-surface-base">
       <div className="mx-auto max-w-lg px-4 py-6">
         <h1 className="mb-1 text-2xl font-bold text-on-surface-light dark:text-on-surface">
           {strings.learn.heading}

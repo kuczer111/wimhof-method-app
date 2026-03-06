@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --nav-height: calc(5rem + env(safe-area-inset-bottom));
+  }
+
   body {
     @apply bg-white text-on-surface-light dark:bg-surface-base dark:text-on-surface;
   }

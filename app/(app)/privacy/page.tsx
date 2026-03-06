@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="flex flex-col gap-6 px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-12">
+    <div className="flex flex-col gap-6 px-4 pb-[var(--nav-height)] pt-12">
       <h1 className="text-2xl font-bold">Privacy Policy</h1>
 
       <section className="flex flex-col gap-2 text-sm text-on-surface-light-muted dark:text-on-surface-muted">

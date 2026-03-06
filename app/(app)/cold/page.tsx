@@ -23,7 +23,7 @@ export default function ColdPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 px-4 pt-8 pb-[calc(5rem+env(safe-area-inset-bottom))]">
+    <div className="flex flex-col gap-6 px-4 pt-8 pb-[var(--nav-height)]">
       <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.cold.heading}</h1>
 
       <Card>
