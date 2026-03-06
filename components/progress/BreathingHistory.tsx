@@ -52,7 +52,8 @@ function BreathingList({ sessions }: { sessions: BreathingSession[] }) {
                 className="text-lg"
                 aria-label={`Feeling rating: ${s.feelingRating} out of 5`}
               >
-                {'*'.repeat(s.feelingRating)}
+                {'\u2605'.repeat(s.feelingRating)}
+                {'\u2606'.repeat(5 - s.feelingRating)}
               </span>
             )}
           </div>
