@@ -24,7 +24,17 @@ export function getReminderSettings(): ReminderSettings {
   if (typeof window === "undefined") return DEFAULT_REMINDER;
   try {
     const raw = localStorage.getItem(REMINDER_STORAGE_KEY);
-    if (raw) return { ...DEFAULT_REMINDER, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed: unknown = JSON.parse(raw);
+      if (parsed != null && typeof parsed === "object") {
+        const p = parsed as Record<string, unknown>;
+        return {
+          enabled: typeof p.enabled === "boolean" ? p.enabled : DEFAULT_REMINDER.enabled,
+          hour: typeof p.hour === "number" && p.hour >= 0 && p.hour <= 23 ? p.hour : DEFAULT_REMINDER.hour,
+          minute: typeof p.minute === "number" && p.minute >= 0 && p.minute <= 59 ? p.minute : DEFAULT_REMINDER.minute,
+        };
+      }
+    }
   } catch {
     // ignore
   }

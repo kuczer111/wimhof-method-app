@@ -253,6 +253,38 @@ async function migrateFromLocalStorage(): Promise<void> {
   }
 }
 
+// --- Validation helpers ---
+
+const VALID_PACES = new Set(["slow", "medium", "fast"]);
+const VALID_COLD_TYPES = new Set(["shower", "bath", "outdoor", "other"]);
+
+function isValidBreathingSession(s: unknown): s is BreathingSession {
+  if (s == null || typeof s !== "object") return false;
+  const r = s as Record<string, unknown>;
+  return (
+    typeof r.id === "string" &&
+    typeof r.date === "string" &&
+    typeof r.rounds === "number" &&
+    Array.isArray(r.retentionTimes) &&
+    r.retentionTimes.every((t: unknown) => typeof t === "number") &&
+    typeof r.totalDuration === "number" &&
+    typeof r.breathsPerRound === "number" &&
+    VALID_PACES.has(r.pace as string)
+  );
+}
+
+function isValidColdSession(s: unknown): s is ColdSession {
+  if (s == null || typeof s !== "object") return false;
+  const r = s as Record<string, unknown>;
+  return (
+    typeof r.id === "string" &&
+    typeof r.date === "string" &&
+    typeof r.duration === "number" &&
+    typeof r.targetDuration === "number" &&
+    VALID_COLD_TYPES.has(r.type as string)
+  );
+}
+
 // --- Initialization: load IndexedDB data into cache ---
 
 async function loadCache(): Promise<void> {
@@ -262,14 +294,14 @@ async function loadCache(): Promise<void> {
 
   const db = await getDB();
 
-  const [breathingSessions, coldSessions, prefs] = await Promise.all([
+  const [rawBreathing, rawCold, prefs] = await Promise.all([
     db.getAll("breathing_sessions"),
     db.getAll("cold_sessions"),
     db.get("preferences", "user"),
   ]);
 
-  cache.breathingSessions = breathingSessions;
-  cache.coldSessions = coldSessions;
+  cache.breathingSessions = rawBreathing.filter(isValidBreathingSession);
+  cache.coldSessions = rawCold.filter(isValidColdSession);
   cache.preferences = prefs
     ? { ...DEFAULT_PREFERENCES, ...prefs }
     : { ...DEFAULT_PREFERENCES };
