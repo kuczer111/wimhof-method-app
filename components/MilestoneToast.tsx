@@ -7,15 +7,26 @@ import {
   MILESTONE_DEFINITIONS,
   type Milestone,
 } from "@/lib/milestones";
+import {
+  LungsIcon,
+  SnowflakeIcon,
+  FireIcon,
+  CalendarIcon,
+  TrophyIcon,
+  MedalIcon,
+  GraduationIcon,
+  StarIcon,
+} from "@/components/ui/Icon";
+import { type ComponentType } from "react";
 
-const ICON_MAP: Record<string, string> = {
-  lungs: "\u{1FAC1}",
-  snowflake: "\u2744\uFE0F",
-  fire: "\uD83D\uDD25",
-  calendar: "\uD83D\uDCC5",
-  trophy: "\uD83C\uDFC6",
-  medal: "\uD83C\uDFC5",
-  graduation: "\uD83C\uDF93",
+const ICON_MAP: Record<string, ComponentType<{ size?: "sm" | "md" | "lg"; className?: string }>> = {
+  lungs: LungsIcon,
+  snowflake: SnowflakeIcon,
+  fire: FireIcon,
+  calendar: CalendarIcon,
+  trophy: TrophyIcon,
+  medal: MedalIcon,
+  graduation: GraduationIcon,
 };
 
 function MilestoneDisplay({
@@ -26,7 +37,7 @@ function MilestoneDisplay({
   onDismiss: () => void;
 }) {
   const definition = MILESTONE_DEFINITIONS[milestone.type];
-  const icon = ICON_MAP[definition.icon] ?? "\u2B50";
+  const IconComponent = ICON_MAP[definition.icon] ?? StarIcon;
 
   useEffect(() => {
     const timer = setTimeout(onDismiss, 5000);
@@ -40,7 +51,7 @@ function MilestoneDisplay({
         onClick={onDismiss}
         className="flex w-full items-center gap-4 rounded-2xl border border-warning-light/40 bg-gradient-to-r from-warning/[0.08] to-warning-light/[0.08] p-4 shadow-lg dark:border-warning-dark/50 dark:from-warning-dark/40 dark:to-warning/30"
       >
-        <span className="text-4xl">{icon}</span>
+        <IconComponent size="lg" className="shrink-0 text-warning-dark dark:text-warning-light" />
         <div className="flex-1 text-left">
           <p className="text-xs font-semibold uppercase tracking-wider text-warning-dark dark:text-warning-light">
             Achievement Unlocked
