@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "Wim Hof Method",
   "short_name": "WHM",
   "description": "Guided Wim Hof Method breathing and cold exposure tracker",
@@ -7,6 +8,7 @@
   "background_color": "#0a0a0a",
   "theme_color": "#0ea5e9",
   "orientation": "portrait",
+  "categories": ["health", "fitness"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -17,6 +19,12 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
