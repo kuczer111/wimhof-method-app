@@ -20,6 +20,13 @@ function formatDate(iso: string): string {
   });
 }
 
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 function ColdStats({ sessions }: { sessions: ColdSession[] }) {
   const { totalMinutes, streak, calendarDays } = useMemo(() => {
     const totalSec = sessions.reduce((sum, s) => sum + s.duration, 0);
@@ -27,7 +34,7 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
       totalSec > 0 && totalSec < 60 ? '< 1' : Math.round(totalSec / 60);
 
     const sessionDates = new Set(
-      sessions.map((s) => new Date(s.date).toISOString().slice(0, 10)),
+      sessions.map((s) => toLocalDateString(new Date(s.date))),
     );
 
     const streakCount = calculateStreak(sessions);
@@ -38,7 +45,7 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
     for (let i = 83; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
+      const key = toLocalDateString(d);
       days.push({ date: key, hasSession: sessionDates.has(key) });
     }
 
