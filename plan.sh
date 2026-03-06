@@ -2,6 +2,15 @@
 set -euo pipefail
 
 MODE="${1:-spec}"
+NTFY_TOPIC="bzhshhs-773737377-oeuuueue"
+
+notify() {
+  if curl -s -o /dev/null -w "%{http_code}" -d "$1" "https://ntfy.sh/$NTFY_TOPIC" | grep -q "^200$"; then
+    return
+  fi
+  osascript -e "display notification \"$1\" with title \"Plan\"" 2>/dev/null || true
+}
+
 # ── Auto-detect latest spec file (SPEC_FILE env var overrides) ──
 if [ -z "${SPEC_FILE:-}" ]; then
   SPEC_FILE=$(ls -1 SPEC-v*.md 2>/dev/null | sort -t'v' -k2 -n | tail -1) || true
@@ -103,6 +112,9 @@ Write this output directly to the file TASKS.md
     exit 1
     ;;
 esac
+
+TASK_COUNT=$(grep -c "^- \[ \]" TASKS.md 2>/dev/null) || true
+notify "Planning done (${MODE}): ${TASK_COUNT:-0} new tasks in TASKS.md"
 
 echo ""
 echo "✅ TASKS.md updated. Review it:"
