@@ -34,7 +34,7 @@ function OnboardingFlow() {
     }
   }, [router]);
 
-  const canSkip = current >= 2 && current !== safetyScreenIndex;
+  const canSkip = current >= 1 && current !== safetyScreenIndex;
 
   const goNext = useCallback(() => {
     if (current === safetyScreenIndex && !safetyAcked) return;
