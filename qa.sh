@@ -21,8 +21,8 @@ if ! command -v timeout &>/dev/null; then
 fi
 
 # ── TEMP FILES & CLEANUP ──
-FUNCTIONAL_FILE=$(mktemp /tmp/qa-functional-XXXXXX.md)
-VISUAL_FILE=$(mktemp /tmp/qa-visual-XXXXXX.md)
+FUNCTIONAL_FILE=$(mktemp /tmp/qa-functional-XXXXXX)
+VISUAL_FILE=$(mktemp /tmp/qa-visual-XXXXXX)
 trap 'rm -f "$FUNCTIONAL_FILE" "$VISUAL_FILE"' EXIT INT TERM HUP
 
 # ── ALLOWED TOOLS (security: restrict to browser MCP only) ──
