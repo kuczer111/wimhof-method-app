@@ -76,17 +76,22 @@ export default function RetentionHold({
     }
   }, []);
 
-  const handlePointerDown = useCallback(() => {
-    if (completedRef.current) return;
-    pointerActiveRef.current = true;
-    setPressing(true);
-    pressStartRef.current = Date.now();
-    pressRafRef.current = requestAnimationFrame(animateProgress);
-    pressTimerRef.current = setTimeout(() => {
-      setPressProgress(1);
-      completeHold();
-    }, LONG_PRESS_MS);
-  }, [animateProgress, completeHold]);
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (completedRef.current) return;
+      // On desktop (mouse), let the click handler deal with it
+      if (e.pointerType === 'mouse') return;
+      pointerActiveRef.current = true;
+      setPressing(true);
+      pressStartRef.current = Date.now();
+      pressRafRef.current = requestAnimationFrame(animateProgress);
+      pressTimerRef.current = setTimeout(() => {
+        setPressProgress(1);
+        completeHold();
+      }, LONG_PRESS_MS);
+    },
+    [animateProgress, completeHold],
+  );
 
   const handlePointerUp = useCallback(() => {
     if (!pressing) return;
@@ -238,6 +243,10 @@ export default function RetentionHold({
           </svg>
         )}
       </button>
+
+      <p className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">
+        Hold or double-tap to end
+      </p>
     </div>
   );
 }
