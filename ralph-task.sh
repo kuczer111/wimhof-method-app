@@ -3,7 +3,14 @@ set -euo pipefail
 
 MODE="${1:-spec}"
 TASK="${2:-}"
-SPEC_FILE="${SPEC_FILE:-SPEC-v4-draft.md}"
+# ── Auto-detect latest spec file (SPEC_FILE env var overrides) ──
+if [ -z "${SPEC_FILE:-}" ]; then
+  SPEC_FILE=$(ls -1 SPEC-v*.md 2>/dev/null | sort -t'v' -k2 -n | tail -1) || true
+fi
+if [ -z "${SPEC_FILE:-}" ]; then
+  echo "No SPEC-v*.md files found. Create one (e.g., SPEC-v1.md) or set SPEC_FILE env var."
+  exit 1
+fi
 MAX_LOOPS=8
 loop=0
 BUILD_LOG=$(mktemp)
