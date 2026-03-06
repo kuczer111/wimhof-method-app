@@ -5,6 +5,7 @@ import {
   type BreathingSession,
   type ColdSession,
 } from "./storage";
+import { calculateStreak } from "./analytics";
 
 // --- Types ---
 
@@ -119,39 +120,6 @@ async function unlockMilestone(
   milestoneCache = milestoneCache ? [...milestoneCache, milestone] : [milestone];
 
   return milestone;
-}
-
-// --- Streak calculation ---
-
-function calculateStreak(sessions: { date: string }[]): number {
-  if (sessions.length === 0) return 0;
-
-  // Get unique dates, sorted descending
-  const dates = Array.from(
-    new Set(sessions.map((s) => s.date.split("T")[0]))
-  ).sort((a, b) => b.localeCompare(a));
-
-  const today = new Date().toISOString().split("T")[0];
-
-  // Streak must include today or yesterday
-  if (dates[0] !== today) {
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-    if (dates[0] !== yesterday) return 0;
-  }
-
-  let streak = 1;
-  for (let i = 1; i < dates.length; i++) {
-    const prev = new Date(dates[i - 1] + "T00:00:00");
-    const curr = new Date(dates[i] + "T00:00:00");
-    const diffDays = (prev.getTime() - curr.getTime()) / 86400000;
-    if (diffDays === 1) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-
-  return streak;
 }
 
 // --- Detection: called after saving a session ---

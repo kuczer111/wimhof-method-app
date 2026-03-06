@@ -6,7 +6,7 @@ import {
   getColdSessions,
 } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
-import { safeAvgRetention } from "@/lib/analytics";
+import { safeAvgRetention, calculateStreak } from "@/lib/analytics";
 
 const DISMISSED_KEY = "whm_weekly_summary_dismissed";
 
@@ -24,36 +24,6 @@ function formatSeconds(s: number): string {
   const sec = Math.round(s % 60);
   if (m === 0) return `${sec}s`;
   return sec > 0 ? `${m}m ${sec}s` : `${m}m`;
-}
-
-function computeStreak(sessions: { date: string }[]): number {
-  if (sessions.length === 0) return 0;
-  const uniqueDays = new Set(
-    sessions.map((s) => new Date(s.date).toISOString().slice(0, 10))
-  );
-  const sorted = Array.from(uniqueDays).sort().reverse();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  const todayStr = today.toISOString().slice(0, 10);
-  const yesterdayStr = yesterday.toISOString().slice(0, 10);
-
-  if (sorted[0] !== todayStr && sorted[0] !== yesterdayStr) return 0;
-
-  let streak = 0;
-  let current = sorted[0] === todayStr ? today : yesterday;
-  for (let i = 0; i < 365; i++) {
-    const dateStr = current.toISOString().slice(0, 10);
-    if (uniqueDays.has(dateStr)) {
-      streak++;
-      current.setDate(current.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-  return streak;
 }
 
 function shouldShow(): boolean {
@@ -153,8 +123,8 @@ export default function WeeklySummary() {
     const avgRetentionLast = safeAvgRetention(breathingLastWeek);
     const avgRetentionPrev = safeAvgRetention(breathingPrevWeek);
     const coldTotalLast = coldLastWeek.reduce((sum, s) => sum + s.duration, 0);
-    const breathingStreak = computeStreak(breathing);
-    const coldStreak = computeStreak(cold);
+    const breathingStreak = calculateStreak(breathing);
+    const coldStreak = calculateStreak(cold);
 
     const retTrend: "up" | "down" | "flat" =
       avgRetentionLast > avgRetentionPrev + 2

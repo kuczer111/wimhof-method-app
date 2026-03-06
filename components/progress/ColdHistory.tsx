@@ -3,6 +3,7 @@ import Card from "@/components/ui/Card";
 import { getPreferences, type ColdSession } from "@/lib/storage";
 import { formatDuration, displayTemperature, getTemperatureUnitLabel } from "@/lib/format";
 import { strings } from "@/lib/i18n";
+import { calculateStreak } from "@/lib/analytics";
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -24,19 +25,10 @@ function ColdStats({ sessions }: { sessions: ColdSession[] }) {
       sessions.map((s) => new Date(s.date).toISOString().slice(0, 10))
     );
 
-    let streakCount = 0;
+    const streakCount = calculateStreak(sessions);
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const checkDate = new Date(today);
-
-    if (!sessionDates.has(checkDate.toISOString().slice(0, 10))) {
-      checkDate.setDate(checkDate.getDate() - 1);
-    }
-    while (sessionDates.has(checkDate.toISOString().slice(0, 10))) {
-      streakCount++;
-      checkDate.setDate(checkDate.getDate() - 1);
-    }
-
     const days: { date: string; hasSession: boolean }[] = [];
     for (let i = 83; i >= 0; i--) {
       const d = new Date(today);
