@@ -111,6 +111,8 @@ export default function ColdSessionLog({ elapsed, target, onDone }: ColdSessionL
                 key={value}
                 type="button"
                 onClick={() => setRating(value)}
+                aria-pressed={isSelected}
+                aria-label={`${value} - ${label}`}
                 className={`flex h-12 w-12 flex-col items-center justify-center rounded-xl text-xs font-medium transition-colors ${
                   isSelected
                     ? "bg-cyan-500 text-white"

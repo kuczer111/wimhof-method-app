@@ -73,6 +73,6 @@
 - [x] 071: Lazy-load recharts on progress tab | Dynamic-import recharts in `components/progress/BreathingHistory.tsx` so the ~200KB bundle only loads when the user navigates to the Progress tab, with a loading skeleton placeholder.
 - [x] 072: Remove userScalable false | Remove `userScalable: false` and `maximumScale: 1` from the viewport config in `app/layout.tsx` to fix WCAG 1.4.4 pinch-to-zoom accessibility violation.
 - [x] 073: Fix manifest.json completeness | Add `id`, `categories: ["health", "fitness"]`, and a maskable 512px icon variant to `public/manifest.json` so the Lighthouse PWA audit passes.
-- [ ] 074: Add ARIA labels to cold timer ratings | Add `aria-label="{value} - {label}"` to the feeling rating buttons in `components/cold/ColdTimer.tsx` to match the accessible pattern already used in `SessionComplete.tsx`.
+- [x] 074: Add ARIA labels to cold timer ratings | Add `aria-label="{value} - {label}"` to the feeling rating buttons in `components/cold/ColdTimer.tsx` to match the accessible pattern already used in `SessionComplete.tsx`.
 - [ ] 075: Add privacy policy page | Create `app/(app)/privacy/page.tsx` with a static privacy policy stating all data is stored locally, what data is collected, and how to delete it, then link to it from `app/(app)/settings/page.tsx`.
 - [ ] 076: Add basic error tracking | Add minimal error tracking using `window.onerror` and `navigator.sendBeacon` in `app/layout.tsx` to capture unhandled promise rejections, error boundary catches, and IndexedDB failures — no user behavior or personal data tracked.
