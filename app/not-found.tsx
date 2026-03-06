@@ -12,7 +12,7 @@ export default function NotFound() {
           Page not found
         </p>
         <Link
-          href="/breathe"
+          href="/"
           className="mt-8 rounded-xl bg-brand px-6 py-3 font-semibold text-white transition-colors hover:bg-brand-dark dark:bg-brand-light dark:text-surface-base dark:hover:bg-brand"
         >
           Back to Home
