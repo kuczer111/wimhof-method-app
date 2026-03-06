@@ -19,10 +19,39 @@ const config: Config = {
           light: "#fb923c",
           dark: "#ea580c",
         },
+        cold: {
+          DEFAULT: "#06b6d4",
+          light: "#22d3ee",
+          dark: "#0891b2",
+        },
+        success: {
+          DEFAULT: "#10b981",
+          light: "#34d399",
+          dark: "#059669",
+        },
+        warning: {
+          DEFAULT: "#f59e0b",
+          light: "#fbbf24",
+          dark: "#d97706",
+        },
+        danger: {
+          DEFAULT: "#ef4444",
+          light: "#f87171",
+          dark: "#dc2626",
+        },
         surface: {
           base: "#030712",
           raised: "#111827",
           overlay: "#1f2937",
+        },
+        "on-surface": {
+          DEFAULT: "#ffffff",
+          muted: "#9ca3af",
+          faint: "#4b5563",
+        },
+        "on-surface-light": {
+          DEFAULT: "#111827",
+          muted: "#6b7280",
         },
       },
       borderRadius: {
