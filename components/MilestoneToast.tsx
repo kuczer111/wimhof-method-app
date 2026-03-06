@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   subscribeMilestones,
   consumePendingMilestone,
@@ -59,25 +59,27 @@ function MilestoneDisplay({
 
 export default function MilestoneToast() {
   const [current, setCurrent] = useState<Milestone | null>(null);
+  const currentRef = useRef<Milestone | null>(null);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    currentRef.current = current;
+  }, [current]);
 
   const processNext = useCallback(() => {
     const next = consumePendingMilestone();
-    if (next) {
-      setCurrent(next);
-    } else {
-      setCurrent(null);
-    }
+    setCurrent(next ?? null);
   }, []);
 
   useEffect(() => {
     const unsubscribe = subscribeMilestones(() => {
       // Only show if nothing is currently displayed
-      if (!current) {
+      if (!currentRef.current) {
         processNext();
       }
     });
     return unsubscribe;
-  }, [current, processNext]);
+  }, [processNext]);
 
   const handleDismiss = useCallback(() => {
     setCurrent(null);
