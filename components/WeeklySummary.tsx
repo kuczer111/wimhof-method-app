@@ -151,10 +151,10 @@ export default function WeeklySummary() {
   const trendArrow = retTrend === "up" ? "\u2191" : retTrend === "down" ? "\u2193" : "\u2192";
   const trendColor =
     retTrend === "up"
-      ? "text-green-500"
+      ? "text-success"
       : retTrend === "down"
-      ? "text-red-400"
-      : "text-gray-400";
+      ? "text-danger-light"
+      : "text-on-surface-muted";
 
   const handleDismiss = () => {
     dismiss();
@@ -163,12 +163,12 @@ export default function WeeklySummary() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl dark:bg-gray-900">
+      <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl dark:bg-surface-raised">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">{s.title}</h2>
           <button
             onClick={handleDismiss}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            className="text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"
             aria-label="Dismiss"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,10 +178,10 @@ export default function WeeklySummary() {
         </div>
 
         {/* Sessions comparison */}
-        <div className="mb-3 rounded-xl bg-gray-100 p-3 dark:bg-gray-800">
+        <div className="mb-3 rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-gray-500 dark:text-gray-400">{s.sessions}</span>
-            <span className="text-xs text-gray-400 dark:text-gray-500">
+            <span className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">{s.sessions}</span>
+            <span className="text-xs text-on-surface-muted dark:text-on-surface-faint">
               {sessionDiff > 0
                 ? `+${sessionDiff} vs prev week`
                 : sessionDiff < 0
@@ -195,8 +195,8 @@ export default function WeeklySummary() {
         {/* Two-column stats */}
         <div className="mb-3 grid grid-cols-2 gap-2">
           {/* Avg retention */}
-          <div className="rounded-xl bg-gray-100 p-3 dark:bg-gray-800">
-            <span className="text-xs text-gray-500 dark:text-gray-400">{s.avgRetention}</span>
+          <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.avgRetention}</span>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-xl font-bold">
                 {data.avgRetentionLast > 0 ? formatSeconds(data.avgRetentionLast) : "--"}
@@ -208,8 +208,8 @@ export default function WeeklySummary() {
           </div>
 
           {/* Cold total */}
-          <div className="rounded-xl bg-gray-100 p-3 dark:bg-gray-800">
-            <span className="text-xs text-gray-500 dark:text-gray-400">{s.coldTotal}</span>
+          <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.coldTotal}</span>
             <p className="mt-1 text-xl font-bold">
               {data.coldTotalLast > 0 ? formatSeconds(data.coldTotalLast) : "--"}
             </p>
@@ -218,29 +218,29 @@ export default function WeeklySummary() {
 
         {/* Streaks */}
         <div className="mb-3 grid grid-cols-2 gap-2">
-          <div className="rounded-xl bg-gray-100 p-3 dark:bg-gray-800">
-            <span className="text-xs text-gray-500 dark:text-gray-400">{s.breathingStreak}</span>
+          <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.breathingStreak}</span>
             <p className="mt-1 text-xl font-bold">
-              {data.breathingStreak} <span className="text-xs font-normal text-gray-500">{s.days}</span>
+              {data.breathingStreak} <span className="text-xs font-normal text-on-surface-light-muted">{s.days}</span>
             </p>
           </div>
-          <div className="rounded-xl bg-gray-100 p-3 dark:bg-gray-800">
-            <span className="text-xs text-gray-500 dark:text-gray-400">{s.coldStreak}</span>
+          <div className="rounded-xl bg-on-surface-light/[0.06] p-3 dark:bg-surface-overlay">
+            <span className="text-xs text-on-surface-light-muted dark:text-on-surface-muted">{s.coldStreak}</span>
             <p className="mt-1 text-xl font-bold">
-              {data.coldStreak} <span className="text-xs font-normal text-gray-500">{s.days}</span>
+              {data.coldStreak} <span className="text-xs font-normal text-on-surface-light-muted">{s.days}</span>
             </p>
           </div>
         </div>
 
         {/* Suggestion */}
-        <div className="mb-4 rounded-xl bg-blue-50 p-3 dark:bg-blue-950/30">
-          <span className="text-xs font-medium text-blue-600 dark:text-blue-400">{s.suggestionLabel}</span>
-          <p className="mt-1 text-sm text-blue-900 dark:text-blue-100">{data.suggestion}</p>
+        <div className="mb-4 rounded-xl bg-brand/[0.08] p-3 dark:bg-brand-dark/20">
+          <span className="text-xs font-medium text-brand-dark dark:text-brand-light">{s.suggestionLabel}</span>
+          <p className="mt-1 text-sm text-on-surface-light dark:text-on-surface">{data.suggestion}</p>
         </div>
 
         <button
           onClick={handleDismiss}
-          className="w-full rounded-xl bg-blue-500 py-2.5 text-sm font-medium text-white active:bg-blue-600"
+          className="w-full rounded-xl bg-brand py-2.5 text-sm font-medium text-white active:bg-brand-dark"
         >
           {s.dismiss}
         </button>

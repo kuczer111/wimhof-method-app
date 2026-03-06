@@ -22,8 +22,8 @@ export default function OptionButton({
       aria-label={ariaLabel}
       className={`${sizeClasses} font-medium transition-colors ${
         selected
-          ? "bg-sky-500 text-white"
-          : "bg-gray-200 text-gray-600 active:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:active:bg-gray-700"
+          ? "bg-brand text-white"
+          : "bg-on-surface-light/10 text-on-surface-light-muted active:bg-on-surface-light/15 dark:bg-surface-overlay dark:text-on-surface-muted dark:active:bg-on-surface-faint"
       }${className ? ` ${className}` : ""}`}
     >
       {children}

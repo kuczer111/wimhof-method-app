@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-white;
+    @apply bg-white text-on-surface-light dark:bg-surface-base dark:text-on-surface;
   }
 }
 

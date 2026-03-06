@@ -38,17 +38,17 @@ function MilestoneDisplay({
       <button
         type="button"
         onClick={onDismiss}
-        className="flex w-full items-center gap-4 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 p-4 shadow-lg dark:border-amber-700/50 dark:from-amber-900/40 dark:to-yellow-900/30"
+        className="flex w-full items-center gap-4 rounded-2xl border border-warning-light/40 bg-gradient-to-r from-warning/[0.08] to-warning-light/[0.08] p-4 shadow-lg dark:border-warning-dark/50 dark:from-warning-dark/40 dark:to-warning/30"
       >
         <span className="text-4xl">{icon}</span>
         <div className="flex-1 text-left">
-          <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+          <p className="text-xs font-semibold uppercase tracking-wider text-warning-dark dark:text-warning-light">
             Achievement Unlocked
           </p>
-          <p className="text-lg font-bold text-gray-900 dark:text-gray-50">
+          <p className="text-lg font-bold text-on-surface-light dark:text-on-surface">
             {definition.title}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-on-surface-faint dark:text-on-surface-muted">
             {definition.description}
           </p>
         </div>

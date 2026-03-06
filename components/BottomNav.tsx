@@ -72,7 +72,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/80 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] dark:border-gray-800 dark:bg-gray-950/80">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-on-surface-light/[0.12] bg-white/80 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] dark:border-surface-overlay dark:bg-surface-base/80">
       <ul className="flex justify-around">
         {tabs.map((tab) => {
           const active = pathname.startsWith(tab.href);
@@ -81,7 +81,7 @@ export default function BottomNav() {
               <Link
                 href={tab.href}
                 className={`flex flex-col items-center px-3 py-2 text-xs transition-colors ${
-                  active ? "text-sky-500 dark:text-sky-400" : "text-gray-400 dark:text-gray-500"
+                  active ? "text-brand dark:text-brand-light" : "text-on-surface-muted dark:text-on-surface-faint"
                 }`}
               >
                 {tab.icon}
