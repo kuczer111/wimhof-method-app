@@ -9,9 +9,11 @@ dist/
 .DS_Store
 .vscode/
 
-# next-pwa generated files
+# PWA generated files (next-pwa / @ducanh2912/next-pwa)
 public/sw.js
 public/sw.js.map
+public/swe-worker-*.js
+public/swe-worker-*.js.map
 public/workbox-*.js
 public/workbox-*.js.map
 public/worker-*.js
