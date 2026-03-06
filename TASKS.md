@@ -71,7 +71,7 @@
 - [x] 069: Replace next-pwa with serwist | Migrate from deprecated `next-pwa@5.6.0` to `serwist` (or `@ducanh2912/next-pwa`) in `next.config.mjs`, verify service worker generation, offline fallback page, and precaching of all app routes.
 - [x] 070: Upgrade Next.js to 15.x | Upgrade `next` package from 14.2.5 to latest 15.x, fix any breaking changes in app router, middleware, or config, and verify `npm run build` and `npx tsc --noEmit` both pass.
 - [x] 071: Lazy-load recharts on progress tab | Dynamic-import recharts in `components/progress/BreathingHistory.tsx` so the ~200KB bundle only loads when the user navigates to the Progress tab, with a loading skeleton placeholder.
-- [ ] 072: Remove userScalable false | Remove `userScalable: false` and `maximumScale: 1` from the viewport config in `app/layout.tsx` to fix WCAG 1.4.4 pinch-to-zoom accessibility violation.
+- [x] 072: Remove userScalable false | Remove `userScalable: false` and `maximumScale: 1` from the viewport config in `app/layout.tsx` to fix WCAG 1.4.4 pinch-to-zoom accessibility violation.
 - [ ] 073: Fix manifest.json completeness | Add `id`, `categories: ["health", "fitness"]`, and a maskable 512px icon variant to `public/manifest.json` so the Lighthouse PWA audit passes.
 - [ ] 074: Add ARIA labels to cold timer ratings | Add `aria-label="{value} - {label}"` to the feeling rating buttons in `components/cold/ColdTimer.tsx` to match the accessible pattern already used in `SessionComplete.tsx`.
 - [ ] 075: Add privacy policy page | Create `app/(app)/privacy/page.tsx` with a static privacy policy stating all data is stored locally, what data is collected, and how to delete it, then link to it from `app/(app)/settings/page.tsx`.
