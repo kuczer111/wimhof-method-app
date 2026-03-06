@@ -38,7 +38,7 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
   }
 
   return (
-    <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
+    <div className="flex flex-col gap-6 px-4 pt-8 pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.breathe.heading}</h1>
 
       <SessionTip />
