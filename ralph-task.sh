@@ -26,8 +26,8 @@ Fix these errors. Do NOT repeat the same mistakes."
   fi
 
   claude --dangerously-skip-permissions --print "
-You are building a Wim Hof Method PWA using Next.js 14 (app router), TypeScript, and Tailwind CSS.
-Clerk is installed for auth. Target: installable PWA on iPhone home screen.
+You are building a Wim Hof Method PWA using Next.js (app router), TypeScript, and Tailwind CSS.
+All data is stored locally in IndexedDB — there is no auth or backend. Target: installable PWA on iPhone home screen.
 
 Full spec is in SPEC-v3-draft.md — read it for context. Also read REVIEW-v2.md for bug details.
 
