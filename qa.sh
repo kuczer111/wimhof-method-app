@@ -185,8 +185,8 @@ run_claude() {
   timeout "${TIMEOUT}" \
     claude --model "$QA_MODEL" --dangerously-skip-permissions --print \
     --allowedTools "$allowed_tools" \
-    "$prompt" \
-    > "$output_file" 2>/dev/null || rc=$?
+    -- "$prompt" \
+    > "$output_file" 2>&1 || rc=$?
 
   if [ "$rc" -ne 0 ]; then
     if [ "$rc" -eq 124 ]; then
