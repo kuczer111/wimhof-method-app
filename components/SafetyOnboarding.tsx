@@ -18,7 +18,7 @@ export default function SafetyOnboarding() {
   }, []);
 
   function handleAcknowledge() {
-    savePreferences({ safetyAcknowledged: true, onboardingComplete: true });
+    savePreferences({ safetyAcknowledged: true });
     setVisible(false);
   }
 
