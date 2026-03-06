@@ -58,6 +58,7 @@ export interface UserPreferences {
   experienceLevel?: ExperienceLevel;
   preferredSessionTime?: PreferredTime;
   customPresets?: CustomPreset[];
+  themeMode: "system" | "light" | "dark";
 }
 
 export interface SessionConfig {
@@ -177,6 +178,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   onboardingComplete: false,
   wakeLockEnabled: true,
   reducedMotion: false,
+  themeMode: "system",
 };
 
 // --- In-memory cache ---
@@ -382,6 +384,22 @@ export async function clearAllData(): Promise<void> {
   cache.breathingSessions = [];
   cache.coldSessions = [];
   cache.preferences = { ...DEFAULT_PREFERENCES };
+}
+
+// --- Theme ---
+
+/** Apply the dark class to <html> based on themeMode and persist for FOUC script. */
+export function applyTheme(mode: "system" | "light" | "dark"): void {
+  if (typeof window === "undefined") return;
+  const prefersDark =
+    mode === "dark" ||
+    (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.classList.toggle("dark", prefersDark);
+  try {
+    localStorage.setItem("whm_theme", mode);
+  } catch {
+    // localStorage unavailable — inline script won't benefit but app still works
+  }
 }
 
 // --- Utility ---

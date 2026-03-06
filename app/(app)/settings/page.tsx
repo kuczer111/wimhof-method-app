@@ -5,6 +5,7 @@ import {
   getPreferences,
   savePreferences,
   profileToDefaults,
+  applyTheme,
   type UserPreferences,
   type CustomPreset,
 } from "@/lib/storage";
@@ -70,6 +71,30 @@ export default function SettingsPage() {
         ariaLabel="Reduced motion"
         onToggle={() => update({ reducedMotion: !prefs.reducedMotion })}
       />
+
+      <Card>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
+          {strings.settings.appearance}
+        </h2>
+        <div className="flex gap-2">
+          {(["system", "light", "dark"] as const).map((mode) => (
+            <OptionButton
+              key={mode}
+              selected={prefs.themeMode === mode}
+              onClick={() => {
+                update({ themeMode: mode });
+                applyTheme(mode);
+              }}
+            >
+              {mode === "system"
+                ? strings.settings.themeSystem
+                : mode === "light"
+                  ? strings.settings.themeLight
+                  : strings.settings.themeDark}
+            </OptionButton>
+          ))}
+        </div>
+      </Card>
 
       <DailyReminder />
 
