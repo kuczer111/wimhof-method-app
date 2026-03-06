@@ -54,7 +54,7 @@ function CircularProgress({
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={offset}
-        className={`transition-[stroke-dashoffset] duration-300 ${
+        className={`transition-[stroke-dashoffset] duration-normal ${
           exceeded ? "text-success-light" : "text-cold-light"
         }`}
       />

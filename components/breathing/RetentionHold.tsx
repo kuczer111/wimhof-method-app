@@ -103,7 +103,7 @@ export default function RetentionHold({
             className="h-2 w-full overflow-hidden rounded-full bg-on-surface-light/10 dark:bg-on-surface-faint"
           >
             <div
-              className={`h-full rounded-full transition-all duration-300 ${
+              className={`h-full rounded-full transition-all duration-normal ${
                 isPastPb
                   ? "bg-warning"
                   : isApproaching

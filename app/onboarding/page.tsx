@@ -135,7 +135,7 @@ function OnboardingFlow() {
       {/* Screen content */}
       <div className="flex-1 overflow-hidden">
         <div
-          className="flex h-full transition-transform duration-300 ease-out"
+          className="flex h-full transition-transform duration-normal ease-out"
           style={{ transform: `translateX(-${current * 100}%)` }}
         >
           {screens.map((screen, i) => (

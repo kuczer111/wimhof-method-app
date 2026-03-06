@@ -54,6 +54,25 @@ const config: Config = {
           muted: "#6b7280",
         },
       },
+      transitionDuration: {
+        fast: "150ms",
+        normal: "250ms",
+        slow: "400ms",
+      },
+      animation: {
+        "page-enter": "page-enter 250ms ease-out",
+        "slide-up": "slide-up 400ms ease-out",
+      },
+      keyframes: {
+        "page-enter": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-up": {
+          from: { opacity: "0", transform: "translateY(20px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+      },
       borderRadius: {
         "2xl": "1rem",
       },

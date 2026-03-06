@@ -63,7 +63,7 @@ export default function RecoveryBreath({ onComplete }: RecoveryBreathProps) {
         className="h-2 w-48 overflow-hidden rounded-full bg-success/20 dark:bg-success-dark/30"
       >
         <div
-          className="h-full rounded-full bg-success-light transition-all duration-200 ease-linear"
+          className="h-full rounded-full bg-success-light transition-all duration-fast ease-linear"
           style={{
             width: `${(remaining / RECOVERY_DURATION_S) * 100}%`,
           }}
