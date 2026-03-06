@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 type Pace = "slow" | "medium" | "fast";
@@ -74,27 +73,21 @@ export default function BreathingCircle({
 
   return (
     <div className="flex items-center justify-center" role="img" aria-label="Breathing animation guide">
-      <motion.div
+      <div
         aria-hidden="true"
         className="rounded-full bg-sky-500/30 flex items-center justify-center"
-        style={{ width: 200, height: 200 }}
-        animate={
-          isActive
-            ? { scale: [1, 1.6, 1], opacity: [0.4, 0.9, 0.4] }
-            : { scale: 1, opacity: 0.4 }
-        }
-        transition={
-          isActive
-            ? {
-                duration,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-            : { duration: 0.4 }
-        }
+        style={{
+          width: 200,
+          height: 200,
+          animation: isActive
+            ? `breathe ${duration}s ease-in-out infinite`
+            : "none",
+          transform: isActive ? undefined : "scale(1)",
+          opacity: isActive ? undefined : 0.4,
+        }}
       >
         <div className="w-16 h-16 rounded-full bg-sky-400" />
-      </motion.div>
+      </div>
     </div>
   );
 }

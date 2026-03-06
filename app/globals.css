@@ -38,6 +38,17 @@
   animation: slide-up 0.3s ease-out;
 }
 
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.9;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-page-enter {
     animation: none;
