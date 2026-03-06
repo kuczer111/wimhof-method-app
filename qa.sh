@@ -36,48 +36,41 @@ preflight() {
     exit 1
   fi
 
-  local mcp_found=false
-  for config_path in .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json; do
-    if [ -f "$config_path" ] 2>/dev/null; then
-      mcp_found=true
-      break
-    fi
-  done
+  # Check all known MCP config locations
+  local config_files=(.mcp.json ~/.claude.json ~/.claude/.mcp.json ~/.claude/projects/*/settings.local.json)
 
-  if [ "$mcp_found" = false ]; then
-    echo "FATAL: No MCP configuration files found."
-    echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @anthropic-ai/mcp-playwright --no-vision"
-    echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @anthropic-ai/mcp-puppeteer"
-    exit 1
-  fi
+  check_mcp() {
+    local name="$1"
+    grep -ql "\"${name}\"" "${config_files[@]}" 2>/dev/null
+  }
 
   case "$MODE" in
     functional)
-      if ! grep -ql "playwright" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+      if ! check_mcp "playwright"; then
         echo "FATAL: Playwright MCP not configured."
-        echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @anthropic-ai/mcp-playwright --no-vision"
+        echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @playwright/mcp --no-vision"
         exit 1
       fi
       ;;
     visual)
-      if ! grep -ql "puppeteer" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+      if ! check_mcp "puppeteer"; then
         echo "FATAL: Puppeteer MCP not configured."
-        echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @anthropic-ai/mcp-puppeteer"
+        echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @modelcontextprotocol/server-puppeteer"
         exit 1
       fi
       ;;
     smart)
       local missing=""
-      if ! grep -ql "playwright" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+      if ! check_mcp "playwright"; then
         missing="playwright"
       fi
-      if ! grep -ql "puppeteer" .mcp.json ~/.claude/projects/*/settings.local.json ~/.claude/.mcp.json 2>/dev/null; then
+      if ! check_mcp "puppeteer"; then
         missing="${missing:+$missing, }puppeteer"
       fi
       if [ -n "$missing" ]; then
         echo "FATAL: Missing MCP configuration: ${missing}"
-        [ "$missing" != "${missing/playwright/}" ] && echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @anthropic-ai/mcp-playwright --no-vision"
-        [ "$missing" != "${missing/puppeteer/}" ] && echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @anthropic-ai/mcp-puppeteer"
+        [[ "$missing" == *playwright* ]] && echo "  Run: npx @anthropic-ai/claude-code mcp add playwright -- npx -y @playwright/mcp --no-vision"
+        [[ "$missing" == *puppeteer* ]] && echo "  Run: npx @anthropic-ai/claude-code mcp add puppeteer -- npx -y @modelcontextprotocol/server-puppeteer"
         exit 1
       fi
       ;;
