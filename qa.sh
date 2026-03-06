@@ -152,7 +152,7 @@ Output your findings as a markdown report in EXACTLY this format:
 
 # QA Findings — ${mode} Pass
 
-**Date:** $(date +%Y-%m-%d)
+**Date:** $(date '+%Y-%m-%d %H:%M:%S')
 **Tested URL:** ${APP_URL}
 **Mode:** ${mode}
 
@@ -180,6 +180,8 @@ ZERO_ISSUES_FOUND
 Include EVERY issue no matter how small.
 EOF
 }
+
+LAST_PASS_SECS=0
 
 # ── FORMAT ELAPSED TIME ──
 fmt_elapsed() {
@@ -259,9 +261,9 @@ run_claude() {
     echo "WARNING: ${label} output doesn't contain expected report structure. Results may be unreliable."
   fi
 
-  local pass_secs=$(( $(date +%s) - PASS_START ))
+  LAST_PASS_SECS=$(( $(date +%s) - PASS_START ))
   local pass_time
-  pass_time=$(fmt_elapsed "$pass_secs")
+  pass_time=$(fmt_elapsed "$LAST_PASS_SECS")
   echo "[$(date +%H:%M:%S)] Done: ${label} ($(wc -l < "$output_file" | tr -d ' ') lines, ${pass_time})"
   notify "Done: ${label} (${pass_time})"
 }
@@ -352,13 +354,39 @@ merge_reports() {
   local func_file="$1"
   local vis_file="$2"
   local out="$3"
+  local func_secs="${4:-0}"
+  local vis_secs="${5:-0}"
+
+  # Count issues from both reports
+  local func_count vis_total vis_dismissed vis_confirmed
+  func_count=$(grep -c "^### \[F-" "$func_file" 2>/dev/null) || true
+  vis_total=$(grep -c "^### \[F-" "$vis_file" 2>/dev/null) || true
+  vis_dismissed=$(grep -c "^### .*DISMISSED" "$vis_file" 2>/dev/null) || true
+  vis_confirmed=$((vis_total - vis_dismissed))
+  if [ "$vis_confirmed" -lt 0 ]; then
+    echo "WARNING: Dismissed count (${vis_dismissed}) exceeds visual findings (${vis_total}). Counts may be unreliable."
+    vis_confirmed=0
+  fi
+
+  local func_time vis_time total_time
+  func_time=$(fmt_elapsed "$func_secs")
+  vis_time=$(fmt_elapsed "$vis_secs")
+  total_time=$(fmt_elapsed $((func_secs + vis_secs)))
 
   cat > "$out" <<EOF
 # QA Findings
 
-**Date:** $(date +%Y-%m-%d)
+**Date:** $(date '+%Y-%m-%d %H:%M:%S')
 **Tested URL:** ${APP_URL}
 **Mode:** Smart (functional + visual verification)
+
+## Results Overview
+
+| Pass | Findings | Time |
+|---|---|---|
+| Functional | ${func_count:-0} found | ${func_time} |
+| Visual verification | ${vis_confirmed} confirmed, ${vis_dismissed:-0} dismissed | ${vis_time} |
+| **Total** | **${vis_confirmed} open** | **${total_time}** |
 
 ---
 
@@ -413,9 +441,11 @@ case "$MODE" in
   smart)
     # Pass 1: Cheap functional scan
     run_functional "$FUNCTIONAL_FILE"
+    FUNCTIONAL_SECS=$LAST_PASS_SECS
     echo ""
 
     # Check results
+    VISUAL_SECS=0
     if has_issues "$FUNCTIONAL_FILE"; then
       COUNT=$(issue_count "$FUNCTIONAL_FILE")
       echo "Found ${COUNT} issue(s). Running targeted visual verification..."
@@ -423,17 +453,27 @@ case "$MODE" in
 
       # Pass 2: Visual verification of flagged screens only
       run_visual_targeted "$FUNCTIONAL_FILE" "$VISUAL_FILE"
+      VISUAL_SECS=$LAST_PASS_SECS
       echo ""
 
       # Merge both reports (bash only — no extra Claude call)
-      merge_reports "$FUNCTIONAL_FILE" "$VISUAL_FILE" "$QA_FILE"
+      merge_reports "$FUNCTIONAL_FILE" "$VISUAL_FILE" "$QA_FILE" "$FUNCTIONAL_SECS" "$VISUAL_SECS"
     else
       echo "No issues found in functional pass. Skipping visual."
       cp "$FUNCTIONAL_FILE" "$QA_FILE"
     fi
 
     QA_TIME=$(fmt_elapsed $(( $(date +%s) - QA_START )))
-    FINAL_COUNT=$(issue_count "$VISUAL_FILE")
+    # Count confirmed issues: from visual pass if run, otherwise from functional
+    if [ -s "$VISUAL_FILE" ]; then
+      local vis_all vis_dis
+      vis_all=$(grep -c "^### \[F-" "$VISUAL_FILE" 2>/dev/null) || true
+      vis_dis=$(grep -c "^### .*DISMISSED" "$VISUAL_FILE" 2>/dev/null) || true
+      FINAL_COUNT=$((vis_all - vis_dis))
+      if [ "$FINAL_COUNT" -lt 0 ]; then FINAL_COUNT=0; fi
+    else
+      FINAL_COUNT=$(issue_count "$FUNCTIONAL_FILE")
+    fi
     echo ""
     echo "Smart QA complete in ${QA_TIME}. ${FINAL_COUNT} issue(s). Results in ${QA_FILE}"
     notify "QA complete (smart, ${QA_TIME}): ${FINAL_COUNT} issue(s) in ${QA_FILE}"
