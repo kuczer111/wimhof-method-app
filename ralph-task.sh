@@ -29,7 +29,7 @@ Fix these errors. Do NOT repeat the same mistakes."
 You are building a Wim Hof Method PWA using Next.js (app router), TypeScript, and Tailwind CSS.
 All data is stored locally in IndexedDB — there is no auth or backend. Target: installable PWA on iPhone home screen.
 
-Full spec is in SPEC-v3-draft.md — read it for context. Also read REVIEW-v2.md for bug details.
+Full spec is in SPEC-v4-draft.md — read it for context, especially the design token definitions in section 4.
 
 Your ONLY job right now is this task:
 $TASK
