@@ -283,13 +283,30 @@ Tasks from different modes (spec and fix) share the same TASKS.md and numbering 
 
 All scripts send push notifications via [ntfy.sh](https://ntfy.sh). The topic is configured in `config.sh` (`NTFY_TOPIC` variable), which all scripts source. Falls back to macOS native notifications if ntfy fails.
 
-Events notified:
+Events notified (all include elapsed time where applicable):
 
-- **plan.sh**: planning done (with task count)
-- **ralph.sh**: task complete, task failed, all done, push failed, suspicious commit size
-- **qa.sh**: pass complete, pass failed/timed out, QA complete
-- **research-plan.sh**: planning done (with subtopic count)
-- **research.sh**: subtopic complete (with progress), synthesis started, research complete
+- **plan.sh**: start, done (mode, elapsed time, open task count)
+- **ralph.sh**: task complete (task number, elapsed time), task failed, all done (task count, total time), push failed, suspicious commit size
+- **ralph-task.sh**: max-loops failure
+- **qa.sh**: start (mode, URL), pass complete (elapsed time), pass failed/timed out, QA complete (issue count, total time)
+- **research-plan.sh**: done (subtopic count, elapsed time)
+- **research.sh**: start (topic), subtopic complete (progress N/M), synthesis started, research complete (subtopic count, total time)
+
+---
+
+## Shared Utilities (config.sh)
+
+All scripts source `config.sh` at the top with: `SCRIPT_TITLE="X"; source ./config.sh`
+
+This provides:
+
+| Function                 | Description                                                     |
+| ------------------------ | --------------------------------------------------------------- |
+| `notify(msg)`            | Push notification via ntfy.sh, falls back to macOS notification |
+| `log(msg)`               | Timestamped echo: `[HH:MM:SS] msg`                              |
+| `fmt_elapsed(secs)`      | Human-readable duration: `45s` or `3min`                        |
+| `start_heartbeat(label)` | Background process logging every 60s while Claude runs          |
+| `stop_heartbeat()`       | Kills the heartbeat background process                          |
 
 ---
 
