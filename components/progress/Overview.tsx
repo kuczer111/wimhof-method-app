@@ -2,28 +2,12 @@
 
 import { BreathingSession, ColdSession } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
-import { safeAvgRetention, calculateStreak } from "@/lib/analytics";
+import { safeAvgRetention, calculateStreak, startOfWeek, formatSeconds } from "@/lib/analytics";
 import InsightCard from "@/components/progress/InsightCard";
 
 interface OverviewProps {
   breathingSessions: BreathingSession[];
   coldSessions: ColdSession[];
-}
-
-function startOfWeek(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = day === 0 ? 6 : day - 1; // Monday = start
-  d.setDate(d.getDate() - diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function formatSeconds(s: number): string {
-  const m = Math.floor(s / 60);
-  const sec = Math.round(s % 60);
-  if (m === 0) return `${sec}s`;
-  return sec > 0 ? `${m}m ${sec}s` : `${m}m`;
 }
 
 export default function Overview({ breathingSessions, coldSessions }: OverviewProps) {

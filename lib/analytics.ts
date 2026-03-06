@@ -1,5 +1,23 @@
 import type { BreathingSession } from "@/lib/storage";
 
+/** Returns the Monday 00:00:00 of the week containing `date`. */
+export function startOfWeek(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? 6 : day - 1;
+  d.setDate(d.getDate() - diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/** Formats a duration in seconds as e.g. "1m 30s" or "45s". */
+export function formatSeconds(s: number): string {
+  const m = Math.floor(s / 60);
+  const sec = Math.round(s % 60);
+  if (m === 0) return `${sec}s`;
+  return sec > 0 ? `${m}m ${sec}s` : `${m}m`;
+}
+
 export function calculateStreak(sessions: { date: string }[]): number {
   if (sessions.length === 0) return 0;
 

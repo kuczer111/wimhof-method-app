@@ -1,18 +1,9 @@
 import type { BreathingSession } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
-import { safeAvgRetention } from "@/lib/analytics";
+import { safeAvgRetention, startOfWeek } from "@/lib/analytics";
 
 interface InsightCardProps {
   sessions: BreathingSession[];
-}
-
-function getWeekStart(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = day === 0 ? 6 : day - 1;
-  d.setDate(d.getDate() - diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
 }
 
 export default function InsightCard({ sessions }: InsightCardProps) {
@@ -32,7 +23,7 @@ export default function InsightCard({ sessions }: InsightCardProps) {
 
   // Split into recent week vs prior week
   const now = new Date();
-  const thisWeekStart = getWeekStart(now);
+  const thisWeekStart = startOfWeek(now);
   const lastWeekStart = new Date(thisWeekStart);
   lastWeekStart.setDate(lastWeekStart.getDate() - 7);
   const twoWeeksAgoStart = new Date(lastWeekStart);

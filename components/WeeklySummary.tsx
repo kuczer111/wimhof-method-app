@@ -6,29 +6,13 @@ import {
   getColdSessions,
 } from "@/lib/storage";
 import { strings } from "@/lib/i18n";
-import { safeAvgRetention, calculateStreak } from "@/lib/analytics";
+import { safeAvgRetention, calculateStreak, startOfWeek, formatSeconds } from "@/lib/analytics";
 
 const DISMISSED_KEY = "whm_weekly_summary_dismissed";
 
-function getMondayOfWeek(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = day === 0 ? 6 : day - 1;
-  d.setDate(d.getDate() - diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function formatSeconds(s: number): string {
-  const m = Math.floor(s / 60);
-  const sec = Math.round(s % 60);
-  if (m === 0) return `${sec}s`;
-  return sec > 0 ? `${m}m ${sec}s` : `${m}m`;
-}
-
 function shouldShow(): boolean {
   const now = new Date();
-  const thisMonday = getMondayOfWeek(now);
+  const thisMonday = startOfWeek(now);
   // Only show if we're past Monday (i.e., the previous week is complete)
   // "First app open after Monday" means: current week's Monday has passed
   try {
@@ -90,7 +74,7 @@ export default function WeeklySummary() {
     if (breathing.length === 0 && cold.length === 0) return;
 
     const now = new Date();
-    const thisMonday = getMondayOfWeek(now);
+    const thisMonday = startOfWeek(now);
     const lastMonday = new Date(thisMonday);
     lastMonday.setDate(lastMonday.getDate() - 7);
     const prevMonday = new Date(lastMonday);
