@@ -74,7 +74,7 @@ export default function SettingsPage() {
       <DailyReminder />
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.settings.practiceProfile}
         </h2>
         <Button variant="secondary" size="sm" onClick={() => setShowProfile(true)}>
@@ -83,18 +83,18 @@ export default function SettingsPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.settings.customPresets}
         </h2>
         {customPresets.length === 0 ? (
-          <p className="text-xs text-gray-400 dark:text-gray-500">{strings.settings.noCustomPresets}</p>
+          <p className="text-xs text-on-surface-light-muted dark:text-on-surface-faint">{strings.settings.noCustomPresets}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {customPresets.map((preset) => (
-              <li key={preset.id} className="flex items-center justify-between rounded-xl bg-gray-100 px-3 py-2 dark:bg-gray-800/60">
+              <li key={preset.id} className="flex items-center justify-between rounded-xl bg-on-surface-light/[0.06] px-3 py-2 dark:bg-surface-overlay/60">
                 <div>
-                  <span className="block text-sm font-semibold text-gray-800 dark:text-gray-100">{preset.name}</span>
-                  <span className="block text-xs text-gray-500 dark:text-gray-400">
+                  <span className="block text-sm font-semibold text-on-surface-light dark:text-on-surface">{preset.name}</span>
+                  <span className="block text-xs text-on-surface-light-muted dark:text-on-surface-muted">
                     {strings.settings.presetRounds(preset.config.rounds)} · {preset.config.breathsPerRound[0]}b · {preset.config.pace}
                   </span>
                 </div>
@@ -114,7 +114,7 @@ export default function SettingsPage() {
       <BreathingDefaults defaultRounds={prefs.defaultRounds} defaultBreathCount={prefs.defaultBreathCount} defaultPace={prefs.defaultPace} onUpdate={update} />
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{strings.settings.temperatureUnit}</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">{strings.settings.temperatureUnit}</h2>
         <div className="flex gap-2">
           <OptionButton selected={prefs.temperatureUnit === "celsius"} onClick={() => update({ temperatureUnit: "celsius" })}>°C</OptionButton>
           <OptionButton selected={prefs.temperatureUnit === "fahrenheit"} onClick={() => update({ temperatureUnit: "fahrenheit" })}>°F</OptionButton>
@@ -122,7 +122,7 @@ export default function SettingsPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{strings.settings.defaultColdTarget}</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">{strings.settings.defaultColdTarget}</h2>
         <div className="flex flex-wrap gap-2">
           {COLD_TARGET_OPTIONS.map((opt) => (
             <OptionButton key={opt.value} selected={prefs.defaultColdTarget === opt.value} onClick={() => update({ defaultColdTarget: opt.value })}>{opt.label}</OptionButton>
@@ -132,11 +132,11 @@ export default function SettingsPage() {
 
       <DataManagement onDataCleared={() => setPrefs(getPreferences())} />
 
-      <Link href="/privacy" className="block text-center text-xs text-sky-600 underline dark:text-sky-400">
+      <Link href="/privacy" className="block text-center text-xs text-brand underline dark:text-brand-light">
         Privacy Policy
       </Link>
 
-      <p className="text-center text-xs text-gray-600">{strings.app.version}</p>
+      <p className="text-center text-xs text-on-surface-light-muted">{strings.app.version}</p>
 
       <Modal open={showProfile} onClose={() => setShowProfile(false)} title={strings.settings.practiceProfile}>
         <ProfileSetup

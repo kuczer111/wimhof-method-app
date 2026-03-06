@@ -42,14 +42,14 @@ export default function PresetGrid({ config, onConfigChange, customPresets, onDe
               aria-label={`${preset.name} preset: ${preset.description}`}
               className={`rounded-2xl border p-3 text-left transition-colors ${
                 isActive
-                  ? "border-sky-500 bg-sky-500/10"
-                  : "border-gray-200 bg-gray-100/50 active:bg-gray-200 dark:border-gray-700 dark:bg-gray-800/50 dark:active:bg-gray-700"
+                  ? "border-brand bg-brand/10"
+                  : "border-on-surface-light/[0.12] bg-on-surface-light/[0.04] active:bg-on-surface-light/[0.08] dark:border-surface-overlay dark:bg-surface-overlay/50 dark:active:bg-surface-overlay"
               }`}
             >
-              <span className={`block text-sm font-semibold ${isActive ? "text-sky-500 dark:text-sky-400" : "text-gray-800 dark:text-gray-100"}`}>
+              <span className={`block text-sm font-semibold ${isActive ? "text-brand dark:text-brand-light" : "text-on-surface-light dark:text-on-surface"}`}>
                 {preset.name}
               </span>
-              <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">
+              <span className="mt-0.5 block text-xs text-on-surface-light-muted dark:text-on-surface-muted">
                 {preset.description}
               </span>
             </button>
@@ -60,7 +60,7 @@ export default function PresetGrid({ config, onConfigChange, customPresets, onDe
       {/* Custom presets */}
       {customPresets.length > 0 && (
         <div className="flex flex-col gap-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
             {strings.breathe.customPresetLabel}
           </h2>
           <div className="grid grid-cols-2 gap-3">
@@ -71,8 +71,8 @@ export default function PresetGrid({ config, onConfigChange, customPresets, onDe
                   key={preset.id}
                   className={`relative rounded-2xl border p-3 text-left transition-colors ${
                     isActive
-                      ? "border-sky-500 bg-sky-500/10"
-                      : "border-gray-200 bg-gray-100/50 dark:border-gray-700 dark:bg-gray-800/50"
+                      ? "border-brand bg-brand/10"
+                      : "border-on-surface-light/[0.12] bg-on-surface-light/[0.04] dark:border-surface-overlay dark:bg-surface-overlay/50"
                   }`}
                 >
                   <button
@@ -80,17 +80,17 @@ export default function PresetGrid({ config, onConfigChange, customPresets, onDe
                     onClick={() => onConfigChange(preset.config)}
                     className="w-full text-left"
                   >
-                    <span className={`block text-sm font-semibold ${isActive ? "text-sky-500 dark:text-sky-400" : "text-gray-800 dark:text-gray-100"}`}>
+                    <span className={`block text-sm font-semibold ${isActive ? "text-brand dark:text-brand-light" : "text-on-surface-light dark:text-on-surface"}`}>
                       {preset.name}
                     </span>
-                    <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">
+                    <span className="mt-0.5 block text-xs text-on-surface-light-muted dark:text-on-surface-muted">
                       {preset.config.rounds}r · {preset.config.breathsPerRound[0]}b · {preset.config.pace}
                     </span>
                   </button>
                   <button
                     type="button"
                     onClick={() => onDeletePreset(preset.id)}
-                    className="absolute right-2 top-2 rounded-full p-1 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
+                    className="absolute right-2 top-2 rounded-full p-1 text-on-surface-light-muted hover:text-danger dark:text-on-surface-faint dark:hover:text-danger-light"
                     aria-label={`Delete ${preset.name}`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">

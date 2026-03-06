@@ -30,7 +30,7 @@ export default class ErrorBoundary extends React.Component<
         <div className="flex min-h-screen items-center justify-center p-6">
           <div className="text-center space-y-4">
             <h2 className="text-xl font-semibold">Something went wrong</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
               An unexpected error occurred.
             </p>
             <button
@@ -38,7 +38,7 @@ export default class ErrorBoundary extends React.Component<
                 this.setState({ hasError: false });
                 window.location.reload();
               }}
-              className="rounded-lg bg-blue-600 px-6 py-2 text-white font-medium hover:bg-blue-700 transition-colors"
+              className="rounded-lg bg-brand px-6 py-2 text-white font-medium hover:bg-brand-dark transition-colors"
             >
               Try again
             </button>

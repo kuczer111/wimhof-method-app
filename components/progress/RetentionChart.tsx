@@ -28,7 +28,7 @@ export default function RetentionChart({ sessions }: { sessions: BreathingSessio
           <button onClick={() => setMode("avg")} aria-pressed={mode === "avg"} aria-label="Show average retention" className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${mode === "avg" ? "bg-brand/10 text-brand-dark dark:bg-brand-dark/20 dark:text-brand-light" : "text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"}`}>
             {strings.progress.chart.showAvg}
           </button>
-          <button onClick={() => setMode("rounds")} aria-pressed={mode === "rounds"} aria-label="Show per-round breakdown" className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${mode === "rounds" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300" : "text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"}`}>
+          <button onClick={() => setMode("rounds")} aria-pressed={mode === "rounds"} aria-label="Show per-round breakdown" className={`rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${mode === "rounds" ? "bg-accent/10 text-accent-dark dark:bg-accent-dark/20 dark:text-accent-light" : "text-on-surface-muted hover:text-on-surface-faint dark:hover:text-on-surface"}`}>
             {strings.progress.chart.showRounds}
           </button>
         </div>
@@ -37,10 +37,10 @@ export default function RetentionChart({ sessions }: { sessions: BreathingSessio
       <div className="mb-1 flex flex-wrap items-center gap-3 text-xs text-on-surface-light-muted">
         {mode === "avg" ? (
           <>
-            <span className="flex items-center gap-1"><span className="inline-block h-0.5 w-3 bg-blue-400" /> {strings.progress.chart.avgLegend}</span>
-            <span className="flex items-center gap-1"><span className="inline-block h-0.5 w-3 bg-green-400" style={{ borderTop: "2px dashed #4ade80" }} /> {strings.progress.chart.trendLegend}</span>
-            <span className="flex items-center gap-1"><span className="inline-block h-0.5 w-3 bg-orange-400" style={{ borderTop: "2px dotted #fb923c" }} /> {strings.progress.chart.weeklyAvgLegend}</span>
-            <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-yellow-400" /> {strings.progress.chart.prLegend}</span>
+            <span className="flex items-center gap-1"><span className="inline-block h-0.5 w-3 bg-brand-light" /> {strings.progress.chart.avgLegend}</span>
+            <span className="flex items-center gap-1"><span className="inline-block h-0.5 w-3 bg-success-light" style={{ borderTop: "2px dashed #4ade80" }} /> {strings.progress.chart.trendLegend}</span>
+            <span className="flex items-center gap-1"><span className="inline-block h-0.5 w-3 bg-accent-light" style={{ borderTop: "2px dotted #fb923c" }} /> {strings.progress.chart.weeklyAvgLegend}</span>
+            <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-warning-light" /> {strings.progress.chart.prLegend}</span>
           </>
         ) : (
           Array.from({ length: maxRounds }, (_, i) => (

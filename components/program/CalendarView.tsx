@@ -22,7 +22,7 @@ export default function CalendarView({
     <div className="flex flex-col gap-3">
       {weeks.map((week) => (
         <div key={week.label}>
-          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
             {week.label}
           </h3>
           <div className="flex gap-1.5">
@@ -31,21 +31,21 @@ export default function CalendarView({
               const isToday = day.dayNumber === todayDayNumber;
               const isFuture = todayDayNumber !== null && day.dayNumber > todayDayNumber;
 
-              let bg = "bg-gray-200 dark:bg-gray-800";
-              let text = "text-gray-500 dark:text-gray-400";
+              let bg = "bg-on-surface-light/[0.12] dark:bg-surface-overlay";
+              let text = "text-on-surface-light-muted dark:text-on-surface-muted";
 
               if (isCompleted) {
-                bg = "bg-emerald-500 dark:bg-emerald-600";
+                bg = "bg-success dark:bg-success-dark";
                 text = "text-white";
               } else if (isToday) {
-                bg = "bg-sky-500 dark:bg-sky-600";
+                bg = "bg-brand dark:bg-brand-dark";
                 text = "text-white";
               } else if (day.isRestDay) {
-                bg = "bg-gray-100 dark:bg-gray-800/50";
-                text = "text-gray-400 dark:text-gray-500";
+                bg = "bg-on-surface-light/[0.06] dark:bg-surface-overlay/50";
+                text = "text-on-surface-light-muted dark:text-on-surface-faint";
               } else if (isFuture) {
-                bg = "bg-gray-100 dark:bg-gray-800/50";
-                text = "text-gray-400 dark:text-gray-600";
+                bg = "bg-on-surface-light/[0.06] dark:bg-surface-overlay/50";
+                text = "text-on-surface-light-muted dark:text-on-surface-faint";
               }
 
               return (

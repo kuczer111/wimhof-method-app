@@ -19,7 +19,7 @@ interface AudioSettingsProps {
 export default function AudioSettings({ audioMode, onUpdate }: AudioSettingsProps) {
   return (
     <Card>
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.settings.audioMode}
       </h2>
       <div className="flex gap-2">

@@ -115,7 +115,7 @@ function OnboardingFlow() {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 flex flex-col bg-white dark:bg-gray-950"
+      className="fixed inset-0 flex flex-col bg-white dark:bg-surface-base"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -126,7 +126,7 @@ function OnboardingFlow() {
           <div
             key={i}
             className={`h-2 w-2 rounded-full transition-colors ${
-              i === current ? "bg-sky-500" : "bg-gray-300 dark:bg-gray-700"
+              i === current ? "bg-brand" : "bg-on-surface-light/30 dark:bg-surface-overlay"
             }`}
           />
         ))}
@@ -151,7 +151,7 @@ function OnboardingFlow() {
         {canSkip ? (
           <button
             onClick={handleSkip}
-            className="text-sm text-gray-400 dark:text-gray-500"
+            className="text-sm text-on-surface-light-muted dark:text-on-surface-faint"
           >
             {t.skip}
           </button>
@@ -175,10 +175,10 @@ function HeroScreen() {
   return (
     <div className="text-center">
       <div className="mb-6 text-6xl">&#10052;&#65039;</div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+      <h1 className="text-3xl font-bold text-on-surface-light dark:text-on-surface">
         {t.hero.title}
       </h1>
-      <p className="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-xs mx-auto">
+      <p className="mt-4 text-lg text-on-surface-light-muted dark:text-on-surface-muted max-w-xs mx-auto">
         {t.hero.subtitle}
       </p>
     </div>
@@ -194,19 +194,19 @@ function PillarsScreen() {
 
   return (
     <div className="w-full max-w-sm">
-      <h2 className="mb-6 text-center text-2xl font-bold text-gray-900 dark:text-white">
+      <h2 className="mb-6 text-center text-2xl font-bold text-on-surface-light dark:text-on-surface">
         {t.pillars.title}
       </h2>
       <div className="space-y-4">
         {pillars.map((p) => (
           <div
             key={p.title}
-            className="flex gap-4 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-900"
+            className="flex gap-4 rounded-xl border border-on-surface-light/[0.12] bg-on-surface-light/[0.03] p-4 dark:border-surface-overlay dark:bg-surface-raised"
           >
             <span className="text-2xl">{p.icon}</span>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{p.title}</h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{p.desc}</p>
+              <h3 className="font-semibold text-on-surface-light dark:text-on-surface">{p.title}</h3>
+              <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">{p.desc}</p>
             </div>
           </div>
         ))}
@@ -218,24 +218,24 @@ function PillarsScreen() {
 function ExpectationsScreen() {
   return (
     <div className="w-full max-w-sm">
-      <h2 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-white">
+      <h2 className="mb-2 text-center text-2xl font-bold text-on-surface-light dark:text-on-surface">
         {t.expectations.title}
       </h2>
-      <p className="mb-6 text-center text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-center text-sm text-on-surface-light-muted dark:text-on-surface-muted">
         {t.expectations.subtitle}
       </p>
       <ul className="space-y-3">
         {t.expectations.items.map((item) => (
           <li
             key={item}
-            className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200"
+            className="flex items-center gap-3 rounded-lg border border-on-surface-light/[0.12] bg-on-surface-light/[0.03] px-4 py-3 text-sm text-on-surface-light dark:border-surface-overlay dark:bg-surface-raised dark:text-on-surface"
           >
-            <span className="text-sky-500">&#10003;</span>
+            <span className="text-brand">&#10003;</span>
             {item}
           </li>
         ))}
       </ul>
-      <p className="mt-6 text-center text-sm text-gray-400 dark:text-gray-500">
+      <p className="mt-6 text-center text-sm text-on-surface-light-muted dark:text-on-surface-faint">
         {t.expectations.reassurance}
       </p>
     </div>
@@ -253,17 +253,17 @@ function SafetyScreen({
     <div className="w-full max-w-sm">
       <div className="mb-4 text-center">
         <span className="text-4xl">&#9888;&#65039;</span>
-        <h2 className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+        <h2 className="mt-2 text-2xl font-bold text-on-surface-light dark:text-on-surface">
           {t.safety.title}
         </h2>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
           {t.safety.subtitle}
         </p>
       </div>
       <ul className="mb-6 space-y-3">
         {safetyRules.map((rule) => (
-          <li key={rule} className="flex gap-3 text-sm text-gray-700 dark:text-gray-200">
-            <span className="mt-0.5 shrink-0 text-yellow-500">&#x2022;</span>
+          <li key={rule} className="flex gap-3 text-sm text-on-surface-light dark:text-on-surface">
+            <span className="mt-0.5 shrink-0 text-warning">&#x2022;</span>
             {rule}
           </li>
         ))}
@@ -274,7 +274,7 @@ function SafetyScreen({
         </Button>
       )}
       {acknowledged && (
-        <div className="flex items-center justify-center gap-2 text-green-500">
+        <div className="flex items-center justify-center gap-2 text-success">
           <span>&#10003;</span>
           <span className="text-sm font-medium">Acknowledged</span>
         </div>
@@ -286,26 +286,26 @@ function SafetyScreen({
 function StartingPointScreen({ onSelect }: { onSelect: (exp: "new" | "experienced") => void }) {
   return (
     <div className="w-full max-w-sm">
-      <h2 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-white">
+      <h2 className="mb-2 text-center text-2xl font-bold text-on-surface-light dark:text-on-surface">
         {t.startingPoint.title}
       </h2>
-      <p className="mb-6 text-center text-sm text-gray-500 dark:text-gray-400">
+      <p className="mb-6 text-center text-sm text-on-surface-light-muted dark:text-on-surface-muted">
         {t.startingPoint.subtitle}
       </p>
       <div className="space-y-3">
         <button
           onClick={() => onSelect("new")}
-          className="w-full rounded-xl border-2 border-sky-500 bg-sky-50 p-4 text-left transition-colors active:bg-sky-100 dark:bg-sky-950 dark:active:bg-sky-900"
+          className="w-full rounded-xl border-2 border-brand bg-brand/10 p-4 text-left transition-colors active:bg-brand/15 dark:bg-brand-dark/20 dark:active:bg-brand-dark/30"
         >
-          <h3 className="font-semibold text-gray-900 dark:text-white">{t.startingPoint.newbie}</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t.startingPoint.newbieDesc}</p>
+          <h3 className="font-semibold text-on-surface-light dark:text-on-surface">{t.startingPoint.newbie}</h3>
+          <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">{t.startingPoint.newbieDesc}</p>
         </button>
         <button
           onClick={() => onSelect("experienced")}
-          className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 p-4 text-left transition-colors active:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:active:bg-gray-800"
+          className="w-full rounded-xl border-2 border-on-surface-light/[0.12] bg-on-surface-light/[0.03] p-4 text-left transition-colors active:bg-on-surface-light/[0.06] dark:border-surface-overlay dark:bg-surface-raised dark:active:bg-surface-overlay"
         >
-          <h3 className="font-semibold text-gray-900 dark:text-white">{t.startingPoint.experienced}</h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t.startingPoint.experiencedDesc}</p>
+          <h3 className="font-semibold text-on-surface-light dark:text-on-surface">{t.startingPoint.experienced}</h3>
+          <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">{t.startingPoint.experiencedDesc}</p>
         </button>
       </div>
     </div>

@@ -39,7 +39,7 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
 
   return (
     <div className="flex flex-col gap-6 px-4 pt-8 pb-24">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">{strings.breathe.heading}</h1>
+      <h1 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{strings.breathe.heading}</h1>
 
       <SessionTip />
 
@@ -51,7 +51,7 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
       />
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.breathe.rounds}
         </h2>
         <div className="flex gap-2">
@@ -72,7 +72,7 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.breathe.breathsPerRound}
         </h2>
         <div className="flex gap-2">
@@ -90,7 +90,7 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
       </Card>
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.breathe.retentionMode}
         </h2>
         <div className="flex gap-2">
@@ -104,7 +104,7 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
             </OptionButton>
           ))}
         </div>
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-xs text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.breathe.retentionModeDescriptions[config.retentionMode]}
         </p>
       </Card>
@@ -112,7 +112,7 @@ export default function BreathingConfig({ config, onConfigChange, onStart }: Bre
       <MindsetPrompts config={config} onConfigChange={onConfigChange} />
 
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.breathe.pace}
         </h2>
         <div className="flex gap-2">

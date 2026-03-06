@@ -23,8 +23,8 @@ export default function SafetyReminder({ onProceed }: SafetyReminderProps) {
     <Modal open={open} onClose={() => setOpen(false)} title={strings.safety.reminder.title}>
       <ul className="mb-6 space-y-2">
         {SAFETY_POINTS.map((point) => (
-          <li key={point} className="flex gap-2 text-sm text-gray-600 dark:text-gray-300">
-            <span className="shrink-0 text-yellow-500">&#x2022;</span>
+          <li key={point} className="flex gap-2 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
+            <span className="shrink-0 text-warning">&#x2022;</span>
             {point}
           </li>
         ))}

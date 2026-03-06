@@ -51,7 +51,7 @@ export default function SavePresetForm({ config, customPresets, onPresetsChange 
               onChange={(e) => setPresetName(e.target.value)}
               placeholder={strings.breathe.presetNamePlaceholder}
               maxLength={30}
-              className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-50 dark:placeholder:text-gray-500"
+              className="flex-1 rounded-lg border border-on-surface-light/[0.12] bg-white px-3 py-2 text-sm text-on-surface-light placeholder:text-on-surface-light-muted dark:border-surface-overlay dark:bg-surface-overlay dark:text-on-surface dark:placeholder:text-on-surface-faint"
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSavePreset();
               }}
@@ -71,7 +71,7 @@ export default function SavePresetForm({ config, customPresets, onPresetsChange 
       )}
 
       {saveMessage && (
-        <p className="text-center text-sm font-medium text-emerald-500 dark:text-emerald-400">
+        <p className="text-center text-sm font-medium text-success dark:text-success-light">
           {saveMessage}
         </p>
       )}

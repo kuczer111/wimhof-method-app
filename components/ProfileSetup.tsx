@@ -81,12 +81,12 @@ export default function ProfileSetup({
   return (
     <div className="w-full max-w-sm space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t.title}</h2>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t.subtitle}</p>
+        <h2 className="text-2xl font-bold text-on-surface-light dark:text-on-surface">{t.title}</h2>
+        <p className="mt-1 text-sm text-on-surface-light-muted dark:text-on-surface-muted">{t.subtitle}</p>
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="mb-2 block text-sm font-medium text-on-surface-light-muted dark:text-on-surface-muted">
           {t.primaryGoal}
         </label>
         <div className="flex flex-wrap gap-2">
@@ -99,7 +99,7 @@ export default function ProfileSetup({
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="mb-2 block text-sm font-medium text-on-surface-light-muted dark:text-on-surface-muted">
           {t.availableTime}
         </label>
         <div className="flex gap-2">
@@ -112,7 +112,7 @@ export default function ProfileSetup({
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="mb-2 block text-sm font-medium text-on-surface-light-muted dark:text-on-surface-muted">
           {t.experienceLevel}
         </label>
         <div className="flex flex-wrap gap-2">
@@ -125,7 +125,7 @@ export default function ProfileSetup({
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="mb-2 block text-sm font-medium text-on-surface-light-muted dark:text-on-surface-muted">
           {t.preferredTime}
         </label>
         <div className="flex gap-2">
@@ -142,7 +142,7 @@ export default function ProfileSetup({
           {t.save}
         </Button>
         {onSkip && (
-          <button onClick={onSkip} className="text-sm text-gray-400 dark:text-gray-500">
+          <button onClick={onSkip} className="text-sm text-on-surface-light-muted dark:text-on-surface-faint">
             {t.skipForNow}
           </button>
         )}

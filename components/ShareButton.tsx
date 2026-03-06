@@ -56,7 +56,7 @@ export default function ShareButton({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl bg-gray-900 p-5">
+      <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl bg-surface-raised p-5">
         {/* Ratio toggle */}
         <div className="flex gap-2">
           {(["9:16", "1:1"] as const).map((r) => (
@@ -65,8 +65,8 @@ export default function ShareButton({
               onClick={() => changeRatio(r)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                 ratio === r
-                  ? "bg-sky-500 text-white"
-                  : "bg-gray-800 text-gray-400"
+                  ? "bg-brand text-white"
+                  : "bg-surface-overlay text-on-surface-muted"
               }`}
             >
               {r}

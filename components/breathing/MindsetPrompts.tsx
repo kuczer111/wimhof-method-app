@@ -10,7 +10,7 @@ interface MindsetPromptsProps {
 export default function MindsetPrompts({ config, onConfigChange }: MindsetPromptsProps) {
   return (
     <Card>
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.breathe.mindsetPrompts}
       </h2>
       <div className="flex flex-col gap-2">
@@ -28,7 +28,7 @@ export default function MindsetPrompts({ config, onConfigChange }: MindsetPrompt
               onConfigChange({ ...config, mindsetPrompts: prompts });
             }}
             placeholder={strings.breathe.mindsetPromptPlaceholder(i + 1)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-50 dark:placeholder:text-gray-500"
+            className="rounded-lg border border-on-surface-light/[0.12] bg-white px-3 py-2 text-sm text-on-surface-light placeholder:text-on-surface-light-muted dark:border-surface-overlay dark:bg-surface-overlay dark:text-on-surface dark:placeholder:text-on-surface-faint"
           />
         ))}
       </div>

@@ -160,7 +160,7 @@ export default function ProgramPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center pt-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
       </div>
     );
   }
@@ -170,13 +170,13 @@ export default function ProgramPage() {
   if (!progress) {
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">
+        <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">
           {strings.program.heading}
         </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
           {program.description}
         </p>
-        <p className="text-center text-gray-600 dark:text-gray-300">
+        <p className="text-center text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.program.notStarted}
         </p>
         <Button size="lg" className="w-full max-w-xs" onClick={handleStartProgram}>
@@ -191,10 +191,10 @@ export default function ProgramPage() {
   if (isProgramComplete) {
     return (
       <div className="flex flex-col items-center gap-6 px-4 pt-8 pb-24">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">
+        <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">
           {strings.program.programComplete}
         </h1>
-        <p className="text-center text-gray-500 dark:text-gray-400">
+        <p className="text-center text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.program.programCompleteMessage}
         </p>
         <CalendarView program={program} progress={progress} todayDayNumber={todayDayNumber} />
@@ -221,15 +221,15 @@ export default function ProgramPage() {
     <div className="flex flex-col gap-5 px-4 pt-6 pb-24">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">
+          <h1 className="text-xl font-bold text-on-surface-light dark:text-on-surface">
             {strings.program.heading}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-on-surface-light-muted dark:text-on-surface-muted">
             {strings.program.subtitle}
           </p>
         </div>
         {progress.paused && (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+          <span className="rounded-full bg-warning/20 px-3 py-1 text-xs font-semibold text-warning-dark dark:bg-warning-dark/30 dark:text-warning-light">
             {strings.program.paused}
           </span>
         )}
@@ -269,7 +269,7 @@ export default function ProgramPage() {
         )}
         <button
           type="button"
-          className="text-xs text-gray-400 underline dark:text-gray-500"
+          className="text-xs text-on-surface-light-muted underline dark:text-on-surface-faint"
           onClick={() => setConfirmReset(true)}
         >
           {strings.program.resetProgram}

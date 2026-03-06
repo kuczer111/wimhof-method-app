@@ -39,12 +39,12 @@ export default function DataManagement({ onDataCleared }: DataManagementProps) {
   return (
     <>
       <Card>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.settings.data}
         </h2>
         <div className="flex flex-col gap-3">
           <div>
-            <p className="mb-2 text-xs text-gray-400 dark:text-gray-500">
+            <p className="mb-2 text-xs text-on-surface-light-muted dark:text-on-surface-faint">
               {strings.settings.exportDataDescription}
             </p>
             <Button variant="secondary" size="sm" onClick={handleExportData}>
@@ -52,7 +52,7 @@ export default function DataManagement({ onDataCleared }: DataManagementProps) {
             </Button>
           </div>
           {cleared ? (
-            <p className="text-sm text-green-600 dark:text-green-400">{strings.settings.allDataCleared}</p>
+            <p className="text-sm text-success dark:text-success-light">{strings.settings.allDataCleared}</p>
           ) : (
             <Button
               variant="danger"
@@ -70,7 +70,7 @@ export default function DataManagement({ onDataCleared }: DataManagementProps) {
         onClose={() => setShowClearConfirm(false)}
         title={strings.settings.clearConfirm.title}
       >
-        <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
+        <p className="mb-6 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.settings.clearConfirm.description}
         </p>
         <div className="flex gap-3">

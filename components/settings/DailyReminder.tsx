@@ -22,10 +22,10 @@ export default function DailyReminder() {
     <Card>
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
             {strings.settings.dailyReminder}
           </h2>
-          <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-xs text-on-surface-light-muted dark:text-on-surface-faint">
             {strings.settings.reminderDescription}
           </p>
         </div>
@@ -46,8 +46,8 @@ export default function DailyReminder() {
           }}
           className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${
             reminder.enabled
-              ? "bg-cyan-500"
-              : "bg-gray-300 dark:bg-gray-700"
+              ? "bg-cold"
+              : "bg-on-surface-light/30 dark:bg-surface-overlay"
           }`}
         >
           <span
@@ -60,7 +60,7 @@ export default function DailyReminder() {
 
       {reminder.enabled && (
         <div className="mt-4">
-          <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">
+          <label className="mb-2 block text-sm text-on-surface-light-muted dark:text-on-surface-muted">
             {strings.settings.reminderTime}
           </label>
           <input
@@ -72,16 +72,16 @@ export default function DailyReminder() {
               setReminder(next);
               saveReminderSettings(next);
             }}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className="rounded-lg border border-on-surface-light/20 bg-white px-3 py-2 text-sm dark:border-on-surface-faint dark:bg-surface-overlay dark:text-on-surface"
           />
         </div>
       )}
 
       {notifPermission === "denied" && (
-        <p className="mt-2 text-xs text-red-500">{strings.settings.notificationsBlocked}</p>
+        <p className="mt-2 text-xs text-danger">{strings.settings.notificationsBlocked}</p>
       )}
       {notifPermission === "unsupported" && (
-        <p className="mt-2 text-xs text-gray-400">{strings.settings.notificationsUnsupported}</p>
+        <p className="mt-2 text-xs text-on-surface-light-muted">{strings.settings.notificationsUnsupported}</p>
       )}
     </Card>
   );

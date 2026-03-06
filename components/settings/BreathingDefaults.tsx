@@ -23,13 +23,13 @@ interface BreathingDefaultsProps {
 export default function BreathingDefaults({ defaultRounds, defaultBreathCount, defaultPace, onUpdate }: BreathingDefaultsProps) {
   return (
     <Card>
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.settings.defaultBreathingConfig}
       </h2>
 
       <div className="space-y-4">
         <div>
-          <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">{strings.settings.rounds}</label>
+          <label className="mb-2 block text-sm text-on-surface-light-muted dark:text-on-surface-muted">{strings.settings.rounds}</label>
           <div className="flex gap-2">
             {ROUND_OPTIONS.map((n) => (
               <OptionButton
@@ -44,7 +44,7 @@ export default function BreathingDefaults({ defaultRounds, defaultBreathCount, d
         </div>
 
         <div>
-          <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">
+          <label className="mb-2 block text-sm text-on-surface-light-muted dark:text-on-surface-muted">
             {strings.settings.breathsPerRound}
           </label>
           <div className="flex gap-2">
@@ -61,7 +61,7 @@ export default function BreathingDefaults({ defaultRounds, defaultBreathCount, d
         </div>
 
         <div>
-          <label className="mb-2 block text-sm text-gray-600 dark:text-gray-300">{strings.settings.pace}</label>
+          <label className="mb-2 block text-sm text-on-surface-light-muted dark:text-on-surface-muted">{strings.settings.pace}</label>
           <div className="flex gap-2">
             {PACE_OPTIONS.map((opt) => (
               <OptionButton

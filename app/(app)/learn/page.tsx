@@ -31,7 +31,7 @@ export default function LearnPage() {
       // Bold headings
       if (block.startsWith("**") && block.endsWith("**")) {
         return (
-          <h3 key={i} className="mt-6 mb-3 text-lg font-semibold text-gray-900 dark:text-white">
+          <h3 key={i} className="mt-6 mb-3 text-lg font-semibold text-on-surface-light dark:text-on-surface">
             {block.slice(2, -2)}
           </h3>
         );
@@ -39,10 +39,10 @@ export default function LearnPage() {
       // Paragraphs that may contain inline bold
       const parts = block.split(/(\*\*[^*]+\*\*)/g);
       return (
-        <p key={i} className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
+        <p key={i} className="mb-4 leading-relaxed text-on-surface-light-muted dark:text-on-surface-muted">
           {parts.map((part, j) =>
             part.startsWith("**") && part.endsWith("**") ? (
-              <strong key={j} className="font-semibold text-gray-900 dark:text-white">
+              <strong key={j} className="font-semibold text-on-surface-light dark:text-on-surface">
                 {part.slice(2, -2)}
               </strong>
             ) : (
@@ -57,26 +57,26 @@ export default function LearnPage() {
   // Reader view
   if (activeChapter) {
     return (
-      <div className="min-h-screen bg-white pb-28 dark:bg-gray-950">
+      <div className="min-h-screen bg-white pb-28 dark:bg-surface-base">
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center gap-3 border-b border-gray-200 bg-white/80 px-4 py-3 backdrop-blur-lg dark:border-gray-800 dark:bg-gray-950/80">
+        <div className="sticky top-0 z-10 flex items-center gap-3 border-b border-on-surface-light/[0.12] bg-white/80 px-4 py-3 backdrop-blur-lg dark:border-surface-overlay dark:bg-surface-base/80">
           <button
             onClick={() => setActiveChapter(null)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-on-surface-light-muted transition-colors hover:bg-on-surface-light/[0.06] dark:text-on-surface-muted dark:hover:bg-surface-overlay"
             aria-label={strings.learn.back}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          <span className="text-sm font-medium text-on-surface-light-muted dark:text-on-surface-muted">
             {strings.learn.chapterLabel} {activeChapter.id}
           </span>
         </div>
 
         {/* Content */}
         <div className="mx-auto max-w-2xl px-5 py-6">
-          <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="mb-6 text-2xl font-bold text-on-surface-light dark:text-on-surface">
             {activeChapter.title}
           </h1>
           {renderedContent}
@@ -87,12 +87,12 @@ export default function LearnPage() {
 
   // Chapter list view
   return (
-    <div className="min-h-screen bg-white pb-28 dark:bg-gray-950">
+    <div className="min-h-screen bg-white pb-28 dark:bg-surface-base">
       <div className="mx-auto max-w-lg px-4 py-6">
-        <h1 className="mb-1 text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="mb-1 text-2xl font-bold text-on-surface-light dark:text-on-surface">
           {strings.learn.heading}
         </h1>
-        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mb-6 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
           {strings.learn.subtitle}
         </p>
 
@@ -102,7 +102,7 @@ export default function LearnPage() {
             return (
               <Card
                 key={chapter.id}
-                className={`transition-colors ${locked ? "opacity-60" : "cursor-pointer hover:border-sky-300 dark:hover:border-sky-700"}`}
+                className={`transition-colors ${locked ? "opacity-60" : "cursor-pointer hover:border-brand-light dark:hover:border-brand-dark"}`}
                 onClick={locked ? undefined : () => setActiveChapter(chapter)}
                 role={locked ? undefined : "button"}
                 tabIndex={locked ? undefined : 0}
@@ -114,18 +114,18 @@ export default function LearnPage() {
                 }}
               >
                 <div className="flex items-start gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-600 dark:bg-sky-900/40 dark:text-sky-400">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand/10 text-sm font-semibold text-brand dark:bg-brand-dark/30 dark:text-brand-light">
                     {chapter.id}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <h2 className="font-semibold text-gray-900 dark:text-white">
+                    <h2 className="font-semibold text-on-surface-light dark:text-on-surface">
                       {chapter.title}
                     </h2>
-                    <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="mt-0.5 text-sm text-on-surface-light-muted dark:text-on-surface-muted">
                       {chapter.summary}
                     </p>
                     {locked && (
-                      <p className="mt-2 flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+                      <p className="mt-2 flex items-center gap-1.5 text-xs text-warning-dark dark:text-warning-light">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
                           <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                           <path d="M7 11V7a5 5 0 0 1 10 0v4" />

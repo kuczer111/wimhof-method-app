@@ -60,8 +60,8 @@ export default function SessionTip() {
   const tip = useMemo(() => getTip(), []);
 
   return (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800/50 dark:bg-amber-900/20">
-      <p className="text-sm leading-relaxed text-amber-800 dark:text-amber-200">
+    <div className="rounded-2xl border border-warning/30 bg-warning/10 px-4 py-3 dark:border-warning-dark/30 dark:bg-warning-dark/20">
+      <p className="text-sm leading-relaxed text-warning-dark dark:text-warning-light">
         {tip}
       </p>
     </div>

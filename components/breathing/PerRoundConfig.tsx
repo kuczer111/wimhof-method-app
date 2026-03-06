@@ -14,13 +14,13 @@ export default function PerRoundConfig({ config, onConfigChange }: PerRoundConfi
 
   return (
     <div className="mt-4">
-      <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+      <p className="mb-2 text-xs font-medium text-on-surface-light-muted dark:text-on-surface-muted">
         {strings.breathe.perRoundCustomize}
       </p>
       <div className="flex flex-col gap-2">
         {Array.from({ length: config.rounds }, (_, i) => (
           <div key={i} className="flex items-center gap-2">
-            <span className="w-8 text-xs font-semibold text-gray-500 dark:text-gray-400">
+            <span className="w-8 text-xs font-semibold text-on-surface-light-muted dark:text-on-surface-muted">
               {strings.breathe.roundLabel(i + 1)}
             </span>
             <div className="flex gap-1.5">
