@@ -4,21 +4,23 @@ This project uses an automated pipeline to plan, execute, and QA tasks via Claud
 
 ## Files Overview
 
-| File             | Purpose                                                                         |
-| ---------------- | ------------------------------------------------------------------------------- |
-| `plan.sh`        | Generates tasks in TASKS.md from a spec or QA findings                          |
-| `ralph.sh`       | Loops through unchecked tasks, delegates to ralph-task.sh, commits & pushes     |
-| `ralph-task.sh`  | Executes a single task via Claude CLI with build verification (up to 8 retries) |
-| `qa.sh`          | Runs automated QA testing against the deployed app                              |
-| `TASKS.md`       | Task list — checked items are done, unchecked are pending                       |
-| `QA-FINDINGS.md` | QA test results (overwritten each run, git tracks history)                      |
-| `SPEC-vX.md`     | Feature specifications per version                                              |
-| `REVIEW-vX.md`   | Post-version review notes                                                       |
-| `ralph.log`      | Append-only log of completed/failed tasks with timestamps                       |
+| File               | Purpose                                                                         |
+| ------------------ | ------------------------------------------------------------------------------- |
+| `plan.sh`          | Generates tasks in TASKS.md from a spec or QA findings                          |
+| `ralph.sh`         | Loops through unchecked tasks, delegates to ralph-task.sh, commits & pushes     |
+| `ralph-task.sh`    | Executes a single task via Claude CLI with build verification (up to 8 retries) |
+| `qa.sh`            | Runs automated QA testing against the deployed app                              |
+| `research-plan.sh` | Takes a topic, asks context questions, breaks into subtopics                    |
+| `research.sh`      | Loops subtopics, researches each with web search, synthesizes final output      |
+| `TASKS.md`         | Task list — checked items are done, unchecked are pending                       |
+| `QA-FINDINGS.md`   | QA test results (overwritten each run, git tracks history)                      |
+| `SPEC-vX.md`       | Feature specifications per version                                              |
+| `REVIEW-vX.md`     | Post-version review notes                                                       |
+| `ralph.log`        | Append-only log of completed/failed tasks with timestamps                       |
 
 ---
 
-## Two Modes
+## Three Pipelines
 
 ### `spec` mode — Feature work
 
@@ -34,6 +36,14 @@ Fix bugs found by QA testing.
 
 ```
 qa.sh  -->  QA-FINDINGS.md  -->  plan.sh fix  -->  TASKS.md  -->  ralph.sh fix  -->  fix: commits
+```
+
+### `research` mode — Research and brainstorming
+
+Investigate a topic with web search, produce a synthesized document.
+
+```
+research-plan.sh "topic"  -->  RESEARCH-PLAN.md  -->  research.sh  -->  RESEARCH-OUTPUT.md
 ```
 
 ---
@@ -135,6 +145,89 @@ git diff QA-FINDINGS.md
 
 ---
 
+## Step-by-Step: Research
+
+### 1. Plan the research
+
+```bash
+./research-plan.sh "How do other fitness apps handle streak mechanics?"
+```
+
+The script will:
+
+1. Ask Claude to generate 3-5 context questions tailored to your topic
+2. Present them interactively — answer each or press Enter to skip
+3. Use your answers + topic to generate focused subtopics
+4. Write everything to `RESEARCH-PLAN.md`
+
+Example interaction:
+
+```
+Before I research this, a few questions to sharpen the focus:
+
+1. What is the goal of this research? (Benchmarking, redesigning, learning?)
+   > We want to redesign our streak system to reduce anxiety
+
+2. Which platforms matter most? (Mobile, web, wearables?)
+   > Mobile fitness and language learning apps
+
+3. Who is the audience for this output? (You, stakeholders, design team?)
+   > Me, solo developer
+
+Planning subtopics...
+Done: RESEARCH-PLAN.md (7 subtopics)
+```
+
+To skip the questions and go straight to subtopics:
+
+```bash
+./research-plan.sh --quick "your topic here"
+```
+
+To read a longer topic from a file:
+
+```bash
+./research-plan.sh --file RESEARCH-TOPIC.md
+```
+
+### 2. Run the research
+
+```bash
+./research.sh
+```
+
+This will:
+
+1. Loop through each subtopic in `RESEARCH-PLAN.md`
+2. Claude researches each one using web search, web fetch, and local file reading
+3. Findings are appended to `RESEARCH-WIP.md` (working notes)
+4. Each subtopic gets checked off and you get a notification
+5. After all subtopics: a final synthesis pass produces `RESEARCH-OUTPUT.md`
+
+### 3. Output files
+
+| File                 | Contents                                        |
+| -------------------- | ----------------------------------------------- |
+| `RESEARCH-PLAN.md`   | Topic, context answers, subtopic checklist      |
+| `RESEARCH-WIP.md`    | Raw findings per subtopic (messy working notes) |
+| `RESEARCH-OUTPUT.md` | Polished, synthesized final document            |
+
+### Named research sessions
+
+Run multiple research sessions in parallel using `RESEARCH_NAME`:
+
+```bash
+RESEARCH_NAME=streaks ./research-plan.sh "How do apps handle streaks?"
+RESEARCH_NAME=streaks ./research.sh
+# produces: RESEARCH-streaks-PLAN.md, RESEARCH-streaks-WIP.md, RESEARCH-streaks-OUTPUT.md
+
+RESEARCH_NAME=onboarding ./research-plan.sh "Best onboarding flows in fitness apps"
+RESEARCH_NAME=onboarding ./research.sh
+# produces: RESEARCH-onboarding-PLAN.md, etc.
+```
+
+---
+
 ## Spec File Naming
 
 Specs are named `SPEC-vX.md` by convention (e.g., `SPEC-v1.md`, `SPEC-v5.md`, `SPEC-v4-draft.md`).
@@ -173,14 +266,15 @@ Tasks from different modes (spec and fix) share the same TASKS.md and numbering 
 
 ## Environment Variables
 
-| Variable            | Default                                | Used by                | Description                                       |
-| ------------------- | -------------------------------------- | ---------------------- | ------------------------------------------------- |
-| `SPEC_FILE`         | _(auto-detected)_                      | plan.sh, ralph-task.sh | Override spec file (default: highest SPEC-v\*.md) |
-| `APP_URL`           | `https://wimhof-method-app.vercel.app` | qa.sh                  | URL to test                                       |
-| `QA_FILE`           | `QA-FINDINGS.md`                       | qa.sh                  | Output file for QA results                        |
-| `QA_TIMEOUT`        | `600` (10 min)                         | qa.sh                  | Timeout per QA pass in seconds                    |
-| `QA_MODEL`          | `claude-sonnet-4-6`                    | qa.sh                  | Model for QA testing                              |
-| `QA_SKIP_PREFLIGHT` | `0`                                    | qa.sh                  | Set to `1` to skip MCP check                      |
+| Variable            | Default                                | Used by                       | Description                                       |
+| ------------------- | -------------------------------------- | ----------------------------- | ------------------------------------------------- |
+| `SPEC_FILE`         | _(auto-detected)_                      | plan.sh, ralph-task.sh        | Override spec file (default: highest SPEC-v\*.md) |
+| `APP_URL`           | `https://wimhof-method-app.vercel.app` | qa.sh                         | URL to test                                       |
+| `QA_FILE`           | `QA-FINDINGS.md`                       | qa.sh                         | Output file for QA results                        |
+| `QA_TIMEOUT`        | `600` (10 min)                         | qa.sh                         | Timeout per QA pass in seconds                    |
+| `QA_MODEL`          | `claude-sonnet-4-6`                    | qa.sh                         | Model for QA testing                              |
+| `QA_SKIP_PREFLIGHT` | `0`                                    | qa.sh                         | Set to `1` to skip MCP check                      |
+| `RESEARCH_NAME`     | _(none)_                               | research-plan.sh, research.sh | Prefix for research output files                  |
 
 ---
 
@@ -193,6 +287,8 @@ Events notified:
 - **plan.sh**: planning done (with task count)
 - **ralph.sh**: task complete, task failed, all done, push failed, suspicious commit size
 - **qa.sh**: pass complete, pass failed/timed out, QA complete
+- **research-plan.sh**: planning done (with subtopic count)
+- **research.sh**: subtopic complete (with progress), synthesis started, research complete
 
 ---
 
@@ -248,4 +344,13 @@ vim SPEC-v5.md
 ./qa.sh
 git diff QA-FINDINGS.md   # see what's fixed vs still broken
 git add QA-FINDINGS.md && git commit -m "qa: re-run after fixes"
+```
+
+### Research a topic
+
+```bash
+./research-plan.sh "What state management patterns work best for offline-first PWAs?"
+# answer context questions, review RESEARCH-PLAN.md
+./research.sh
+# wait for notifications, read RESEARCH-OUTPUT.md when done
 ```
