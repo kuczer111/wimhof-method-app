@@ -243,7 +243,7 @@ $(echo "$TAKEAWAYS" | tail -"$DEPTH_PRIOR_LINES")"
   start_monitored_heartbeat "Subtopic ${DONE}/${TOTAL}" "$CLAUDE_OUTPUT"
 
   set +eo pipefail
-  timeout "$RESEARCH_TIMEOUT" claude "${RESEARCH_MODEL_FLAG[@]}" --dangerously-skip-permissions --print \
+  timeout "$RESEARCH_TIMEOUT" claude ${RESEARCH_MODEL_FLAG[@]+"${RESEARCH_MODEL_FLAG[@]}"} --dangerously-skip-permissions --print \
     --allowedTools "$RESEARCH_TOOLS" \
     -- "
 You are a thorough research assistant investigating a specific subtopic.
@@ -339,7 +339,7 @@ $(tail -1500 "$WIP_FILE")"
   fi
 
   set +eo pipefail
-  timeout "$RESEARCH_TIMEOUT" claude "${VERIFY_MODEL_FLAG[@]}" --dangerously-skip-permissions --print \
+  timeout "$RESEARCH_TIMEOUT" claude ${VERIFY_MODEL_FLAG[@]+"${VERIFY_MODEL_FLAG[@]}"} --dangerously-skip-permissions --print \
     --allowedTools "$RESEARCH_TOOLS" \
     -- "
 You are a fact-checker verifying claims from a research document.
@@ -453,7 +453,7 @@ Additional synthesis rules for verified research:
 fi
 
 set +eo pipefail
-timeout "$RESEARCH_TIMEOUT" claude "${VERIFY_MODEL_FLAG[@]}" --dangerously-skip-permissions --print \
+timeout "$RESEARCH_TIMEOUT" claude ${VERIFY_MODEL_FLAG[@]+"${VERIFY_MODEL_FLAG[@]}"} --dangerously-skip-permissions --print \
   --allowedTools "$RESEARCH_TOOLS" \
   -- "
 You are a research analyst producing a final, polished research document.
