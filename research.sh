@@ -106,6 +106,14 @@ case "$DEPTH" in
 - Aim for breadth, not depth"
     DEPTH_CLAIMS="3-5"
     DEPTH_PRIOR_LINES=150
+    DEPTH_SYNTHESIS_LINES=500
+    DEPTH_SYNTHESIS_INSTRUCTIONS="Rules:
+- Keep it concise — this is a quick overview, not an exhaustive report
+- Include a brief executive summary (2-3 sentences)
+- Organize by theme, merge redundant points
+- Lead with the most important and actionable insights
+- Include a short recommendations section at the end
+- Preserve key sources as inline [SOURCE: URL] where available"
     [ -z "$RESEARCH_TIMEOUT" ] && RESEARCH_TIMEOUT=300
     [ -z "$SKIP_VERIFY" ] && SKIP_VERIFY=1  # skip verify by default for quick
     ;;
@@ -117,6 +125,17 @@ case "$DEPTH" in
 - Balance breadth and depth"
     DEPTH_CLAIMS="5-15"
     DEPTH_PRIOR_LINES=300
+    DEPTH_SYNTHESIS_LINES=1500
+    DEPTH_SYNTHESIS_INSTRUCTIONS="Rules:
+- Organize by theme, not by subtopic order — group related insights together
+- Remove redundancy — if multiple subtopics covered the same point, merge them
+- Lead with the most important and actionable insights
+- Include an executive summary at the top (3-5 sentences)
+- Include a recommendations section at the end with concrete, actionable next steps
+- Preserve specific examples, numbers, and sources from the raw findings
+- Write for the audience described in the context
+- Include inline citations [SOURCE: URL] for key claims in the final document
+- If verification data is available, add an Evidence Appendix at the end"
     [ -z "$RESEARCH_TIMEOUT" ] && RESEARCH_TIMEOUT=1200
     ;;
   deep)
@@ -129,6 +148,18 @@ case "$DEPTH" in
 - Prefer quantitative data over qualitative statements"
     DEPTH_CLAIMS="10-25"
     DEPTH_PRIOR_LINES=500
+    DEPTH_SYNTHESIS_LINES=2000
+    DEPTH_SYNTHESIS_INSTRUCTIONS="Rules:
+- Organize by theme, not by subtopic order — group related insights together
+- Remove redundancy — if multiple subtopics covered the same point, merge them
+- Lead with the most important and actionable insights
+- Include an executive summary at the top (3-5 sentences)
+- Include a recommendations section at the end with concrete, actionable next steps
+- Preserve specific examples, numbers, and sources from the raw findings
+- Write for the audience described in the context
+- Include inline citations [SOURCE: URL] for key claims in the final document
+- If verification data is available, add an Evidence Appendix at the end
+- Cross-reference claims across subtopics and note where sources agree or disagree"
     [ -z "$RESEARCH_TIMEOUT" ] && RESEARCH_TIMEOUT=1800
     ;;
   *)
@@ -418,10 +449,10 @@ notify "Synthesizing research findings..."
 start_monitored_heartbeat "Synthesis" "$CLAUDE_OUTPUT"
 
 WIP_LINES=$(wc -l < "$WIP_FILE" | tr -d ' ')
-if [ "$WIP_LINES" -gt 2000 ]; then
-  log "WIP file is large (${WIP_LINES} lines). Truncating to last 2000 lines for synthesis."
-  WIP_CONTENT="[Truncated — showing last 2000 lines of ${WIP_LINES} total]
-$(tail -2000 "$WIP_FILE")"
+if [ "$WIP_LINES" -gt "$DEPTH_SYNTHESIS_LINES" ]; then
+  log "WIP file is large (${WIP_LINES} lines). Truncating to last ${DEPTH_SYNTHESIS_LINES} lines for synthesis."
+  WIP_CONTENT="[Truncated — showing last ${DEPTH_SYNTHESIS_LINES} lines of ${WIP_LINES} total]
+$(tail -"$DEPTH_SYNTHESIS_LINES" "$WIP_FILE")"
 else
   WIP_CONTENT=$(cat "$WIP_FILE")
 fi
@@ -455,9 +486,9 @@ fi
 
 set +eo pipefail
 timeout "$RESEARCH_TIMEOUT" claude ${VERIFY_MODEL_FLAG[@]+"${VERIFY_MODEL_FLAG[@]}"} --dangerously-skip-permissions --print \
-  --allowedTools "$RESEARCH_TOOLS" \
   -- "
 You are a research analyst producing a final, polished research document.
+Do not use web search or fetch — work only with the findings provided below.
 
 ## Topic
 ${TOPIC}
@@ -472,16 +503,7 @@ ${VERIFY_INSTRUCTIONS}
 ## Instructions
 Synthesize all the raw findings above into a well-structured, polished research document.
 
-Rules:
-- Organize by theme, not by subtopic order — group related insights together
-- Remove redundancy — if multiple subtopics covered the same point, merge them
-- Lead with the most important and actionable insights
-- Include an executive summary at the top (3-5 sentences)
-- Include a recommendations section at the end with concrete, actionable next steps
-- Preserve specific examples, numbers, and sources from the raw findings
-- Write for the audience described in the context
-- Include inline citations [SOURCE: URL] for key claims in the final document
-- If verification data is available, add an Evidence Appendix at the end
+${DEPTH_SYNTHESIS_INSTRUCTIONS}
 
 Write the complete document directly to the file ${OUTPUT_FILE}. The document should start with:
 
