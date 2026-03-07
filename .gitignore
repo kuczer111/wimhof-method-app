@@ -22,3 +22,6 @@ public/fallback-*.js
 public/fallback-*.js.map
 .vercel
 tsconfig.tsbuildinfo
+
+# Research output
+researche_output/
