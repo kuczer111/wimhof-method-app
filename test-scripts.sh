@@ -85,6 +85,7 @@ assert_exit_code() {
 # ============================================================================
 echo ""
 echo "=== config.sh: fmt_elapsed ==="
+echo "    Converts seconds to human-readable durations (e.g. 90 → 1min 30s)"
 
 # Source config.sh functions by creating a minimal wrapper
 cd "$TEST_DIR"
@@ -114,6 +115,7 @@ assert_eq "non-numeric" "?" "$(fmt_elapsed "abc")"
 # ============================================================================
 echo ""
 echo "=== config.sh: detect_spec_file ==="
+echo "    Auto-detects highest SPEC-v*.md, respects env override"
 
 # No spec files — run in subshell since detect_spec_file calls exit 1
 rc=0
@@ -136,6 +138,7 @@ assert_eq "env override respected" "SPEC-v1.md" "$SPEC_FILE"
 # ============================================================================
 echo ""
 echo "=== ralph.sh: task check-off (awk) ==="
+echo "    Marks tasks done in TASKS.md using literal string matching"
 
 cat > "$TEST_DIR/tasks_test.md" <<'EOF'
 # Tasks
@@ -163,6 +166,7 @@ assert_contains "task 003 still unchecked" "- [ ] 003:" "$RESULT003"
 # ============================================================================
 echo ""
 echo "=== research.sh: subtopic check-off (awk) ==="
+echo "    Marks subtopics done in plan file, verifies boundary matching (01 vs 011)"
 
 cat > "$TEST_DIR/plan_test.md" <<'EOF'
 ## Subtopics
@@ -216,6 +220,7 @@ assert_contains "011 not affected by 01 check" "- [ ] 011:" "$RESULT011"
 # ============================================================================
 echo ""
 echo "=== research.sh: takeaways extraction (awk) ==="
+echo "    Extracts only section headers + key takeaway bullets from WIP file"
 
 cat > "$TEST_DIR/wip_test.md" <<'EOF'
 # Research Working Notes
@@ -297,6 +302,7 @@ assert_eq "takeaways are compact (7 lines)" "7" "$TAKEAWAY_COUNT"
 # ============================================================================
 echo ""
 echo "=== research.sh: file naming ==="
+echo "    Verifies RESEARCH_NAME prefix applied to all output files"
 
 # With name
 RESEARCH_NAME="agent-sdk"
@@ -331,6 +337,7 @@ assert_eq "unnamed plan file" "RESEARCH-PLAN.md" "$PLAN_FILE"
 # ============================================================================
 echo ""
 echo "=== research.sh: depth profiles ==="
+echo "    Validates timeout, verify, claims, and prior lines per depth level"
 
 for depth in quick standard deep; do
   RESEARCH_TIMEOUT=""
@@ -383,6 +390,7 @@ done
 # ============================================================================
 echo ""
 echo "=== research.sh: SKIP_VERIFY tri-state ==="
+echo "    Tests auto/force-on/force-off logic for --verify/--no-verify flags"
 
 # Auto (empty) + quick = skip
 SKIP_VERIFY=""
@@ -410,6 +418,7 @@ assert_eq "--no-verify overrides standard" "1" "$SKIP_VERIFY"
 # ============================================================================
 echo ""
 echo "=== research.sh: model flag arrays ==="
+echo "    Verifies --model flag arrays build correctly (empty when unset)"
 
 # Default research model (empty = no flag)
 RESEARCH_MODEL=""
@@ -440,6 +449,7 @@ assert_eq "verify model flag[1]" "claude-sonnet-4-6" "${VERIFY_MODEL_FLAG[1]}"
 # ============================================================================
 echo ""
 echo "=== ralph-plan.sh: task number extraction ==="
+echo "    Extracts highest task number from TASKS.md for auto-increment"
 
 cat > "$TEST_DIR/tasks_num.md" <<'EOF'
 - [x] 001: First task
@@ -463,6 +473,7 @@ assert_eq "empty tasks = empty result" "" "$LAST_NUM"
 # ============================================================================
 echo ""
 echo "=== research.sh: topic extraction ==="
+echo "    Parses topic and context from plan file markdown format"
 
 cat > "$TEST_DIR/plan_topic.md" <<'EOF'
 # Research Plan
@@ -505,6 +516,7 @@ assert_eq "no context = empty" "" "$(echo "$CONTEXT_QUICK" | tr -d '[:space:]')"
 # ============================================================================
 echo ""
 echo "=== research.sh: subtopic parsing ==="
+echo "    Splits subtopic line into number and description text"
 
 NEXT="- [ ] 05: Building a planning agent | Spec decomposition"
 SUBTOPIC=$(echo "$NEXT" | sed 's/^- \[ \] [0-9]*: //')
@@ -526,6 +538,7 @@ assert_eq "special chars number" "12" "$NUM2"
 # ============================================================================
 echo ""
 echo "=== config.sh: ensure_timeout ==="
+echo "    Verifies timeout command is available (native, gtimeout, or fallback)"
 
 # ensure_timeout should make timeout available (as command, function, or gtimeout wrapper)
 ensure_timeout
@@ -542,6 +555,7 @@ fi
 # ============================================================================
 echo ""
 echo "=== research.sh: takeaways edge cases ==="
+echo "    Empty files, consecutive sections, nested indentation handling"
 
 # Empty WIP file
 cat > "$TEST_DIR/wip_empty.md" <<'EOF'
@@ -620,6 +634,7 @@ assert_not_contains "nested: excludes paragraph" "paragraph after" "$TAKEAWAYS_N
 # ============================================================================
 echo ""
 echo "=== ralph-plan.sh: mode and task numbering ==="
+echo "    Next task number calculation with edge cases (high nums, non-numeric)"
 
 # Task number extraction from various TASKS.md formats
 cat > "$TEST_DIR/tasks_plan.md" <<'EOF'
@@ -666,6 +681,7 @@ assert_eq "handles numbers > 999" "1002" "$NEXT_NUM"
 # ============================================================================
 echo ""
 echo "=== ralph.sh: mode and commit prefix ==="
+echo "    Maps spec→feat and fix→fix prefixes, extracts first pending task"
 
 for mode in spec fix; do
   case "$mode" in
@@ -700,6 +716,7 @@ assert_eq "all done = empty" "" "$NEXT_DONE"
 # ============================================================================
 echo ""
 echo "=== ralph.sh: safety check logic ==="
+echo "    Blocks commits with >100 staged files"
 
 # Simulate file count check
 for count in 50 100 101 500; do
@@ -717,6 +734,7 @@ done
 # ============================================================================
 echo ""
 echo "=== ralph-task.sh: mode context ==="
+echo "    Builds correct prompt context per mode, validates retry loop logic"
 
 # Spec mode context
 MODE="spec"
@@ -777,6 +795,7 @@ assert_eq "second loop = has error context" "has errors" "$ERRORS_CONTEXT"
 # ============================================================================
 echo ""
 echo "=== qa.sh: has_issues ==="
+echo "    Detects ZERO_ISSUES_FOUND sentinel vs actual finding headers"
 
 # File with ZERO_ISSUES_FOUND sentinel
 cat > "$TEST_DIR/qa_clean.md" <<'EOF'
@@ -811,6 +830,7 @@ assert_eq "has findings" "yes" "$HAS_ISSUES_FOUND"
 # ============================================================================
 echo ""
 echo "=== qa.sh: issue_count ==="
+echo "    Counts [F-XX] finding headers in QA report"
 
 ISSUE_COUNT=$(grep -c "^### \[F-" "$TEST_DIR/qa_issues.md" 2>/dev/null) || true
 assert_eq "counts 2 issues" "2" "${ISSUE_COUNT:-0}"
@@ -823,6 +843,7 @@ assert_eq "counts 0 issues in clean" "0" "${ISSUE_COUNT_CLEAN:-0}"
 # ============================================================================
 echo ""
 echo "=== qa.sh: merge report counting ==="
+echo "    Counts functional findings, visual confirmed/dismissed for merge"
 
 cat > "$TEST_DIR/qa_func.md" <<'EOF'
 ### [F-01] Button broken
@@ -852,6 +873,7 @@ assert_eq "visual confirmed" "3" "$vis_confirmed"
 # ============================================================================
 echo ""
 echo "=== qa.sh: mode validation ==="
+echo "    Accepts smart/functional/visual, rejects invalid modes"
 
 for mode in smart functional visual; do
   case "$mode" in
@@ -873,6 +895,7 @@ assert_eq "mode 'broken' is invalid" "no" "$VALID"
 # ============================================================================
 echo ""
 echo "=== research-plan.sh: flag parsing ==="
+echo "    Validates --quick, --file flags and RESEARCH_NAME file naming"
 
 # Simulate --quick flag
 QUICK=false
@@ -908,6 +931,7 @@ assert_eq "unnamed plan file" "RESEARCH-PLAN.md" "$PLAN_FILE_TEST"
 # ============================================================================
 echo ""
 echo "=== research-plan.sh: subtopic counting ==="
+echo "    Counts checked/unchecked subtopics in plan file"
 
 cat > "$TEST_DIR/plan_count.md" <<'EOF'
 ## Subtopics
@@ -938,6 +962,7 @@ assert_eq "2 done" "2" "$DONE_COUNT"
 # ============================================================================
 echo ""
 echo "=== Syntax checks (bash -n) ==="
+echo "    Verifies all scripts parse without syntax errors"
 
 SCRIPT_DIR="/Users/tomaszkuczera/Documents/Playground/wimhof-method-app"
 for script in config.sh ralph-plan.sh ralph.sh ralph-task.sh qa.sh research-plan.sh research.sh test-scripts.sh; do
