@@ -323,7 +323,7 @@ Events notified (all include elapsed time where applicable):
 - **ralph-task.sh**: max-loops failure
 - **qa.sh**: start (mode, URL), pass complete (elapsed time), pass failed/timed out, QA complete (issue count, total time)
 - **research-plan.sh**: done (subtopic count, elapsed time)
-- **research.sh**: start (topic), subtopic complete (progress N/M), synthesis started, research complete (subtopic count, total time)
+- **research.sh**: start (topic), subtopic complete (progress N/M, elapsed time), synthesis started, research complete (subtopic count, total time)
 
 ---
 
