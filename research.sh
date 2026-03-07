@@ -535,9 +535,17 @@ notify "Research complete (${RESEARCH_TIME}): ${DONE} subtopics in ${OUTPUT_FILE
 
 echo ""
 log "Research complete! ${DONE} subtopics in ${RESEARCH_TIME}."
+# ── Convert output to HTML ──
+HTML_FILE="${OUTPUT_FILE%.md}.html"
+if [ -f "$OUTPUT_FILE" ] && [ -x "./md2html.sh" ]; then
+  ./md2html.sh "$OUTPUT_FILE" "$HTML_FILE"
+  log "HTML generated: ${HTML_FILE}"
+fi
+
 echo ""
 echo "Files:"
 echo "  Plan:     ${PLAN_FILE}"
 echo "  Notes:    ${WIP_FILE}"
 [ -f "$VERIFY_FILE" ] && echo "  Verified: ${VERIFY_FILE}"
 echo "  Output:   ${OUTPUT_FILE}"
+[ -f "$HTML_FILE" ] && echo "  HTML:     ${HTML_FILE}"
