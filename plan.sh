@@ -1,4 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================================
+# plan.sh — Generate task lists from specs or QA findings.
+# ============================================================================
+#
+# Usage:
+#   ./plan.sh spec        Generate feature tasks from latest SPEC-v*.md
+#   ./plan.sh fix         Generate fix tasks from QA-FINDINGS.md
+#
+# Flow:
+#   1. Auto-detect latest SPEC-v*.md (or use SPEC_FILE env var)
+#   2. Find next task number from TASKS.md (auto-increment)
+#   3. Call Claude to read spec/findings + existing tasks
+#   4. Claude appends new tasks to TASKS.md (preserving existing ones)
+#   5. Report task count and elapsed time via log + notification
+#
+# Inputs:
+#   spec mode -> SPEC-v*.md + TASKS.md
+#   fix mode  -> QA-FINDINGS.md + TASKS.md
+#
+# Output:
+#   TASKS.md (updated in place with new unchecked tasks)
+#
+# Next step:  ./ralph.sh spec  or  ./ralph.sh fix
+#
+# Environment:
+#   SPEC_FILE  — Override spec file (default: auto-detect highest version)
+# ============================================================================
 set -euo pipefail
 
 SCRIPT_TITLE="Plan"
@@ -7,17 +34,13 @@ source ./config.sh
 MODE="${1:-spec}"
 
 # ── Auto-detect latest spec file (SPEC_FILE env var overrides) ──
-if [ -z "${SPEC_FILE:-}" ]; then
-  SPEC_FILE=$(ls -1 SPEC-v*.md 2>/dev/null | sort -t'v' -k2 -n | tail -1) || true
-fi
-if [ -z "${SPEC_FILE:-}" ]; then
-  echo "No SPEC-v*.md files found. Create one (e.g., SPEC-v1.md) or set SPEC_FILE env var."
-  exit 1
-fi
+detect_spec_file
 
 # ── Resolve next task number from TASKS.md ──
 if [ -f TASKS.md ]; then
   LAST_NUM=$(grep -E '^\- \[.\] [0-9]+' TASKS.md | sed 's/^- \[.\] \([0-9]*\).*/\1/' | sort -n | tail -1) || true
+  # Guard against non-numeric values
+  if ! [[ "${LAST_NUM:-}" =~ ^[0-9]+$ ]]; then LAST_NUM=0; fi
   NEXT_NUM=$(printf "%03d" $((10#${LAST_NUM:-0} + 1)))
 else
   NEXT_NUM="001"
@@ -108,17 +131,17 @@ Write this output directly to the file TASKS.md
     echo "  fix   — Generate fix tasks from QA-FINDINGS.md"
     echo ""
     echo "Environment variables:"
-    echo "  SPEC_FILE  — Override spec file (default: SPEC-v4-draft.md)"
+    echo "  SPEC_FILE  — Override spec file (default: auto-detect highest SPEC-v*.md)"
     exit 1
     ;;
 esac
 
-TASK_COUNT=$(grep -c "^- \[ \]" TASKS.md 2>/dev/null) || true
+TASK_COUNT=$(grep -c "^- \[ \]" TASKS.md 2>/dev/null || echo 0)
 PLAN_TIME=$(fmt_elapsed $(( $(date +%s) - PLAN_START )))
-log "Planning done (${MODE}, ${PLAN_TIME}): ${TASK_COUNT:-0} open tasks"
-notify "Planning done (${MODE}, ${PLAN_TIME}): ${TASK_COUNT:-0} open tasks in TASKS.md"
+log "Planning done (${MODE}, ${PLAN_TIME}): ${TASK_COUNT} open tasks"
+notify "Planning done (${MODE}, ${PLAN_TIME}): ${TASK_COUNT} open tasks in TASKS.md"
 
 echo ""
 log "TASKS.md updated. Review it:"
 echo ""
-cat TASKS.md
+[ -f TASKS.md ] && cat TASKS.md

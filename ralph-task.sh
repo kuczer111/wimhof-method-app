@@ -1,4 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================================
+# ralph-task.sh — Execute a single task via Claude with build verification.
+# ============================================================================
+#
+# Usage:
+#   ./ralph-task.sh spec "task description"
+#   ./ralph-task.sh fix  "task description"
+#
+# Flow:
+#   1. Build mode-specific context:
+#      spec → auto-detect latest SPEC-v*.md, Claude reads spec + implements task
+#      fix  → Claude reads QA-FINDINGS.md, fixes the bug
+#   2. Call Claude with context + task description
+#   3. Run `npm run build` to verify
+#   4. If build fails: feed errors back to Claude and retry (up to 8 loops)
+#   5. If build passes: exit 0 (ralph.sh handles commit)
+#   6. If max loops hit: stash changes for recovery, exit 1
+#
+# Called by:
+#   ralph.sh (not typically run directly)
+#
+# Environment:
+#   SPEC_FILE  — Override spec file (default: auto-detect highest version)
+# ============================================================================
 set -euo pipefail
 
 SCRIPT_TITLE="Ralph Task"
@@ -6,28 +30,23 @@ source ./config.sh
 
 MODE="${1:-spec}"
 TASK="${2:-}"
-# ── Auto-detect latest spec file (SPEC_FILE env var overrides) ──
-if [ -z "${SPEC_FILE:-}" ]; then
-  SPEC_FILE=$(ls -1 SPEC-v*.md 2>/dev/null | sort -t'v' -k2 -n | tail -1) || true
-fi
-if [ -z "${SPEC_FILE:-}" ]; then
-  echo "No SPEC-v*.md files found. Create one (e.g., SPEC-v1.md) or set SPEC_FILE env var."
-  exit 1
-fi
-MAX_LOOPS=8
-loop=0
-BUILD_LOG=$(mktemp)
-TASK_START=$(date +%s)
-trap 'stop_heartbeat; rm -f "$BUILD_LOG"' EXIT INT TERM HUP
 
 if [ -z "$TASK" ]; then
   echo "Usage: ./ralph-task.sh [spec|fix] \"task description\""
   exit 1
 fi
 
+MAX_LOOPS=8
+loop=0
+BUILD_LOG=$(mktemp)
+TASK_START=$(date +%s)
+trap 'stop_heartbeat; rm -f "$BUILD_LOG"' EXIT INT TERM HUP
+
 # ── Mode-specific context ──
 case "$MODE" in
   spec)
+    # Only need spec file in spec mode
+    detect_spec_file
     CONTEXT="Full spec is in ${SPEC_FILE} — read it for context.
 
 Your ONLY job right now is this task:
@@ -82,7 +101,6 @@ Rules:
 - Read existing files before creating anything
 - Only touch files relevant to this task
 - Keep changes small and focused
-- After finishing, output exactly: TASK_COMPLETE
 - Fix any TypeScript or build errors before stopping
 $ERRORS_CONTEXT
 "
@@ -107,5 +125,6 @@ done
 
 log "Max loops hit. Task needs manual attention: $TASK"
 notify "Max loops hit on: $TASK"
-git checkout .
+# Stash changes instead of discarding them (preserves work for recovery)
+git stash push -m "ralph-task: max loops on: $TASK" 2>/dev/null || git checkout .
 exit 1

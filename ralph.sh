@@ -1,4 +1,37 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================================
+# ralph.sh — Task runner. Loops through TASKS.md, executes each via Claude.
+# ============================================================================
+#
+# Usage:
+#   ./ralph.sh spec       Execute feature tasks (commits with "feat:" prefix)
+#   ./ralph.sh fix        Execute bug fix tasks (commits with "fix:" prefix)
+#
+# Flow:
+#   1. Read TASKS.md, find first unchecked task: - [ ] NNN: description
+#   2. Delegate to ralph-task.sh with mode + task description
+#   3. On success:
+#      a. Mark task as done in TASKS.md: - [x]
+#      b. git add -u (tracked files only for safety)
+#      c. Safety check: abort if >100 files staged
+#      d. git commit -m "feat/fix: task description"
+#      e. git push
+#      f. Log to ralph.log and terminal, send notification with elapsed time
+#   4. On failure: stop, notify, log — user fixes manually then re-runs
+#   5. Repeat until all tasks done or one fails
+#
+# Calls:      ./ralph-task.sh (one invocation per task)
+# Prev step:  ./plan.sh spec  or  ./plan.sh fix
+#
+# Inputs:
+#   TASKS.md (must exist — run ./plan.sh first)
+#
+# Output:
+#   Git commits (one per task), ralph.log (append-only task log)
+#
+# Resume:
+#   Just re-run ./ralph.sh — it picks up from the first unchecked task
+# ============================================================================
 set -euo pipefail
 
 SCRIPT_TITLE="Ralph"
@@ -53,15 +86,16 @@ while true; do
   if [ $rc -eq 0 ]; then
     TASK_TIME=$(fmt_elapsed $(( $(date +%s) - TASK_START )))
 
-    # Mark done — awk handles special chars in task names (/, [], etc.)
-    awk -v task="$TASK" '{if (!done && $0 == "- [ ] " task) {print "- [x] " task; done=1} else print}' TASKS.md > TASKS.md.tmp && mv TASKS.md.tmp TASKS.md
+    # Mark done — use index() for literal matching (safe with special chars)
+    awk -v task="- [ ] $TASK" '{if (!done && index($0, task) == 1) {sub(/^- \[ \]/, "- [x]"); done=1} print}' TASKS.md > TASKS.md.tmp && mv TASKS.md.tmp TASKS.md
 
-    git add .
+    # Stage tracked files only (safer than git add .)
+    git add -u
 
-    # Safety check — catch accidental node_modules or bulk file commits
-    FILE_COUNT=$(git diff --cached --name-only | wc -l)
+    # Safety check — catch accidental bulk file commits
+    FILE_COUNT=$(git diff --cached --name-only | wc -l | tr -d ' ')
     if [ "$FILE_COUNT" -gt 100 ]; then
-      git reset HEAD
+      git restore --staged .
       notify "Suspiciously large commit ($FILE_COUNT files) on task $TASK_COUNT — stopping"
       log "Too many files staged ($FILE_COUNT). Check .gitignore before continuing."
       exit 1
@@ -70,11 +104,12 @@ while true; do
     git commit -m "${COMMIT_PREFIX}: $TASK"
     git push || { notify "Push failed on task $TASK_COUNT"; exit 1; }
 
-    log "Task $TASK_COUNT done (${TASK_TIME}): $TASK" >> ralph.log
+    # Log to both terminal (via log()) and ralph.log file
+    log "Task $TASK_COUNT done (${TASK_TIME}): $TASK" | tee -a ralph.log
     notify "Done ($TASK_COUNT, ${TASK_TIME}): $TASK"
-    sleep 2
+    sleep 2  # brief pause between tasks to avoid API rate limits
   else
-    log "FAILED Task $TASK_COUNT: $TASK" >> ralph.log
+    log "FAILED Task $TASK_COUNT: $TASK" | tee -a ralph.log
     notify "Stuck on task $TASK_COUNT: $TASK — needs you"
     echo ""
     log "Fix manually then re-run ./ralph.sh $MODE"

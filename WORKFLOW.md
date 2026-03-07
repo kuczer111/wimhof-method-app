@@ -201,17 +201,39 @@ This will:
 
 1. Loop through each subtopic in `RESEARCH-PLAN.md`
 2. Claude researches each one using web search, web fetch, and local file reading
-3. Findings are appended to `RESEARCH-WIP.md` (working notes)
-4. Each subtopic gets checked off and you get a notification
-5. After all subtopics: a final synthesis pass produces `RESEARCH-OUTPUT.md`
+3. Each claim is tagged with `[CLAIM]`, `[SOURCE]`, and `[CONFIDENCE]` inline
+4. Findings are appended to `RESEARCH-WIP.md` (working notes)
+5. Each subtopic gets checked off and you get a notification
+6. **Verification pass** — visits cited URLs, checks if sources support claims, produces a trust score
+7. Final synthesis pass produces `RESEARCH-OUTPUT.md` with an evidence appendix
+
+Options:
+
+```bash
+./research.sh                              # standard depth, verify on, 20 min timeout
+./research.sh --depth quick                # fast overview, verify off, 5 min timeout
+./research.sh --depth deep                 # exhaustive, verify on, 30 min timeout
+./research.sh --depth quick --verify       # fast but still verify sources
+./research.sh --no-verify                  # skip verification on any depth
+./research.sh --timeout 900               # custom timeout per Claude call
+```
+
+#### Depth profiles
+
+| Depth      | Timeout | Searches | Claims | Verify | Use case                      |
+| ---------- | ------- | -------- | ------ | ------ | ----------------------------- |
+| `quick`    | 5 min   | 2-3      | 3-5    | off    | Quick overview, brainstorming |
+| `standard` | 20 min  | 5-8      | 5-15   | on     | Default, balanced research    |
+| `deep`     | 30 min  | 10+      | 10-25  | on     | Exhaustive, cross-referenced  |
 
 ### 3. Output files
 
-| File                 | Contents                                        |
-| -------------------- | ----------------------------------------------- |
-| `RESEARCH-PLAN.md`   | Topic, context answers, subtopic checklist      |
-| `RESEARCH-WIP.md`    | Raw findings per subtopic (messy working notes) |
-| `RESEARCH-OUTPUT.md` | Polished, synthesized final document            |
+| File                 | Contents                                                   |
+| -------------------- | ---------------------------------------------------------- |
+| `RESEARCH-PLAN.md`   | Topic, context answers, subtopic checklist                 |
+| `RESEARCH-WIP.md`    | Raw findings per subtopic with inline citations            |
+| `RESEARCH-VERIFY.md` | Verification report: each claim checked against its source |
+| `RESEARCH-OUTPUT.md` | Polished final document with evidence appendix             |
 
 ### Named research sessions
 
@@ -269,6 +291,7 @@ Tasks from different modes (spec and fix) share the same TASKS.md and numbering 
 
 | Variable            | Default                                | Used by                       | Description                                       |
 | ------------------- | -------------------------------------- | ----------------------------- | ------------------------------------------------- |
+| `NTFY_TOPIC`        | _(from .env)_                          | all (via config.sh)           | ntfy.sh topic for push notifications              |
 | `SPEC_FILE`         | _(auto-detected)_                      | plan.sh, ralph-task.sh        | Override spec file (default: highest SPEC-v\*.md) |
 | `APP_URL`           | `https://wimhof-method-app.vercel.app` | qa.sh                         | URL to test                                       |
 | `QA_FILE`           | `QA-FINDINGS.md`                       | qa.sh                         | Output file for QA results                        |
@@ -276,12 +299,20 @@ Tasks from different modes (spec and fix) share the same TASKS.md and numbering 
 | `QA_MODEL`          | `claude-sonnet-4-6`                    | qa.sh                         | Model for QA testing                              |
 | `QA_SKIP_PREFLIGHT` | `0`                                    | qa.sh                         | Set to `1` to skip MCP check                      |
 | `RESEARCH_NAME`     | _(none)_                               | research-plan.sh, research.sh | Prefix for research output files                  |
+| `DEPTH`             | `standard`                             | research.sh                   | Research depth: `quick`, `standard`, or `deep`    |
+| `SKIP_VERIFY`       | _(auto by depth)_                      | research.sh                   | Set to `1` to skip fact verification pass         |
+| `RESEARCH_TIMEOUT`  | _(auto by depth)_                      | research.sh                   | Timeout per Claude call in seconds                |
 
 ---
 
 ## Notifications
 
-All scripts send push notifications via [ntfy.sh](https://ntfy.sh). The topic is configured in `config.sh` (`NTFY_TOPIC` variable), which all scripts source. Falls back to macOS native notifications if ntfy fails.
+All scripts send push notifications via [ntfy.sh](https://ntfy.sh). The topic is loaded from `.env` file (`NTFY_TOPIC` variable), which `config.sh` sources. Falls back to macOS native notifications if ntfy is not configured or fails.
+
+```bash
+# .env (gitignored)
+NTFY_TOPIC=your-topic-here
+```
 
 Events notified (all include elapsed time where applicable):
 
