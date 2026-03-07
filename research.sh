@@ -244,6 +244,7 @@ while true; do
   NUM=$(echo "$NEXT" | sed 's/^- \[ \] \([0-9]*\):.*/\1/')
   DONE=$((DONE + 1))
 
+  SUBTOPIC_START=$(date +%s)
   echo "========================================="
   log "Subtopic ${DONE}/${TOTAL}: ${SUBTOPIC}"
   echo "========================================="
@@ -348,7 +349,8 @@ Every factual claim MUST have an inline [SOURCE: URL] or [SOURCE: general knowle
     }' "$PLAN_FILE" > "${PLAN_FILE}.tmp" && mv "${PLAN_FILE}.tmp" "$PLAN_FILE"
   fi
 
-  notify "Research (${DONE}/${TOTAL}): ${SUBTOPIC}"
+  SUBTOPIC_TIME=$(fmt_elapsed $(( $(date +%s) - SUBTOPIC_START )))
+  notify "Research (${DONE}/${TOTAL}, ${SUBTOPIC_TIME}): ${SUBTOPIC}"
   echo ""
 done
 
