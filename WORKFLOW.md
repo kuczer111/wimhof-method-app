@@ -7,7 +7,7 @@ This project uses an automated pipeline to plan, execute, and QA tasks via Claud
 | File               | Purpose                                                                         |
 | ------------------ | ------------------------------------------------------------------------------- |
 | `config.sh`        | Shared utilities: notify(), log(), fmt_elapsed(), heartbeat functions           |
-| `plan.sh`          | Generates tasks in TASKS.md from a spec or QA findings                          |
+| `ralph-plan.sh`    | Generates tasks in TASKS.md from a spec or QA findings                          |
 | `ralph.sh`         | Loops through unchecked tasks, delegates to ralph-task.sh, commits & pushes     |
 | `ralph-task.sh`    | Executes a single task via Claude CLI with build verification (up to 8 retries) |
 | `qa.sh`            | Runs automated QA testing against the deployed app                              |
@@ -28,7 +28,7 @@ This project uses an automated pipeline to plan, execute, and QA tasks via Claud
 Build new features from a spec file.
 
 ```
-plan.sh spec  -->  TASKS.md  -->  ralph.sh spec  -->  feat: commits
+ralph-plan.sh spec  -->  TASKS.md  -->  ralph.sh spec  -->  feat: commits
 ```
 
 ### `fix` mode — Bug fixes
@@ -36,7 +36,7 @@ plan.sh spec  -->  TASKS.md  -->  ralph.sh spec  -->  feat: commits
 Fix bugs found by QA testing.
 
 ```
-qa.sh  -->  QA-FINDINGS.md  -->  plan.sh fix  -->  TASKS.md  -->  ralph.sh fix  -->  fix: commits
+qa.sh  -->  QA-FINDINGS.md  -->  ralph-plan.sh fix  -->  TASKS.md  -->  ralph.sh fix  -->  fix: commits
 ```
 
 ### `research` mode — Research and brainstorming
@@ -58,7 +58,7 @@ Create a spec file named `SPEC-vX.md` (e.g., `SPEC-v5.md`). The scripts auto-det
 ### 2. Generate tasks
 
 ```bash
-./plan.sh spec
+./ralph-plan.sh spec
 ```
 
 This reads your spec and TASKS.md, then appends new tasks. Task numbering is auto-detected (continues from the highest existing number).
@@ -109,7 +109,7 @@ Open QA-FINDINGS.md. Findings marked `DISMISSED` were false positives caught by 
 ### 3. Generate fix tasks
 
 ```bash
-./plan.sh fix
+./ralph-plan.sh fix
 ```
 
 This reads QA-FINDINGS.md (ignores DISMISSED findings) and appends fix tasks to TASKS.md, ordered by severity (Critical > Major > Minor > Cosmetic). Each task references the finding ID (e.g., `Fix F-03: ...`).
@@ -255,15 +255,15 @@ RESEARCH_NAME=onboarding ./research.sh
 
 Specs are named `SPEC-vX.md` by convention (e.g., `SPEC-v1.md`, `SPEC-v5.md`, `SPEC-v4-draft.md`).
 
-**Auto-detection:** Both `plan.sh` and `ralph-task.sh` automatically find the highest-versioned spec file by sorting `SPEC-v*.md` numerically. You don't need to specify which spec to use — just create the file and the scripts pick it up.
+**Auto-detection:** Both `ralph-plan.sh` and `ralph-task.sh` automatically find the highest-versioned spec file by sorting `SPEC-v*.md` numerically. You don't need to specify which spec to use — just create the file and the scripts pick it up.
 
 ```bash
 # Auto-detects latest (e.g., SPEC-v5.md if it exists)
-./plan.sh spec
+./ralph-plan.sh spec
 ./ralph.sh spec
 
 # Override to a specific spec
-SPEC_FILE=SPEC-v3.md ./plan.sh spec
+SPEC_FILE=SPEC-v3.md ./ralph-plan.sh spec
 export SPEC_FILE=SPEC-v3.md && ./ralph.sh spec
 ```
 
@@ -273,7 +273,7 @@ The auto-detection sorts by the number after `v`, so `SPEC-v10.md` > `SPEC-v9.md
 
 ## Task Numbering
 
-Task numbers are auto-detected. `plan.sh` finds the highest number in TASKS.md and starts from the next one. You never need to manually specify the starting number.
+Task numbers are auto-detected. `ralph-plan.sh` finds the highest number in TASKS.md and starts from the next one. You never need to manually specify the starting number.
 
 ```
 v1: 001-025
@@ -292,7 +292,7 @@ Tasks from different modes (spec and fix) share the same TASKS.md and numbering 
 | Variable            | Default                                | Used by                       | Description                                       |
 | ------------------- | -------------------------------------- | ----------------------------- | ------------------------------------------------- |
 | `NTFY_TOPIC`        | _(from .env)_                          | all (via config.sh)           | ntfy.sh topic for push notifications              |
-| `SPEC_FILE`         | _(auto-detected)_                      | plan.sh, ralph-task.sh        | Override spec file (default: highest SPEC-v\*.md) |
+| `SPEC_FILE`         | _(auto-detected)_                      | ralph-plan.sh, ralph-task.sh  | Override spec file (default: highest SPEC-v\*.md) |
 | `APP_URL`           | `https://wimhof-method-app.vercel.app` | qa.sh                         | URL to test                                       |
 | `QA_FILE`           | `QA-FINDINGS.md`                       | qa.sh                         | Output file for QA results                        |
 | `QA_TIMEOUT`        | `600` (10 min)                         | qa.sh                         | Timeout per QA pass in seconds                    |
@@ -302,6 +302,8 @@ Tasks from different modes (spec and fix) share the same TASKS.md and numbering 
 | `DEPTH`             | `standard`                             | research.sh                   | Research depth: `quick`, `standard`, or `deep`    |
 | `SKIP_VERIFY`       | _(auto by depth)_                      | research.sh                   | Set to `1` to skip fact verification pass         |
 | `RESEARCH_TIMEOUT`  | _(auto by depth)_                      | research.sh                   | Timeout per Claude call in seconds                |
+| `RESEARCH_MODEL`    | _(claude default)_                     | research.sh                   | Model for research subtopics                      |
+| `VERIFY_MODEL`      | `claude-sonnet-4-6`                    | research.sh                   | Model for verification & synthesis (cheaper)      |
 
 ---
 
@@ -316,7 +318,7 @@ NTFY_TOPIC=your-topic-here
 
 Events notified (all include elapsed time where applicable):
 
-- **plan.sh**: start, done (mode, elapsed time, open task count)
+- **ralph-plan.sh**: start, done (mode, elapsed time, open task count)
 - **ralph.sh**: task complete (task number, elapsed time), task failed, all done (task count, total time), push failed, suspicious commit size
 - **ralph-task.sh**: max-loops failure
 - **qa.sh**: start (mode, URL), pass complete (elapsed time), pass failed/timed out, QA complete (issue count, total time)
@@ -362,7 +364,7 @@ This provides:
 vim SPEC-v5.md
 
 # 2. Plan and execute (auto-detects SPEC-v5.md)
-./plan.sh spec
+./ralph-plan.sh spec
 # review TASKS.md, commit
 ./ralph.sh spec
 
@@ -371,7 +373,7 @@ vim SPEC-v5.md
 # review QA-FINDINGS.md, commit
 
 # 4. Fix bugs
-./plan.sh fix
+./ralph-plan.sh fix
 # review TASKS.md, commit
 ./ralph.sh fix
 

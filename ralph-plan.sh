@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ============================================================================
-# plan.sh — Generate task lists from specs or QA findings.
+# ralph-plan.sh — Generate task lists from specs or QA findings.
 # ============================================================================
 #
 # Usage:
-#   ./plan.sh spec        Generate feature tasks from latest SPEC-v*.md
-#   ./plan.sh fix         Generate fix tasks from QA-FINDINGS.md
+#   ./ralph-plan.sh spec        Generate feature tasks from latest SPEC-v*.md
+#   ./ralph-plan.sh fix         Generate fix tasks from QA-FINDINGS.md
 #
 # Flow:
 #   1. Auto-detect latest SPEC-v*.md (or use SPEC_FILE env var)
@@ -125,7 +125,7 @@ Write this output directly to the file TASKS.md
     ;;
 
   *)
-    echo "Usage: ./plan.sh [spec|fix]"
+    echo "Usage: ./ralph-plan.sh [spec|fix]"
     echo ""
     echo "  spec  — Generate tasks from a spec file (default)"
     echo "  fix   — Generate fix tasks from QA-FINDINGS.md"

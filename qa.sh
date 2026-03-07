@@ -29,7 +29,7 @@
 # Output:
 #   QA-FINDINGS.md (overwritten each run — git tracks history)
 #
-# Next step:  ./plan.sh fix  (to generate fix tasks from findings)
+# Next step:  ./ralph-plan.sh fix  (to generate fix tasks from findings)
 #
 # Environment:
 #   APP_URL            Target URL (default: https://wimhof-method-app.vercel.app)

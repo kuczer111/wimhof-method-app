@@ -21,10 +21,10 @@
 #   5. Repeat until all tasks done or one fails
 #
 # Calls:      ./ralph-task.sh (one invocation per task)
-# Prev step:  ./plan.sh spec  or  ./plan.sh fix
+# Prev step:  ./ralph-plan.sh spec  or  ./ralph-plan.sh fix
 #
 # Inputs:
-#   TASKS.md (must exist — run ./plan.sh first)
+#   TASKS.md (must exist — run ./ralph-plan.sh first)
 #
 # Output:
 #   Git commits (one per task), ralph.log (append-only task log)
@@ -52,7 +52,7 @@ case "$MODE" in
 esac
 
 if [ ! -f TASKS.md ]; then
-  echo "No TASKS.md found. Run ./plan.sh first."
+  echo "No TASKS.md found. Run ./ralph-plan.sh first."
   exit 1
 fi
 

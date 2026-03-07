@@ -53,6 +53,8 @@
 #   DEPTH              Research depth: quick, standard, deep (default: standard)
 #   SKIP_VERIFY        Set to 1 to skip verification (auto-set by depth)
 #   RESEARCH_TIMEOUT   Timeout per Claude call in seconds (auto-set by depth)
+#   RESEARCH_MODEL     Model for research subtopics (default: claude CLI default)
+#   VERIFY_MODEL       Model for verification & synthesis (default: claude-sonnet-4-6)
 # ============================================================================
 set -euo pipefail
 
@@ -63,6 +65,15 @@ RESEARCH_NAME="${RESEARCH_NAME:-}"
 SKIP_VERIFY=""  # tri-state: "" = auto (depth decides), "0" = force on, "1" = force off
 RESEARCH_TIMEOUT="${RESEARCH_TIMEOUT:-}"
 DEPTH="${DEPTH:-standard}"
+RESEARCH_MODEL="${RESEARCH_MODEL:-}"          # model for research (default: claude default)
+VERIFY_MODEL="${VERIFY_MODEL:-claude-sonnet-4-6}"  # cheaper model for verification & synthesis
+
+# Build model flag arrays (safe quoting for command arguments)
+RESEARCH_MODEL_FLAG=()
+if [ -n "$RESEARCH_MODEL" ]; then
+  RESEARCH_MODEL_FLAG=(--model "$RESEARCH_MODEL")
+fi
+VERIFY_MODEL_FLAG=(--model "$VERIFY_MODEL")
 
 # ── Parse flags ──
 while [[ $# -gt 0 ]]; do
@@ -94,6 +105,7 @@ case "$DEPTH" in
 - Skip edge cases and deep details
 - Aim for breadth, not depth"
     DEPTH_CLAIMS="3-5"
+    DEPTH_PRIOR_LINES=150
     [ -z "$RESEARCH_TIMEOUT" ] && RESEARCH_TIMEOUT=300
     [ -z "$SKIP_VERIFY" ] && SKIP_VERIFY=1  # skip verify by default for quick
     ;;
@@ -104,6 +116,7 @@ case "$DEPTH" in
 - Include both mainstream views and notable alternatives
 - Balance breadth and depth"
     DEPTH_CLAIMS="5-15"
+    DEPTH_PRIOR_LINES=300
     [ -z "$RESEARCH_TIMEOUT" ] && RESEARCH_TIMEOUT=1200
     ;;
   deep)
@@ -115,6 +128,7 @@ case "$DEPTH" in
 - Note disagreements between sources with specific citations
 - Prefer quantitative data over qualitative statements"
     DEPTH_CLAIMS="10-25"
+    DEPTH_PRIOR_LINES=500
     [ -z "$RESEARCH_TIMEOUT" ] && RESEARCH_TIMEOUT=1800
     ;;
   *)
@@ -168,6 +182,7 @@ START_TIME=$(date +%s)
 
 log "Starting research: ${TOPIC}"
 log "Depth: ${DEPTH} | Timeout: ${RESEARCH_TIMEOUT}s | Verify: $([ "$SKIP_VERIFY" = "1" ] && echo "off" || echo "on")"
+log "Models: research=${RESEARCH_MODEL:-default} | verify/synthesis=${VERIFY_MODEL}"
 log "Subtopics: ${REMAINING} remaining (${TOTAL} total)"
 log "Output: ${OUTPUT_FILE}"
 echo ""
@@ -202,15 +217,24 @@ while true; do
   log "Subtopic ${DONE}/${TOTAL}: ${SUBTOPIC}"
   echo "========================================="
 
-  # Read prior findings for context (truncate if very large)
+  # Extract section headers + key takeaway bullets only (compact prior context)
   PRIOR_FINDINGS=""
   if [ -f "$WIP_FILE" ]; then
-    WIP_LINES=$(wc -l < "$WIP_FILE" | tr -d ' ')
-    if [ "$WIP_LINES" -gt 500 ]; then
-      PRIOR_FINDINGS="[Prior findings truncated to last 500 lines for context]
-$(tail -500 "$WIP_FILE")"
-    else
-      PRIOR_FINDINGS=$(cat "$WIP_FILE")
+    TAKEAWAYS=$(awk '
+      /^## [0-9]+:/ { print; next }
+      /^\*\*Key takeaways:\*\*/ { grab=1; next }
+      grab && /^- / { print; next }
+      grab && /^[[:space:]]*$/ { next }
+      grab { grab=0 }
+    ' "$WIP_FILE") || true
+    if [ -n "$TAKEAWAYS" ]; then
+      TAKEAWAY_LINES=$(echo "$TAKEAWAYS" | wc -l | tr -d ' ')
+      if [ "$TAKEAWAY_LINES" -gt "$DEPTH_PRIOR_LINES" ]; then
+        PRIOR_FINDINGS="[Prior takeaways truncated to last ${DEPTH_PRIOR_LINES} lines]
+$(echo "$TAKEAWAYS" | tail -"$DEPTH_PRIOR_LINES")"
+      else
+        PRIOR_FINDINGS="$TAKEAWAYS"
+      fi
     fi
   fi
 
@@ -219,7 +243,7 @@ $(tail -500 "$WIP_FILE")"
   start_monitored_heartbeat "Subtopic ${DONE}/${TOTAL}" "$CLAUDE_OUTPUT"
 
   set +eo pipefail
-  timeout "$RESEARCH_TIMEOUT" claude --dangerously-skip-permissions --print \
+  timeout "$RESEARCH_TIMEOUT" claude "${RESEARCH_MODEL_FLAG[@]}" --dangerously-skip-permissions --print \
     --allowedTools "$RESEARCH_TOOLS" \
     -- "
 You are a thorough research assistant investigating a specific subtopic.
@@ -315,7 +339,7 @@ $(tail -1500 "$WIP_FILE")"
   fi
 
   set +eo pipefail
-  timeout "$RESEARCH_TIMEOUT" claude --dangerously-skip-permissions --print \
+  timeout "$RESEARCH_TIMEOUT" claude "${VERIFY_MODEL_FLAG[@]}" --dangerously-skip-permissions --print \
     --allowedTools "$RESEARCH_TOOLS" \
     -- "
 You are a fact-checker verifying claims from a research document.
@@ -429,7 +453,7 @@ Additional synthesis rules for verified research:
 fi
 
 set +eo pipefail
-timeout "$RESEARCH_TIMEOUT" claude --dangerously-skip-permissions --print \
+timeout "$RESEARCH_TIMEOUT" claude "${VERIFY_MODEL_FLAG[@]}" --dangerously-skip-permissions --print \
   --allowedTools "$RESEARCH_TOOLS" \
   -- "
 You are a research analyst producing a final, polished research document.
