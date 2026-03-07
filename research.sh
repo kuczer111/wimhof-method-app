@@ -247,6 +247,7 @@ $(echo "$TAKEAWAYS" | tail -"$DEPTH_PRIOR_LINES")"
     --allowedTools "$RESEARCH_TOOLS" \
     -- "
 You are a thorough research assistant investigating a specific subtopic.
+Base your research on external sources and published best practices. Do not reference or anchor on any files in the current working directory.
 
 ## Overall Topic
 ${TOPIC}
