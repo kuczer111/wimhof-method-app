@@ -1,4 +1,34 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# ============================================================================
+# research-plan.sh — Plan a research session with dynamic context questions.
+# ============================================================================
+#
+# Usage:
+#   ./research-plan.sh "your research topic"
+#   ./research-plan.sh --quick "topic"          Skip context questions
+#   ./research-plan.sh --file TOPIC.md          Read topic from file
+#
+# Flow:
+#   1. Parse topic from argument or --file
+#   2. Pass 1 — Context questions (unless --quick):
+#      a. Claude generates 5 tailored questions about the topic
+#      b. Questions are presented interactively (user answers via terminal)
+#      c. Answers are collected into a context block
+#   3. Pass 2 — Subtopic generation:
+#      a. Claude receives topic + context answers
+#      b. Produces 5-10 focused, ordered subtopics
+#      c. Writes checklist to RESEARCH-PLAN.md (or RESEARCH-{name}-PLAN.md)
+#
+# Output:
+#   RESEARCH-PLAN.md (or RESEARCH-{name}-PLAN.md with RESEARCH_NAME env var)
+#   Contains: topic, date, context answers, subtopic checklist
+#
+# Next step:  ./research.sh
+#
+# Environment:
+#   RESEARCH_NAME  — Prefix for named sessions (e.g., RESEARCH_NAME=streaks)
+#                    Must match between research-plan.sh and research.sh
+# ============================================================================
 set -euo pipefail
 
 SCRIPT_TITLE="Research Plan"
@@ -55,6 +85,11 @@ PLAN_START=$(date +%s)
 CONTEXT_BLOCK=""
 
 if [ "$QUICK" = false ]; then
+  # Context questions require interactive terminal
+  if [ ! -t 0 ]; then
+    echo "Non-interactive shell detected. Use --quick to skip context questions."
+    exit 1
+  fi
   log "Generating context questions for your topic..."
   echo ""
 
@@ -120,7 +155,11 @@ Topic: ${TOPIC}
 ${CONTEXT_PROMPT}
 
 Rules:
-- Create 5-10 subtopics that together cover the topic comprehensively
+- Create as many subtopics as the topic genuinely requires — no more, no less
+- A narrow or well-defined topic might need only 2-3 subtopics
+- A broad or complex topic might need 8-12
+- Do NOT pad with filler subtopics just to reach a number — every subtopic must add unique value
+- If two potential subtopics overlap significantly, merge them into one
 - Order from foundational/definitional to specific/applied
 - Each subtopic should be researchable in a single focused session
 - Be specific — vague subtopics produce vague research
@@ -143,7 +182,14 @@ ${CONTEXT_BLOCK}
 Write this output directly to the file ${PLAN_FILE}. Nothing else.
 "
 
-SUBTOPIC_COUNT=$(grep -c "^- \[ \]" "$PLAN_FILE" 2>/dev/null) || true
+# Verify Claude created the plan file
+if [ ! -f "$PLAN_FILE" ]; then
+  log "FATAL: Claude did not create ${PLAN_FILE}"
+  notify "FATAL: Research planning failed — no output file"
+  exit 1
+fi
+
+SUBTOPIC_COUNT=$(grep -c "^- \[ \]" "$PLAN_FILE" 2>/dev/null || echo 0)
 PLAN_TIME=$(fmt_elapsed $(( $(date +%s) - PLAN_START )))
 
 echo ""

@@ -269,26 +269,28 @@ Every factual claim MUST have an inline [SOURCE: URL] or [SOURCE: general knowle
   stop_heartbeat
 
   if [ "$CLAUDE_RC" -eq 124 ]; then
-    log "WARNING: Subtopic ${NUM} timed out after ${RESEARCH_TIMEOUT}s. Skipping."
-    notify "WARNING: Subtopic ${NUM} timed out"
+    log "WARNING: Subtopic ${NUM} timed out after ${RESEARCH_TIMEOUT}s. Stopping — re-run to retry."
+    notify "WARNING: Subtopic ${NUM} timed out — stopped"
+    break
   elif [ ! -s "$CLAUDE_OUTPUT" ]; then
-    log "WARNING: Empty findings for subtopic ${NUM}. Skipping."
-    notify "WARNING: Empty findings for subtopic ${NUM}"
+    log "WARNING: Empty findings for subtopic ${NUM}. Stopping — re-run to retry."
+    notify "WARNING: Empty findings for subtopic ${NUM} — stopped"
+    break
   else
     # Append to WIP file
     printf "\n%s\n\n---\n" "$(cat "$CLAUDE_OUTPUT")" >> "$WIP_FILE"
     echo ""
     log "Findings appended to ${WIP_FILE}"
-  fi
 
-  # Check off subtopic
-  awk -v num="$NUM" '{
-    if (!done && match($0, "^- \\[ \\] " num ":")) {
-      sub(/^- \[ \]/, "- [x]")
-      done=1
-    }
-    print
-  }' "$PLAN_FILE" > "${PLAN_FILE}.tmp" && mv "${PLAN_FILE}.tmp" "$PLAN_FILE"
+    # Check off subtopic only on success
+    awk -v num="$NUM" '{
+      if (!done && match($0, "^- \\[ \\] " num ":")) {
+        sub(/^- \[ \]/, "- [x]")
+        done=1
+      }
+      print
+    }' "$PLAN_FILE" > "${PLAN_FILE}.tmp" && mv "${PLAN_FILE}.tmp" "$PLAN_FILE"
+  fi
 
   notify "Research (${DONE}/${TOTAL}): ${SUBTOPIC}"
   echo ""
